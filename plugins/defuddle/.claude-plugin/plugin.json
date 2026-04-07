@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "keywords": ["web", "markdown", "scraping", "defuddle"],
-  "skills": ["./skills/"],
-  "agents": ["./agents/"],
-  "commands": ["./commands/"],
+  "skills": "./skills",
+  "agents": "./agents",
+  "commands": "./commands",
   "hooks": {}
 }

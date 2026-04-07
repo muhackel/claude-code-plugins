@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "keywords": ["obsidian", "vault", "index", "audit", "knowledge-management"],
-  "agents": ["./agents/"],
-  "skills": ["./skills/"],
-  "commands": ["./commands/"],
+  "agents": "./agents",
+  "skills": "./skills",
+  "commands": "./commands",
   "hooks": {}
 }

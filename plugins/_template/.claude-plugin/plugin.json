@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "keywords": [],
-  "skills": ["./skills/"],
-  "agents": ["./agents/"],
-  "commands": ["./commands/"],
+  "skills": "./skills",
+  "agents": "./agents",
+  "commands": "./commands",
   "hooks": {}
 }
