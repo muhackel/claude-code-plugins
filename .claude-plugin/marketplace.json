@@ -5,5 +5,18 @@
     "name": "Sebastian Raedle",
     "email": "muhackel@gmail.com"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "bibliothekarin",
+      "source": "./plugins/bibliothekarin",
+      "description": "Vault-Bibliothekarin: Index, Audit und Wissensluecken-Management fuer Obsidian Vaults",
+      "version": "0.1.0"
+    },
+    {
+      "name": "defuddle",
+      "source": "./plugins/defuddle",
+      "description": "Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI",
+      "version": "0.1.0"
+    }
+  ]
 }
