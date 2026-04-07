@@ -1,0 +1,9 @@
+{
+  "name": "muhackel-plugins",
+  "description": "Persoenliche Sammlung von Claude Code Skills, Agents, Commands und Hooks",
+  "owner": {
+    "name": "Sebastian Raedle",
+    "email": "muhackel@gmail.com"
+  },
+  "plugins": []
+}

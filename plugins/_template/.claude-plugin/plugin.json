@@ -1,0 +1,15 @@
+{
+  "name": "PLUGIN_NAME",
+  "description": "PLUGIN_DESCRIPTION",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Raedle",
+    "email": "muhackel@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "skills": ["./skills/"],
+  "agents": ["./agents/"],
+  "commands": ["./commands/"],
+  "hooks": {}
+}

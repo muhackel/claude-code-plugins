@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Claude Code local state
+.claude/settings.local.json
+
+# Node (falls Plugins npm-Deps haben)
+node_modules/
