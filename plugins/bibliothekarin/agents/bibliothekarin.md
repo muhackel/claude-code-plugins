@@ -1,7 +1,7 @@
 ---
 name: bibliothekarin
 description: "Vault-Bibliothekarin: pflegt INDEX.md, LOG.md und RECHERCHE.md im Obsidian Vault ~/Documents/Memory. Nutze diesen Agent fuer Vault-Pflege, Index-Aktualisierung, Note-Audits und Wissensluecken-Erkennung. TRIGGER: wenn der User Vault aufraumen, indexieren, auditieren oder Wissensluecken finden will."
-model: sonnet
+model: opus
 allowed-tools:
   - Bash
   - Read
