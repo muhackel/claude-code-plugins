@@ -45,7 +45,27 @@ Persoenliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und H
 
 ## Verfuegbare Plugins
 
-*Noch keine — wird mit der Zeit wachsen.*
+### bibliothekarin
+
+Vault-Bibliothekarin — pflegt INDEX.md, LOG.md und RECHERCHE.md im Obsidian Vault.
+State Machine mit atomaren Tasks: Scan, Audit, Search, Recherche.
+Arbeitet mit `obsidian` CLI und Dateisystem.
+
+Enthaltene Skills (von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
+- obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
+
+```bash
+/plugin install bibliothekarin@muhackel-plugins --scope user
+```
+
+### defuddle
+
+Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI — token-effizienter als WebFetch.
+Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT).
+
+```bash
+/plugin install defuddle@muhackel-plugins --scope user
+```
 
 ## Lizenz
 

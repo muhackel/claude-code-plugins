@@ -1,0 +1,15 @@
+{
+  "name": "defuddle",
+  "description": "Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI — token-effizienter als WebFetch",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Raedle",
+    "email": "muhackel@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["web", "markdown", "scraping", "defuddle"],
+  "skills": ["./skills/"],
+  "agents": ["./agents/"],
+  "commands": ["./commands/"],
+  "hooks": {}
+}

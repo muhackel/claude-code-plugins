@@ -53,6 +53,10 @@ plugins/
 /plugin install plugin-name --scope local
 ```
 
+## Externe Quellen
+
+- Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) werden 1:1 in Plugins uebernommen. Bei Updates dort: manuell nachziehen.
+
 ## Git-Workflow
 
 - `main` — stabile Releases
