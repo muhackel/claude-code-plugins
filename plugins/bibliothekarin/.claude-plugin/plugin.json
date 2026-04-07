@@ -1,13 +1,13 @@
 {
   "name": "bibliothekarin",
-  "description": "Vault-Bibliothekarin: Index, Audit und Wissensluecken-Management fuer Obsidian Vaults via CLI und Dateisystem",
-  "version": "0.1.0",
+  "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege fuer Obsidian Vaults via CLI und Dateisystem",
+  "version": "0.2.0",
   "author": {
     "name": "Sebastian Raedle",
     "email": "muhackel@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["obsidian", "vault", "index", "audit", "knowledge-management"],
+  "keywords": ["obsidian", "vault", "index", "audit", "knowledge-management", "retrieval", "ingestion", "synthesis"],
   "skills": "./skills",
   "commands": "./commands"
 }

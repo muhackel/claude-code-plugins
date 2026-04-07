@@ -47,9 +47,13 @@ Persoenliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und H
 
 ### bibliothekarin
 
-Vault-Bibliothekarin — pflegt INDEX.md, LOG.md und RECHERCHE.md im Obsidian Vault.
-State Machine mit atomaren Tasks: Scan, Audit, Search, Recherche.
-Arbeitet mit `obsidian` CLI und Dateisystem.
+Wissensmanagement-Agent — primaeres Interface fuer den Obsidian Vault.
+Wissen einpflegen (INGEST), abrufen und synthetisieren (SYNTH/SEARCH), destillieren (DESTILL) und Vault-Pflege (SCAN, AUDIT, RECHERCHE).
+State Machine mit atomaren Tasks. Arbeitet mit `obsidian` CLI und Dateisystem.
+
+Slash Commands:
+- `/karin` — Karin direkt aufrufen (mit optionalem Auftrag)
+- `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
 
 Enthaltene Skills (von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
 - obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle

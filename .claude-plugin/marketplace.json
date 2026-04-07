@@ -9,8 +9,8 @@
     {
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
-      "description": "Vault-Bibliothekarin: Index, Audit und Wissensluecken-Management fuer Obsidian Vaults",
-      "version": "0.1.0"
+      "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege fuer Obsidian Vaults",
+      "version": "0.2.0"
     },
     {
       "name": "defuddle",
