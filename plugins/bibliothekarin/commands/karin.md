@@ -4,6 +4,6 @@ description: "Karin (Wissensmanagerin) direkt aufrufen — mit optionalem Auftra
 ---
 
 Rufe den BibliotheKarin-Agent auf (Subagent-Typ: `bibliothekarin:bibliothekarin`).
-Uebergib den User-Text als Arbeitsauftrag an den Agent.
+Übergib den User-Text als Arbeitsauftrag an den Agent.
 
-Falls kein Text angegeben: Agent geht in IDLE und zeigt das Menue.
+Falls kein Text angegeben: Agent geht in IDLE und zeigt das Menü.

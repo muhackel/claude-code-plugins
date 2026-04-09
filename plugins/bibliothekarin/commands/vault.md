@@ -3,10 +3,10 @@ name: vault
 description: "Schneller Vault-Zugriff ohne Subagent — suchen, lesen, Tags anzeigen"
 ---
 
-Fuehre den folgenden Vault-Befehl direkt via Obsidian CLI aus (kein Subagent noetig).
-Vault: Memory. Alle Befehle mit `2>/dev/null` ausfuehren um stderr zu unterdruecken.
+Führe den folgenden Vault-Befehl direkt via Obsidian CLI aus (kein Subagent nötig).
+Vault: Memory. Alle Befehle mit `2>/dev/null` ausführen um stderr zu unterdrücken.
 
-**Kein BibliotheKarin-Subagent spawnen.** Dieses Command ist fuer schnelle, leichtgewichtige Operationen.
+**Kein BibliotheKarin-Subagent spawnen.** Dieses Command ist für schnelle, leichtgewichtige Operationen.
 
 Beispiele:
 - `/vault suche OSPF` → `obsidian vault="Memory" search query="OSPF" 2>/dev/null`
@@ -14,5 +14,5 @@ Beispiele:
 - `/vault lies BÜ-Netz` → `obsidian vault="Memory" read file="BÜ-Netz" 2>/dev/null`
 - `/vault backlinks Notename` → `obsidian vault="Memory" backlinks file="Notename" 2>/dev/null`
 
-Falls der User-Befehl nicht eindeutig auf einen CLI-Befehl abbildbar ist: das naechstliegende `obsidian`-Kommando waehlen.
+Falls der User-Befehl nicht eindeutig auf einen CLI-Befehl abbildbar ist: das nächstliegende `obsidian`-Kommando wählen.
 Falls die Operation komplex ist (Note erstellen, Synthese, Audit): stattdessen den BibliotheKarin-Agent spawnen.
