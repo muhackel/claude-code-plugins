@@ -52,8 +52,12 @@ Wissen einpflegen (INGEST), abrufen und synthetisieren (SYNTH/SEARCH), destillie
 State Machine mit atomaren Tasks. Arbeitet mit `obsidian` CLI und Dateisystem.
 
 Slash Commands:
-- `/karin` — Karin direkt aufrufen (mit optionalem Auftrag)
+- `/karin` — Karin direkt aufrufen (routet automatisch zum passenden Agent)
 - `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
+
+Agent-Varianten:
+- `bibliothekarin` — Vollstaendig (alle Skills, voller Startup) fuer Ingest, Audit, Scan, Destillation
+- `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) fuer Suche und Synthese (~8.600 Tokens weniger)
 
 Enthaltene Skills (von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
 - obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
