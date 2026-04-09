@@ -3,7 +3,20 @@ name: karin
 description: "Karin (Wissensmanagerin) direkt aufrufen — mit optionalem Auftrag"
 ---
 
-Rufe den BibliotheKarin-Agent auf (Subagent-Typ: `bibliothekarin:bibliothekarin`).
-Übergib den User-Text als Arbeitsauftrag an den Agent.
+Analysiere den User-Text und wähle den passenden Agent:
 
-Falls kein Text angegeben: Agent geht in IDLE und zeigt das Menü.
+**`bibliothekarin:bibliothekarin-search`** (leichtgewichtig, ~8.600 Tokens weniger) wenn:
+- Wissensfrage: "Was weiß ich über ...", "Fasse zusammen ...", "Suche ..."
+- Vault-Recherche ohne Schreibabsicht
+- Synthese über mehrere Notes
+- Schlüsselwörter: suche, finde, was weiß, zusammenfassung, synthese, recherche (lesend)
+
+**`bibliothekarin:bibliothekarin`** (vollständig) wenn:
+- Wissen einpflegen: Note erstellen, URL archivieren, Ingest
+- Vault-Pflege: Scan, Audit, Index aktualisieren
+- Destillation: Auto-Memory oder claude/-Arbeitskopien überführen
+- Wissenslücken identifizieren (RECHERCHE)
+- Kein Text angegeben (IDLE-Menü)
+- Schlüsselwörter: erstelle, pflege ein, archiviere, scan, audit, destilliere, index
+
+Übergib den User-Text als Arbeitsauftrag an den gewählten Agent.

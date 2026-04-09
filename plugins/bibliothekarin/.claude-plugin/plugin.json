@@ -1,7 +1,7 @@
 {
   "name": "bibliothekarin",
   "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults via CLI und Dateisystem",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
