@@ -10,7 +10,7 @@
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
       "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege fuer Obsidian Vaults",
-      "version": "0.4.0"
+      "version": "0.5.0"
     },
     {
       "name": "defuddle",
