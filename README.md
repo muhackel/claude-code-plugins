@@ -4,6 +4,14 @@ Persoenliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und H
 
 ## Nutzung
 
+### Repo klonen (mit Submodules)
+
+```bash
+git clone --recurse-submodules https://github.com/muhackel/claude-code-plugins
+# Oder nachtraeglich:
+git submodule update --init --recursive
+```
+
 ### Marketplace registrieren
 
 ```bash
@@ -34,6 +42,7 @@ Persoenliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und H
 | `.claude-plugin/marketplace.json` | Marketplace-Index |
 | `plugins/<name>/` | Einzelne Plugins mit eigenem Manifest |
 | `plugins/_template/` | Vorlage fuer neue Plugins |
+| `vendors/obsidian-skills/` | Git Submodule: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT) |
 
 ## Neues Plugin erstellen
 
@@ -59,7 +68,7 @@ Agent-Varianten:
 - `bibliothekarin` — Vollstaendig (alle Skills, voller Startup) fuer Ingest, Audit, Scan, Destillation
 - `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) fuer Suche und Synthese (~8.600 Tokens weniger)
 
-Enthaltene Skills (von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
+Enthaltene Skills (via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
 - obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
 
 ```bash

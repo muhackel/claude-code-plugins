@@ -14,11 +14,13 @@ Ein Claude Code **Marketplace-Repository** — eine persoenliche Sammlung von Pl
 
 ```
 .claude-plugin/marketplace.json   # Marketplace-Index — listet alle Plugins
+vendors/
+  obsidian-skills/                # Git Submodule: kepano/obsidian-skills
 plugins/
   _template/                      # Vorlage fuer neue Plugins (nicht im Marketplace)
   <plugin-name>/                  # Jedes Plugin ist eigenstaendig
     .claude-plugin/plugin.json    # Plugin-Manifest (Name, Version, Komponenten)
-    skills/                       # SKILL.md Dateien
+    skills/                       # SKILL.md Dateien (oder Symlinks nach vendors/)
     agents/                       # Agent-Definitionen (.md)
     commands/                     # Slash Commands (.md)
     hooks/                        # hooks.json
@@ -55,7 +57,8 @@ plugins/
 
 ## Externe Quellen
 
-- Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) werden 1:1 in Plugins uebernommen. Bei Updates dort: manuell nachziehen.
+- Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) liegen als Git Submodule unter `vendors/obsidian-skills/`. Plugins referenzieren diese per Symlink (`plugins/<name>/skills/<skill> → ../../../vendors/obsidian-skills/skills/<skill>`).
+- Update: `git submodule update --remote vendors/obsidian-skills`
 
 ## Git-Workflow
 
