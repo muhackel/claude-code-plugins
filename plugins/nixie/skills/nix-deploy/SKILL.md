@@ -11,18 +11,34 @@ description: "Bauen und Deployen von NixOS: Build-Host dynamisch wählen (Host-C
 genau die Fehler, die geprüft werden sollen. Volle Ausgabe lesen und auswerten. Läuft vor jeder
 Fertigstellung einer Änderung. Bei vielen Checks ggf. `--keep-going`, um alle Fehler auf einmal zu sehen.
 
+## nixos-rebuild (ng) — CLI-Form
+
+Aktueller `nixos-rebuild` ist die ng-Variante (Python-Rewrite). Wichtig:
+- **Aktion ist ein positionaler Subcommand:** `switch | boot | test | build | dry-build | dry-activate |
+  build-vm | build-image | list-generations | repl | edit`. Den **echten Dry-Run** für „was würde gebaut/
+  geladen" liefert `dry-build` (nicht mehr `--dry-run`).
+- **Nix-Build-Flags stehen VOR der Aktion:** `nixos-rebuild --max-jobs N --cores M <aktion>`
+  (auch `--keep-going`, `--option …`).
+- **Aktivierung als Nicht-Root:** `--sudo` (lokal) bzw. `-S`/`--ask-sudo-password` (fragt Sudo-Passwort,
+  nötig für Remote-Aktivierung via `--target-host`).
+- **Host-Flags:** `--build-host user@host` (Kompilation dort), `--target-host user@host` (Aktivierung dort);
+  beide nehmen einen ssh-erreichbaren Host, SSH-Optionen via `NIX_SSHOPTS`. `--use-substitutes`, wenn der
+  Ziel-/Build-Host schneller am Cache hängt als die Hosts untereinander.
+- **Flake-Auswahl:** `--flake .#<host>` (sonst Auto-Erkennung über Hostname).
+
 ## Eskalationsstufen (Default = niedrigste)
 
 Die erlaubte Stufe ergibt sich aus der **konkreten Anfrage** des Users — nicht eigenmächtig eskalieren:
 
-1. **check / build (Default):** `nix flake check`, `nixos-rebuild build`/`dry-build`, `nix build .#…`.
-   Ändert nichts am Live-System.
-2. **Lokaler switch:** `nixos-rebuild switch --sudo` — nur wenn explizit verlangt. Vorher ansagen.
-3. **Remote-Build:** `nixos-rebuild … --build-host <host>` — Kompilation auf der schnellen Kiste, Aktivierung
-   lokal.
-4. **Remote-Deploy:** `nixos-rebuild … --target-host <host> [--build-host <host>]` — baut (auf der schnellen
-   Kiste) und aktiviert auf einem anderen Host. Nur auf explizite Anweisung; Ziel-Host vorher nennen und
-   bestätigen lassen.
+1. **check / build (Default):** `nix flake check`, `nixos-rebuild dry-build`, `nixos-rebuild build`,
+   `nix build .#…`. Ändert nichts am Live-System.
+2. **Lokaler switch:** `nixos-rebuild switch --sudo [--flake .#<host>]` — nur wenn explizit verlangt.
+   Vorher ansagen.
+3. **Remote-Build:** `nixos-rebuild switch --sudo --build-host user@<fast>` — Kompilation auf der schnellen
+   Kiste, Aktivierung lokal.
+4. **Remote-Deploy:** `nixos-rebuild switch --build-host user@<fast> --target-host user@<ziel> -S
+   [--use-substitutes] --flake .#<ziel>` — baut auf der schnellen Kiste, aktiviert auf einem anderen Host.
+   Nur auf explizite Anweisung; Ziel-Host vorher nennen und bestätigen lassen.
 
 ## Build-Host-Auswahl
 
@@ -64,7 +80,8 @@ mem   = MemTotal in GiB
 nproc = Kernzahl
 
 # 2) Was wird wirklich GEBAUT (nicht aus Cache geholt)?
-nix build --dry-run … / nixos-rebuild build --dry-run …   → Liste "will be built"
+nixos-rebuild dry-build …            # System-Rebuild: "would be built / would be fetched"
+nix build .#<attr> --dry-run …       # einzelnes Flake-Attribut
 #   (vollständig lesen — kein tail)
 
 # 3) Schwerste Klasse in der Build-Liste bestimmen
@@ -72,12 +89,17 @@ heavy  = chromium | electron | webkitgtk | qtwebengine | firefox | thunderbird |
 medium = llvm | gcc | rustc | qtbase | webkit | linux-kernel | … (große C/C++/Rust)
 light  = alles andere
 
-# 4) Jobs/Cores setzen
-heavy  → --max-jobs = clamp(floor(mem / 24), 1, nproc)      # Swap NICHT mitzählen
-         --cores   = clamp(floor(nproc / max-jobs), 4, nproc)
-medium → --max-jobs = clamp(floor(mem / 6),  1, nproc)
-         --cores   = clamp(floor(nproc / max-jobs), 4, nproc)
-light  → keine Drosselung: --max-jobs auto, --cores 0
+# 4) Jobs/Cores setzen — als Top-Level-Flags VOR der Aktion
+heavy  → MJ = clamp(floor(mem / 24), 1, nproc)      # Swap NICHT mitzählen
+         CO = clamp(floor(nproc / MJ), 4, nproc)
+medium → MJ = clamp(floor(mem / 6),  1, nproc)
+         CO = clamp(floor(nproc / MJ), 4, nproc)
+light  → keine Drosselung (MJ/CO weglassen)
+
+# anwenden:
+nixos-rebuild --max-jobs <MJ> --cores <CO> <aktion> …      # z.B. dry-build/build/switch
+nix build .#<attr> --max-jobs <MJ> --cores <CO> …
+# bei Remote-Build (--build-host) zählen mem/nproc des Remote-Hosts (via ssh ermittelt)
 ```
 
 - **Swap zählt nicht als Job-Kapazität** — nur als OOM-Puffer für den einzelnen Link-Peak. Swap-Thrashing
