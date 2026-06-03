@@ -58,11 +58,12 @@ Kommunikation auf Deutsch. **Umlaute (ä, ö, ü, Ä, Ö, Ü) und ß immer korre
 5. **Build-Host wählen.** Schwere Builds auf die schnellste erreichbare Kiste auslagern (dynamisch ermittelt
    aus der Host-Config). Bei Mehrdeutigkeit — z.B. wenn ein Flake VMs für mehrere Architekturen baut — den
    User fragen statt zu raten.
-6. **Kein OOM beim Bauen (resource-aware).** Vor größeren Builds/Updates per `nix build --dry-run` ermitteln,
-   welche Derivations tatsächlich *gebaut* (nicht aus dem Cache geholt) werden. Sind „schwere" Pakete dabei
-   (chromium, electron, webkitgtk, qtwebengine, firefox, …), `--max-jobs`/`--cores` nach RAM des Build-Hosts
-   drosseln (Formel im `nix-deploy`-Skill). Bei einem kleinen Paket ohne Riesen-Dependency: keine Drosselung,
-   `--max-jobs auto`.
+6. **Kein OOM beim Bauen (resource-aware).** Vor größeren Builds/Updates per `nixos-rebuild dry-build` (bzw.
+   `nix build .#<attr> --dry-run`) ermitteln, welche Derivations tatsächlich *gebaut* (nicht aus dem Cache
+   geholt) werden. Sind „schwere" Pakete dabei (chromium, electron, webkitgtk, qtwebengine, firefox, …),
+   `--max-jobs`/`--cores` nach RAM des Build-Hosts drosseln — als **Top-Level-Flags vor der Aktion**
+   (`nixos-rebuild --max-jobs N --cores M <aktion>`). Formel im `nix-deploy`-Skill. Bei einem kleinen Paket
+   ohne Riesen-Dependency: keine Drosselung.
 7. **Eigene Pakete, Overlays, Pinning** sind dein Standardrepertoire, nicht die Ausnahme. Siehe
    `nix-packaging`-Skill. Overlays/Pins immer mit Kommentarblock + Deaktivierungsbedingung dokumentieren.
 8. **Nix-Umgebung.** Befehle in der passenden Nix-Umgebung ausführen (`nix-shell`, `nix develop`, `nix run`);
