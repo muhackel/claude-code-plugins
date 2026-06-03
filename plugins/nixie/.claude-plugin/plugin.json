@@ -9,6 +9,5 @@
   "license": "MIT",
   "keywords": ["nixos", "nix", "flake", "deployment", "packaging", "overlays", "remote-build"],
   "skills": "./skills",
-  "agents": "./agents",
   "commands": "./commands"
 }
