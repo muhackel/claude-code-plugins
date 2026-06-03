@@ -84,6 +84,32 @@ Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (M
 /plugin install defuddle@muhackel-plugins --scope user
 ```
 
+### nixie
+
+NixOS-Engineer — baut und pflegt NixOS-Konfigurationen (Flake-first), schreibt eigene Derivations und
+Overlays, pinnt lang bauende Pakete und deployt auf die Maschinen im Netz.
+Dokumentenorientiert (schlaegt vor Annahmen nach), `nix flake check` immer ohne Truncation, Deploy nur auf
+explizite Anweisung. Waehlt den Build-Host dynamisch (schnellste erreichbare Kiste) und drosselt
+`--max-jobs`/`--cores` resource-aware gegen OOM bei schweren Builds.
+
+Slash Command:
+- `/nixie` — Nixie direkt aufrufen (mit optionalem Auftrag)
+
+Enthaltene Skills:
+- `nixos-config` — Konventionen der NixOS-Config (mkHost, Feature-Flags, Modul-Layout)
+- `nix-packaging` — Derivations, Overlays, Paket-Pinning
+- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check
+- `nix-docs` — Doku-Lookup-Disziplin (search.nixos.org, noogle, nix search, Manpages)
+
+Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein
+Wissensmanagement-Agent installiert (z.B. `bibliothekarin`), kann Nixie laengere Recherche oder das
+Dokumentieren in einer Knowledge Base als Briefing dahin weiterreichen (Orchestrierung ueber den
+Hauptagenten).
+
+```bash
+/plugin install nixie@muhackel-plugins --scope user
+```
+
 ## Lizenz
 
 MIT
