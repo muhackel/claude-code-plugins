@@ -294,6 +294,9 @@ def cmd_status(cat, methodik):
     print(f'Lizenz:     {m.get("lizenz", "CC BY-SA 4.0")}')
     print(f'OSCAL:      {cat.get("metadata", {}).get("oscal-version", "?")}')
     print(f'Korpus:     {PP}')
+    geladen = [e for e in EDITIONS if os.path.exists(os.path.join(CORPUS, e, "catalog.json"))]
+    disp = ", ".join((e + " (aktiv)" if e == EDITION else e) for e in geladen)
+    print(f'Verfügbar:  {disp or "—"}')
     print("\nEbenen:")
     dateien = m.get("dateien")
     if dateien:
