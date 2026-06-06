@@ -18,12 +18,15 @@ Kommandos:
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
   checklist <GRP...> leere Soll-Ist-Check-Vorlage; nimmt ebenfalls --target/--inherit
+  coverage --targets <Kat,Kat,...>  Abdeckungs-Modellierung über mehrere Zielobjekte (nur Grundschutz++):
+                    Vereinigungs-Soll + Ausweis der querschnittlichen Anf. ohne Zielobjekt (STM.5.4)
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
 
 Beispiele:
   gs.py status
   gs.py targets
   gs.py list --target Hostsysteme --inherit    # Anforderungen für Server (inkl. vererbt von IT-Systeme)
+  gs.py coverage --targets "Hostsysteme,Netze,Administrierende"   # Soll über mehrere Assets + STM.5.4-Lücke
   gs.py --edition edition-2023 get SYS.1.1.A5
 """
 import csv
@@ -520,6 +523,107 @@ def cmd_checklist(cat, grps, target=None, inherit=False, cats=None):
               f'erneut mit `--inherit` ziehen.')
 
 
+def _parse_coverage_opts(args):
+    """coverage-Argumente lösen: --targets <csv> (mehrfach/kommagetrennt), --inherit/--no-inherit.
+    Freie Positionsargumente werden ebenfalls als (kommagetrennte) Kategorien gewertet.
+    Vererbung ist bei coverage standardmäßig AN (Modellierungs-Vollständigkeit)."""
+    raw, inherit = [], True
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a in ("--targets", "--target"):
+            if i + 1 >= len(args):
+                die("--targets braucht eine Kategorienliste (kommagetrennt). Tipp:  gs.py targets")
+            raw += args[i + 1].split(",")
+            i += 2
+            continue
+        if a.startswith("--targets=") or a.startswith("--target="):
+            raw += a.split("=", 1)[1].split(",")
+            i += 1
+            continue
+        if a == "--inherit":
+            inherit = True
+            i += 1
+            continue
+        if a == "--no-inherit":
+            inherit = False
+            i += 1
+            continue
+        raw += a.split(",")
+        i += 1
+    return [t.strip() for t in raw if t.strip()], inherit
+
+
+def cmd_coverage(cat, args, cats):
+    """Abdeckungs-Modellierung über mehrere Zielobjektkategorien (nur Grundschutz++):
+    Vereinigungs-Soll + Ausweis der querschnittlichen Anforderungen ohne Zielobjekt (STM.5.4)."""
+    if EDITION != "grundschutz-pp":
+        die("'coverage' gibt es nur in Grundschutz++ — Edition 2023 modelliert über Bausteine "
+            "(nutze list/checklist).")
+    if not cats:
+        die("Zielobjekt-Namespace fehlt. Erst laden/aktualisieren:  nix run .#ingest")
+    raw, inherit = _parse_coverage_opts(args)
+    if not raw:
+        die('coverage braucht Zielobjektkategorien:  '
+            'gs.py coverage --targets "Hostsysteme,Netze,Administrierende"  (Liste:  gs.py targets)')
+
+    resolved, wanted = [], set()
+    for t in raw:
+        canon = resolve_category(t, cats)
+        chain = (category_chain(canon, cats) if inherit else [canon]) if canon else []
+        resolved.append((t, canon, chain))
+        wanted.update(chain)
+
+    all_rows = list(walk_controls(cat))
+    union = [(c, p) for c, p in all_rows if control_targets(c) & wanted]
+    bound = [(c, p) for c, p in all_rows if control_targets(c)]
+    crosscut = [(c, p) for c, p in all_rows if not control_targets(c)]
+
+    print(f'Abdeckungs-Modellierung (Grundschutz++) — {src_line()}')
+    print(f'Zielobjekte: {len(resolved)} · Vererbung: {"an" if inherit else "aus"}\n')
+
+    print('## Zielobjekte (Asset → Kategorie)')
+    print('| Eingabe | aufgelöst auf | Anf. |')
+    print('|---|---|---|')
+    for t, canon, chain in resolved:
+        if canon:
+            n = sum(1 for c, _ in all_rows if control_targets(c) & set(chain))
+            kette = canon if (not inherit or len(chain) == 1) else " ← ".join(chain)
+            print(f'| {t} | {kette} | {n} |')
+        else:
+            sugg = _suggest_categories(t, cats)
+            tipp = f' (meintest du: {", ".join(sugg)}?)' if sugg else ''
+            print(f'| {t} | **unbekannt**{tipp} | 0 |')
+
+    print(f'\n## Vereinigungs-Soll — {len(union)} zielobjektgebundene Anforderungen')
+    for c, _ in union:
+        print(f'{c.get("id"):<12} {c.get("title", "")}  [{prop(c, "sec_level", "")}]')
+
+    layer = Counter()
+    for c, p in crosscut:
+        layer[next((gid for gid, _ in p if gid), "?")] += 1
+    print(f'\n## Querschnittlich ohne Zielobjekt — STM.5.4 ({len(crosscut)} Anforderungen)')
+    print('Hängen an KEINER Zielobjektkategorie, über --target NICHT erreichbar — über die '
+          'Prozess-/Management-Schichten modellieren (GC/STM/UMS/VRB/PERF/RISK + organisatorisch).')
+    print('Verteilung je Schicht: ' + ", ".join(f'{g}={n}' for g, n in layer.most_common()))
+
+    cnt = Counter()
+    for c, _ in all_rows:
+        for tt in control_targets(c):
+            cnt[tt] += 1
+    nicht = [(name, n) for name, n in cnt.most_common() if name not in wanted]
+
+    print('\n## Bilanz')
+    pct = round(100 * len(union) / len(bound)) if bound else 0
+    print(f'- Vereinigungs-Soll: {len(union)} von {len(bound)} zielobjektgebundenen Anforderungen ({pct}%)')
+    print(f'- Querschnittlich (STM.5.4): {len(crosscut)} — separat über die Prozessschichten modellieren')
+    if nicht:
+        print('- Nicht modellierte Kategorien (Vollständigkeits-Check — fehlt ein Asset?): '
+              + ", ".join(f'{name} ({n})' for name, n in nicht))
+    print('\n_Soll-Liste übernehmbar (zitierfähig via gs.py get/checklist). Die finale '
+          'Relevanzentscheidung je Anforderung trifft der Mensch (STM.5.4)._')
+
+
 def cmd_json(cat, cid, methodik=None):
     c, _ = find_control(cat, cid)
     if not c:
@@ -603,6 +707,8 @@ def main():
     elif cmd == "checklist" and rest:
         pos, target, inherit = _split_target_opts(rest)
         cmd_checklist(cat, pos, target, inherit, load_categories())
+    elif cmd == "coverage":
+        cmd_coverage(cat, rest, load_categories())
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
     else:

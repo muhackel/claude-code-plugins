@@ -33,6 +33,7 @@ nix run .#gs -- groups
 nix run .#gs -- targets           # Zielobjektkategorien + Häufigkeit/Vererbung (nur Grundschutz++)
 nix run .#gs -- list GC KONF.2    # eine/mehrere Selektoren (Schicht/Gruppe oder exakte ID)
 nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
+nix run .#gs -- coverage --targets "Hostsysteme,Netze,Administrierende"  # Vereinigungs-Soll mehrerer Assets + STM.5.4-Ausweis
 nix run .#gs -- get GC.1.1
 nix run .#gs -- search "Notfall"
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene)

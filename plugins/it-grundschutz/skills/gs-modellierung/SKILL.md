@@ -52,6 +52,23 @@ nix run .#gs -- list --target Webanwendungen --inherit    # erbt über Webserver
 nix run .#gs -- list KONF BER --target Hostsysteme --inherit  # nur diese Schichten, auf das Asset gefiltert
 ```
 
+**Mehrere Assets auf einmal — `coverage` (der Vollständigkeits-Schritt):** Ein realer Verbund hat *viele*
+Zielobjekte. Statt jede Kategorie einzeln zu ziehen, liefert `coverage` das **Vereinigungs-Soll** über die
+gesamte Asset-Landschaft — und weist explizit aus, was leicht vergessen wird:
+
+```bash
+nix run .#gs -- coverage --targets "Hostsysteme,Externe Netzanschlüsse,Dateiserver,Administrierende"
+```
+
+- **Vereinigungs-Soll:** alle Anforderungen über alle genannten Assets (inkl. Vererbung, default an;
+  `--no-inherit` schaltet sie ab), dedupliziert.
+- **Querschnittlich ohne Zielobjekt (STM.5.4):** die Anforderungen, die an *keiner* Zielobjektkategorie
+  hängen und über `--target` **nie** erreicht werden — sie müssen über die Prozess-/Management-Schichten
+  modelliert werden. `coverage` nennt Anzahl und Schichtverteilung, damit dieser Block nicht untergeht.
+- **Vollständigkeits-Check:** „Nicht modellierte Kategorien" listet die Asset-Kategorien, für die es
+  Anforderungen gibt, die du *nicht* angegeben hast — die direkte Frage „fehlt ein Asset?" (z.B. fällt ein
+  vergessener `DNS-Server` oder `Outsourcing` hier sofort auf). Nur Grundschutz++.
+
 - **Synonyme werden aufgelöst** (`Server` → `Hostsysteme`, `Fileserver` → `Dateiserver`, `Computer` → `IT-Systeme`).
 - **`--inherit`** zieht die Vererbung gemäß **STM.5.2** hoch: eine Anforderung an `IT-Systeme` gilt auch für ein
   `Hostsystem`. Für ein reales Asset fast immer mit `--inherit` arbeiten — sonst fehlen die generischen
