@@ -18,9 +18,18 @@ teilbare Plugin — dafür ein getrenntes, vertrauliches Repo/Vault nutzen. Hier
 
 1. **Szenario zerlegen** in Aspekte: Governance/Organisation, Strukturmodellierung, betroffene
    Technik/Prozesse, Risiko, Betrieb/Monitoring, Verbesserung.
-2. **Auf Schichten abbilden** (Grundschutz++): `GC` Governance und Compliance, `STM` Strukturmodellierung,
-   `UMS` Umsetzung, `PERF` Monitoring-Evaluation, `VRB` Verbesserung, `RISK` Risikomanagement, … —
-   `gs.py groups` für den aktuellen Baum.
+2. **Auf Schichten abbilden** (Grundschutz++, 20 Schichten — `gs.py groups` für den aktuellen Baum). Zwei Arten:
+   - **Prozess-/Management-Schichten:** `GC` Governance und Compliance, `STM` Strukturmodellierung,
+     `UMS` Umsetzung, `VRB` Verbesserung, `PERF` Monitoring-Evaluation, `RISK` Risikomanagement.
+   - **Thematische Schichten (hier liegt die Technik/Fachlichkeit):** `ASST` Informationen und Assets,
+     `PERS` Personal, `BES` Beschaffungsmanagement, `DLS` Dienstleistersteuerung, `TEST` Änderungen und Tests,
+     `GEB` Gebäudemanagement, `SENS` Sensibilisierung, `ARCH` Architektur, `BER` Berechtigung,
+     `NOT` Notfallplanung, `DET` Detektion, `REA` Sicherheitsvorfallsbehandlung, `KONF` Konfiguration,
+     `DEV` Entwicklung.
+
+   Ein technisches Zielobjekt (z.B. Server) modellierst du primär über die **thematischen** Schichten
+   (`KONF` Härtung/Patches/Firewall, `BER` Zugänge, `DET` Logging, `NOT` Backup, `ARCH` Netzeinbindung),
+   verankert im Prozessrahmen (`GC`/`STM`). Nicht nur die Management-Schichten betrachten.
 3. **Anforderungen ziehen** je relevanter Gruppe (`gs.py list <gruppe>`), thematisch passende per
    `gs.py search`/`get` auswählen.
 4. **Begründen und zitieren:** Ergebnis als Tabelle `ID | Titel | Schicht | sec_level | warum relevant`.

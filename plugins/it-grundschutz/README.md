@@ -50,11 +50,11 @@ nix run .#ingest-2023             # Edition 2023 (DocBook-XML -> OSCAL)
 # Nachschlagen
 nix run .#gs -- status            # Korpus-Status
 nix run .#gs -- groups            # Schichten/Gruppen
-nix run .#gs -- list GC           # Anforderungen einer Schicht
+nix run .#gs -- list GC KONF.2    # Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
 nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis für gs-dokument
-nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown) — Basis für gs-review
+nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (mehrere Gruppen/IDs) — Basis für gs-review
 
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5

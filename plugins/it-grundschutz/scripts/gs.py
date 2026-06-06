@@ -11,11 +11,11 @@ nur eine Ebene (klassische Schichten ISMS/ORP/.../INF + Bausteine).
 Kommandos:
   status            Korpus-Status (Ebenen, Anzahl Anforderungen)
   groups            Schichten/Gruppen-Baum (Anwenderkatalog)
-  list <GRUPPE>     Anforderungen einer Schicht/Gruppe (z.B. GC, GC.1, SYS, SYS.1.1)
+  list <GRP...>     Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs (z.B. GC, KONF.2, KONF.8.1)
   get <ID>          Anforderung volltext, zitierfähig — inkl. Methodik-Ebene, falls vorhanden
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
-  checklist <GRP>   leere Soll-Ist-Check-Vorlage einer Gruppe/Schicht als Markdown-Tabelle
+  checklist <GRP...> leere Soll-Ist-Check-Vorlage einer/mehrerer Gruppen/IDs als Markdown-Tabelle
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
 
 Beispiele:
@@ -214,17 +214,30 @@ def cmd_groups(cat):
         rec(g, 0)
 
 
-def cmd_list(cat, grp):
-    grp_l = grp.strip().lower()
-    rows = []
-    for c, path in walk_controls(cat):
-        gids = [gid for gid, _ in path if gid]
-        if any(g.lower() == grp_l or g.lower().startswith(grp_l + ".") for g in gids) \
-           or (c.get("id") or "").lower().startswith(grp_l + "."):
-            rows.append(c)
+def _select(cat, selectors):
+    """Controls für mehrere Selektoren sammeln. Ein Selektor ist eine Gruppen-/
+    Schicht-ID (GC, KONF.2) oder eine exakte Anforderungs-ID (KONF.8.1).
+    Dedupliziert nach ID, Reihenfolge: je Selektor in Katalogreihenfolge."""
+    sels = [s.strip().lower() for s in selectors if s and s.strip()]
+    seen, out = set(), []
+    for sel in sels:
+        for c, path in walk_controls(cat):
+            cid = (c.get("id") or "").lower()
+            gids = [gid.lower() for gid, _ in path if gid]
+            match = (cid == sel
+                     or any(g == sel or g.startswith(sel + ".") for g in gids)
+                     or cid.startswith(sel + "."))
+            if match and cid not in seen:
+                seen.add(cid)
+                out.append((c, path))
+    return out
+
+
+def cmd_list(cat, grps):
+    rows = _select(cat, grps)
     if not rows:
-        die(f'Keine Anforderungen unter "{grp}". Tipp:  gs.py groups')
-    for c in rows:
+        die(f'Keine Anforderungen unter "{" ".join(grps)}". Tipp:  gs.py groups')
+    for c, _ in rows:
         sl = prop(c, "sec_level", "")
         print(f'{c.get("id"):<12} {c.get("title", "")}  [{sl}]')
     print(f'\n{len(rows)} Anforderungen — {src_line()}')
@@ -275,16 +288,10 @@ def cmd_prozess(methodik):
         print()
 
 
-def cmd_checklist(cat, grp):
-    grp_l = grp.strip().lower()
-    rows = []
-    for c, path in walk_controls(cat):
-        gids = [gid for gid, _ in path if gid]
-        if any(g.lower() == grp_l or g.lower().startswith(grp_l + ".") for g in gids) \
-           or (c.get("id") or "").lower().startswith(grp_l + "."):
-            rows.append(c)
+def cmd_checklist(cat, grps):
+    rows = _select(cat, grps)
     if not rows:
-        die(f'Keine Anforderungen unter "{grp}". Tipp:  gs.py groups')
+        die(f'Keine Anforderungen unter "{" ".join(grps)}". Tipp:  gs.py groups')
 
     def esc(s):
         return (s or "").replace("|", "\\|").replace("\n", " ").strip()
@@ -292,13 +299,14 @@ def cmd_checklist(cat, grp):
     hinweis = ("Grundschutz++ Umsetzung formal binär ja/nein, siehe UMS.1.1"
                if EDITION == "grundschutz-pp"
                else "klassischer IT-Grundschutz-Check, Edition 2023 / BSI-Standard 200-2")
-    print(f'# Soll-Ist-Check (leere Vorlage) — {grp.upper()}')
+    label = ", ".join(g.upper() for g in grps)
+    print(f'# Soll-Ist-Check (leere Vorlage) — {label}')
     print(f'# {src_line()}')
     print(f'# Status je Anforderung: entbehrlich | ja | teilweise | nein ({hinweis})')
     print()
     print('| ID | Titel | sec_level | Status | Begründung | Verantwortlich | Termin |')
     print('|---|---|---|---|---|---|---|')
-    for c in rows:
+    for c, _ in rows:
         status = "entfallen" if prop(c, "status") == "entfallen" else ""
         print(f'| {esc(c.get("id"))} | {esc(c.get("title"))} | {esc(prop(c, "sec_level", ""))} '
               f'| {status} |  |  |  |')
@@ -351,7 +359,7 @@ def main():
     elif cmd == "groups":
         cmd_groups(cat)
     elif cmd == "list" and rest:
-        cmd_list(cat, rest[0])
+        cmd_list(cat, rest)
     elif cmd == "get" and rest:
         cmd_get(cat, rest[0], methodik)
     elif cmd == "search" and rest:
@@ -359,7 +367,7 @@ def main():
     elif cmd == "prozess":
         cmd_prozess(methodik)
     elif cmd == "checklist" and rest:
-        cmd_checklist(cat, rest[0])
+        cmd_checklist(cat, rest)
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
     else:

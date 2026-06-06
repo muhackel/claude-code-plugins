@@ -30,11 +30,11 @@ nix run .#ingest-2023 -- --file kompendium.xml  # offline: lokale XML statt Down
 
 nix run .#gs -- status            # Korpus-Status (= Default-App: nix run . -- status)
 nix run .#gs -- groups
-nix run .#gs -- list GC
+nix run .#gs -- list GC KONF.2    # eine/mehrere Selektoren (Schicht/Gruppe oder exakte ID)
 nix run .#gs -- get GC.1.1
 nix run .#gs -- search "Notfall"
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene)
-nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown-Tabelle) einer Schicht/Gruppe
+nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (eine/mehrere Gruppen oder exakte IDs)
 nix run .#gs -- json GC.1.1       # rohes OSCAL-Control
 
 # Edition 2023 abfragen (--edition vor dem Kommando; alternativ Env GS_EDITION):

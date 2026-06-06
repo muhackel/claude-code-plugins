@@ -81,18 +81,20 @@ nix run .#gs -- --edition edition-2023 list SYS.1.1       # Edition 2023, inkl. 
 
 ## Vorlage erzeugen (leerer Check)
 
-`gs.py checklist <gruppe>` gibt die **leere Soll-Ist-Check-Vorlage** als Markdown-Tabelle aus
+`gs.py checklist <selektor…>` gibt die **leere Soll-Ist-Check-Vorlage** als Markdown-Tabelle aus
 (`ID | Titel | sec_level | Status | Begründung | Verantwortlich | Termin`) — die Norm-Spalten aus dem Korpus,
-die Erhebungsspalten leer:
+die Erhebungsspalten leer. Es nimmt **mehrere Selektoren** (Schicht/Gruppe **oder** exakte Anforderungs-ID,
+dedupliziert), sodass die Soll-Liste aus `gs-modellierung` direkt in **eine** kombinierte Vorlage geht —
+statt pro Gruppe einzeln:
 
 ```bash
-nix run .#gs -- checklist UMS                              # Grundschutz++
+nix run .#gs -- checklist UMS                              # eine ganze Schicht (Grundschutz++)
+nix run .#gs -- checklist KONF.2 KONF.8.1 BER.3            # modellierte Soll-Liste: Gruppen + exakte IDs
 nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Edition 2023 (entfallen wird vorbelegt)
 ```
 
 In Grundschutz++ erscheint der Hinweis auf das binäre Status-Schema (UMS.1.1); in Edition 2023 werden
-`entfallen`-Anforderungen in der Status-Spalte vorbelegt. Alternativ die Vorlage aus `list`/`get`
-zusammensetzen.
+`entfallen`-Anforderungen in der Status-Spalte vorbelegt.
 
 ## Auswertung (Ergebnis des Checks)
 
