@@ -86,7 +86,7 @@ Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (M
 
 ### it-grundschutz
 
-IT-Grundschutz-Berater (Persona **Gustav**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**.
+IT-Grundschutz-Berater (Persona **Bruce**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**.
 Schlaegt BSI-Anforderungen zitierfaehig nach (per ID wie `GC.1.1` oder Thema), modelliert Bausteine fuer
 Szenarien und begleitet Editionswechsel (Crosswalk). Quelle und Logik sind strikt getrennt: der Agent
 arbeitet nur gegen ein internes OSCAL-Schema, neue Editionen brauchen nur einen neuen Adapter.
@@ -96,7 +96,7 @@ OSCAL-Katalog. Der Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgeh
 Repo eingecheckt.
 
 Slash Command:
-- `/gustav` — Gustav direkt aufrufen (mit optionalem Auftrag)
+- `/bruce` — Bruce direkt aufrufen (mit optionalem Auftrag)
 
 Enthaltene Skills:
 - `gs-ingest` — Korpus von der BSI-Quelle laden/cachen/aktualisieren (Manifest mit Version/sha256)

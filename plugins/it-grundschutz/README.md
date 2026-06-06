@@ -1,6 +1,6 @@
 # it-grundschutz
 
-IT-Grundschutz-Berater (Persona **Gustav**) fuer Claude Code. Haelt das BSI-IT-Grundschutz-Kompendium als
+IT-Grundschutz-Berater (Persona **Bruce**) fuer Claude Code. Haelt das BSI-IT-Grundschutz-Kompendium als
 **lokalen OSCAL-Korpus** vor und schlaegt Anforderungen zitierfaehig nach, modelliert Bausteine fuer
 Szenarien und begleitet Editionswechsel.
 
@@ -21,7 +21,7 @@ flowchart LR
     A["DocBook-XML<br/>(Edition 2023)"] --> ADAPTER
     B["OSCAL/JSON<br/>(Grundschutz++)"] --> ADAPTER
     ADAPTER["Adapter<br/>(gs-ingest)"] --> SCHEMA["internes OSCAL-Schema<br/>(catalog.json + manifest)"]
-    SCHEMA --> LOGIK["Agent Gustav + Skills<br/>(lookup · crosswalk · modellierung)"]
+    SCHEMA --> LOGIK["Agent Bruce + Skills<br/>(lookup · crosswalk · modellierung)"]
 ```
 
 Kanonisches internes Format ist **OSCAL** (NIST-Standard). Grundschutz++ ist schon OSCAL (nur laden),
@@ -53,7 +53,7 @@ nix run .#gs -- get GC.1.1        # eine Anforderung volltext, zitierfaehig
 nix run .#gs -- search "ISMS"     # Volltextsuche
 ```
 
-In Claude Code: `/gustav <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).
+In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).
 
 ## Grenzen / Scope
 
@@ -62,4 +62,4 @@ In Claude Code: `/gustav <auftrag>` ruft den Agenten auf. Build-Details in [`bui
   getrenntes, vertrauliches Repo/Vault.
 - **Aktuell nur Grundschutz++.** Edition-2023-Adapter und vollwertiger Crosswalk sind vorbereitet, aber noch
   nicht implementiert (siehe Skills `gs-crosswalk`, `gs-ingest`).
-- Gustav liefert die normative Grundlage — die Bewertung/Entscheidung trifft der Mensch.
+- Bruce liefert die normative Grundlage — die Bewertung/Entscheidung trifft der Mensch.
