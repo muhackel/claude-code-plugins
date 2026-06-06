@@ -27,6 +27,7 @@ Beispiele:
   gs.py --edition edition-2023 get SYS.1.1.A5
 """
 import csv
+import difflib
 import json
 import os
 import re
@@ -128,6 +129,40 @@ def category_chain(name, cats):
             break
         cur = cats["by_uuid"].get(rec["child_of"])
     return out
+
+
+def _suggest(token, candidates, limit=3):
+    """Ähnliche Kandidaten zu token finden (Substring beidseitig, dann Fuzzy)."""
+    if not token:
+        return []
+    tl = token.strip().lower()
+    lc = {}
+    for c in candidates:
+        lc.setdefault(c.lower(), c)
+    out = []
+    for cl, disp in lc.items():
+        if (tl in cl or cl in tl) and disp not in out:
+            out.append(disp)
+    for cl in difflib.get_close_matches(tl, list(lc.keys()), n=limit * 2, cutoff=0.6):
+        if lc[cl] not in out:
+            out.append(lc[cl])
+    return out[:limit]
+
+
+def _suggest_categories(token, cats, limit=3):
+    """Ähnliche Zielobjektkategorien über Namen + Synonyme, kanonisch zurückgegeben."""
+    if not cats or not token:
+        return []
+    tl = token.strip().lower()
+    syn = cats["syn"]
+    out = []
+    for key, canon in syn.items():
+        if (tl in key or key in tl) and canon not in out:
+            out.append(canon)
+    for key in difflib.get_close_matches(tl, list(syn.keys()), n=limit * 3, cutoff=0.6):
+        if syn[key] not in out:
+            out.append(syn[key])
+    return out[:limit]
 
 
 def manifest():
@@ -284,6 +319,40 @@ def cmd_groups(cat):
         rec(g, 0)
 
 
+def _group_ids(cat):
+    """Alle Gruppen-/Schicht-IDs des Katalogs (für 'Meintest du'-Tipps)."""
+    out = []
+
+    def rec(node):
+        if node.get("id"):
+            out.append(node["id"])
+        for g in node.get("groups", []) or []:
+            rec(g)
+    for g in cat.get("groups", []) or []:
+        rec(g)
+    return out
+
+
+def _selector_miss_tip(cat, grps, base):
+    """Tipp mit ähnlichen Gruppen-IDs, wenn die Selektoren selbst nichts trafen."""
+    if base or not grps:
+        return ''
+    cand = _group_ids(cat)
+    sugg = []
+    for s in grps:
+        for x in _suggest(s, cand):
+            if x not in sugg:
+                sugg.append(x)
+    return f' Meintest du: {", ".join(sugg[:3])}?' if sugg else ''
+
+
+def _inherit_extra(base, target, cats, direct_count):
+    """Wie viele Anforderungen --inherit zusätzlich brächte (0, wenn nichts/unaufgelöst)."""
+    if not target or not cats or not resolve_category(target, cats):
+        return 0
+    return max(0, len(_apply_target(base, target, True, cats)) - direct_count)
+
+
 def _select(cat, selectors):
     """Controls für mehrere Selektoren sammeln. Ein Selektor ist eine Gruppen-/
     Schicht-ID (GC, KONF.2) oder eine exakte Anforderungs-ID (KONF.8.1).
@@ -313,7 +382,9 @@ def _apply_target(rows, target, inherit, cats):
         wanted = set(category_chain(resolved, cats)) if inherit else {resolved}
     else:
         if cats:
-            print(f'[!] "{target}" nicht im Zielobjekt-Namespace — exakter String-Match. '
+            sugg = _suggest_categories(target, cats)
+            tip = f' Meintest du: {", ".join(sugg)}?' if sugg else ''
+            print(f'[!] "{target}" nicht im Zielobjekt-Namespace — exakter String-Match.{tip} '
                   f'Tipp:  gs.py targets', file=sys.stderr)
         wanted = {target}
     return [(c, p) for c, p in rows if control_targets(c) & wanted]
@@ -349,16 +420,19 @@ def cmd_targets(cat, cats):
 def cmd_list(cat, grps, target=None, inherit=False, cats=None):
     if not grps and not target:
         die('list braucht eine Gruppe/ID oder --target <Kategorie>. Tipp:  gs.py groups | gs.py targets')
-    rows = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
-    rows = _apply_target(rows, target, inherit, cats)
+    base = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
+    rows = _apply_target(base, target, inherit, cats)
     if not rows:
         sel = (" ".join(grps) + (f' --target {target}' if target else "")).strip()
-        die(f'Keine Anforderungen für "{sel}". Tipp:  gs.py groups | gs.py targets')
+        die(f'Keine Anforderungen für "{sel}".{_selector_miss_tip(cat, grps, base)} '
+            f'Tipp:  gs.py groups | gs.py targets')
     for c, _ in rows:
         sl = prop(c, "sec_level", "")
         print(f'{c.get("id"):<12} {c.get("title", "")}  [{sl}]')
     tinfo = f' · Ziel: {target}{" +Vererbung" if inherit else ""}' if target else ""
-    print(f'\n{len(rows)} Anforderungen{tinfo} — {src_line()}')
+    extra = 0 if inherit else _inherit_extra(base, target, cats, len(rows))
+    ehint = f' (+{extra} über Vererbung mit --inherit)' if extra else ''
+    print(f'\n{len(rows)} Anforderungen{tinfo}{ehint} — {src_line()}')
 
 
 def cmd_get(cat, cid, methodik=None):
@@ -409,11 +483,12 @@ def cmd_prozess(methodik):
 def cmd_checklist(cat, grps, target=None, inherit=False, cats=None):
     if not grps and not target:
         die('checklist braucht eine Gruppe/ID oder --target <Kategorie>. Tipp:  gs.py groups | gs.py targets')
-    rows = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
-    rows = _apply_target(rows, target, inherit, cats)
+    base = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
+    rows = _apply_target(base, target, inherit, cats)
     if not rows:
         sel = (" ".join(grps) + (f' --target {target}' if target else "")).strip()
-        die(f'Keine Anforderungen für "{sel}". Tipp:  gs.py groups | gs.py targets')
+        die(f'Keine Anforderungen für "{sel}".{_selector_miss_tip(cat, grps, base)} '
+            f'Tipp:  gs.py groups | gs.py targets')
 
     def esc(s):
         return (s or "").replace("|", "\\|").replace("\n", " ").strip()
@@ -436,6 +511,10 @@ def cmd_checklist(cat, grps, target=None, inherit=False, cats=None):
               f'| {status} |  |  |  |')
     print(f'\n_{len(rows)} Anforderungen. Status/Begründung/Verantwortlich/Termin sind '
           f'Erhebungsergebnis (firmenspezifisch, hier leer) — die Norm-Spalten stammen aus dem Korpus._')
+    extra = 0 if inherit else _inherit_extra(base, target, cats, len(rows))
+    if extra:
+        print(f'\n> Hinweis: +{extra} Anforderungen über Vererbung der Oberkategorien — '
+              f'erneut mit `--inherit` ziehen.')
 
 
 def cmd_json(cat, cid, methodik=None):
