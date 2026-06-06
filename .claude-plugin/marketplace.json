@@ -19,6 +19,12 @@
       "version": "0.1.0"
     },
     {
+      "name": "it-grundschutz",
+      "source": "./plugins/it-grundschutz",
+      "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ lokal vorhalten, Anforderungen zitierfaehig nachschlagen, Editionen migrieren, Bausteine fuer Szenarien modellieren",
+      "version": "0.1.0"
+    },
+    {
       "name": "nixie",
       "source": "./plugins/nixie",
       "description": "NixOS-Engineer: Flake-first Configs, eigene Derivations & Overlays, Paket-Pinning, resource-aware Remote-Builds auf der schnellsten Kiste, dokumentenorientiert",

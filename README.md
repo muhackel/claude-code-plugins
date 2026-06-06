@@ -84,6 +84,32 @@ Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (M
 /plugin install defuddle@muhackel-plugins --scope user
 ```
 
+### it-grundschutz
+
+IT-Grundschutz-Berater (Persona **Gustav**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**.
+Schlaegt BSI-Anforderungen zitierfaehig nach (per ID wie `GC.1.1` oder Thema), modelliert Bausteine fuer
+Szenarien und begleitet Editionswechsel (Crosswalk). Quelle und Logik sind strikt getrennt: der Agent
+arbeitet nur gegen ein internes OSCAL-Schema, neue Editionen brauchen nur einen neuen Adapter.
+
+Quelle: BSI Stand-der-Technik-Bibliothek (`BSI-Bund/Stand-der-Technik-Bibliothek`), Grundschutz++ als
+OSCAL-Katalog. Der Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgehalten und **nicht** ins
+Repo eingecheckt.
+
+Slash Command:
+- `/gustav` — Gustav direkt aufrufen (mit optionalem Auftrag)
+
+Enthaltene Skills:
+- `gs-ingest` — Korpus von der BSI-Quelle laden/cachen/aktualisieren (Manifest mit Version/sha256)
+- `gs-lookup` — Anforderungen zitierfaehig nachschlagen (ID/Volltext, mit Edition & Quelle)
+- `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++) via OSCAL-Profiles/alt-identifier
+- `gs-modellierung` — zutreffende Bausteine fuer ein generisches Szenario ermitteln
+
+Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
+
+```bash
+/plugin install it-grundschutz@muhackel-plugins --scope user
+```
+
 ### nixie
 
 NixOS-Engineer — baut und pflegt NixOS-Konfigurationen (Flake-first), schreibt eigene Derivations und

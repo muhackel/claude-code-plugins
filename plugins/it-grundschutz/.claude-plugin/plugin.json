@@ -1,0 +1,13 @@
+{
+  "name": "it-grundschutz",
+  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ lokal vorhalten, Anforderungen per ID/Thema zitierfaehig nachschlagen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine fuer Szenarien modellieren. Quelle und Logik strikt getrennt fuer schmerzfreie Editionswechsel.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["bsi", "it-grundschutz", "grundschutz++", "oscal", "isms", "compliance", "informationssicherheit"],
+  "skills": "./skills",
+  "commands": "./commands"
+}
