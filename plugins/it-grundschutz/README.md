@@ -2,7 +2,7 @@
 
 IT-Grundschutz-Berater (Persona **Bruce**) fuer Claude Code. Haelt das BSI-IT-Grundschutz-Kompendium als
 **lokalen OSCAL-Korpus** vor und schlaegt Anforderungen zitierfaehig nach, modelliert Bausteine fuer
-Szenarien und begleitet Editionswechsel.
+Szenarien, fuehrt den IT-Grundschutz-Check (Soll-Ist-Umsetzungspruefung) durch und begleitet Editionswechsel.
 
 ## Warum ueberhaupt ein lokaler Korpus?
 
@@ -54,9 +54,11 @@ nix run .#gs -- list GC           # Anforderungen einer Schicht
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
 nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis fuer gs-dokument
+nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown) — Basis fuer gs-review
 
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
+nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Check-Vorlage inkl. entfallen-Markierung
 ```
 
 In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).

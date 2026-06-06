@@ -34,7 +34,7 @@
             "${pkgs.bash}/bin/bash ${./scripts/ingest.sh}";
           ingest-2023 = mkApp "gs-ingest-2023" "Edition 2023 (DocBook-XML) von der BSI-Quelle nach OSCAL normalisieren"
             "${pkgs.python3}/bin/python3 ${./scripts/adapter-2023.py}";
-          gs = mkApp "gs" "OSCAL-Lookup im lokalen Grundschutz-Korpus (status/groups/list/get/search/json; --edition)"
+          gs = mkApp "gs" "OSCAL-Lookup im lokalen Grundschutz-Korpus (status/groups/list/get/search/prozess/checklist/json; --edition)"
             "${pkgs.python3}/bin/python3 ${./scripts/gs.py}";
         in
         {

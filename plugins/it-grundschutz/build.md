@@ -34,6 +34,7 @@ nix run .#gs -- list GC
 nix run .#gs -- get GC.1.1
 nix run .#gs -- search "Notfall"
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene)
+nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown-Tabelle) einer Schicht/Gruppe
 nix run .#gs -- json GC.1.1       # rohes OSCAL-Control
 
 # Edition 2023 abfragen (--edition vor dem Kommando; alternativ Env GS_EDITION):

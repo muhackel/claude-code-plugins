@@ -102,6 +102,7 @@ Enthaltene Skills:
 - `gs-ingest` — Korpus laden/cachen/aktualisieren: Anwenderkatalog + Methodik + Profile (Manifest je Datei mit sha256)
 - `gs-lookup` — Anforderungen zitierfaehig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik fuehren, als Geruest erzeugen oder pruefen (Gap)
+- `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfuellungsgrad + offene Punkte, Audit-Readiness
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++) via OSCAL-Profiles/alt-identifier
 - `gs-modellierung` — zutreffende Bausteine fuer ein generisches Szenario ermitteln
 

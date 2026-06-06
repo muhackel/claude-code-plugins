@@ -15,6 +15,7 @@ Kommandos:
   get <ID>          Anforderung volltext, zitierfaehig — inkl. Methodik-Ebene, falls vorhanden
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
+  checklist <GRP>   leere Soll-Ist-Check-Vorlage einer Gruppe/Schicht als Markdown-Tabelle
   json <ID>         rohes OSCAL-Control (fuer crosswalk/debug)
 
 Beispiele:
@@ -274,6 +275,37 @@ def cmd_prozess(methodik):
         print()
 
 
+def cmd_checklist(cat, grp):
+    grp_l = grp.strip().lower()
+    rows = []
+    for c, path in walk_controls(cat):
+        gids = [gid for gid, _ in path if gid]
+        if any(g.lower() == grp_l or g.lower().startswith(grp_l + ".") for g in gids) \
+           or (c.get("id") or "").lower().startswith(grp_l + "."):
+            rows.append(c)
+    if not rows:
+        die(f'Keine Anforderungen unter "{grp}". Tipp:  gs.py groups')
+
+    def esc(s):
+        return (s or "").replace("|", "\\|").replace("\n", " ").strip()
+
+    hinweis = ("Grundschutz++ Umsetzung formal binaer ja/nein, siehe UMS.1.1"
+               if EDITION == "grundschutz-pp"
+               else "klassischer IT-Grundschutz-Check, Edition 2023 / BSI-Standard 200-2")
+    print(f'# Soll-Ist-Check (leere Vorlage) — {grp.upper()}')
+    print(f'# {src_line()}')
+    print(f'# Status je Anforderung: entbehrlich | ja | teilweise | nein ({hinweis})')
+    print()
+    print('| ID | Titel | sec_level | Status | Begründung | Verantwortlich | Termin |')
+    print('|---|---|---|---|---|---|---|')
+    for c in rows:
+        status = "entfallen" if prop(c, "status") == "entfallen" else ""
+        print(f'| {esc(c.get("id"))} | {esc(c.get("title"))} | {esc(prop(c, "sec_level", ""))} '
+              f'| {status} |  |  |  |')
+    print(f'\n_{len(rows)} Anforderungen. Status/Begründung/Verantwortlich/Termin sind '
+          f'Erhebungsergebnis (firmenspezifisch, hier leer) — die Norm-Spalten stammen aus dem Korpus._')
+
+
 def cmd_json(cat, cid, methodik=None):
     c, _ = find_control(cat, cid)
     if not c:
@@ -326,6 +358,8 @@ def main():
         cmd_search(cat, " ".join(rest))
     elif cmd == "prozess":
         cmd_prozess(methodik)
+    elif cmd == "checklist" and rest:
+        cmd_checklist(cat, rest[0])
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
     else:
