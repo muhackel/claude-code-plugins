@@ -5,6 +5,17 @@ description: "Bauen und Deployen von NixOS: Build-Host dynamisch wählen (Host-C
 
 # Nix-Deploy — Bauen, Build-Hosts, Deploy
 
+## Build-Sichtbarkeit (kein tail, kein Background)
+
+Der User beobachtet Builds **live im Terminal** — was gerade gebaut wird, wo es hängt, Logs in Echtzeit.
+Darum: `nix build`, `nixos-rebuild`, `nix-build` & vergleichbare Long-Runner **nie** durch `| tail`/`| head`/
+`| grep` pipen und **nie** mit `run_in_background: true` starten — beides schneidet die Live-Ausgabe ab (ein
+Background-Job ist genauso ein Cut wie `tail`). Builds im **Vordergrund** laufen lassen, ggf. `-L` für volle
+Logs. Errors erst **nach** dem Lauf aus dem Drv-Log filtern (`nix log <drv>`), nicht den laufenden Build
+pipen. Gilt analog für `cargo build`, `make` u.a. Wenn ein Build sehr lang ist und parallel weitergearbeitet
+werden muss, kurz mit dem User klären (sein Standard-Workflow ist `nixos-rebuild switch --sudo` im eigenen
+Terminal).
+
 ## `nix flake check` — Regel
 
 **Immer vollständig laufen lassen.** Niemals nach `| tail`, `| head` oder `2>/dev/null` pipen — das versteckt
@@ -63,6 +74,12 @@ Die erlaubte Stufe ergibt sich aus der **konkreten Anfrage** des Users — nicht
    eine CLAUDE.md) und bestätigen lassen.
 
 ### Schnellste Kiste wählen (zur Laufzeit)
+- **LAN vor WiFi.** Hat ein Host mehrere Adressen (kabelgebunden + WLAN, oft als Namensvariante wie
+  `<host>` vs. `<host>-wifi`), zuerst die **LAN-Adresse** (nackter Hostname / kabelgebundener Alias) auf
+  Erreichbarkeit testen — schneller und stabiler für Build und Deploy. Einen `-wifi`/`.wlan`-Alias nur als
+  Fallback nehmen. Erreichbarkeit **dynamisch** prüfen (z.B. `for h in <host> <host>-wifi; do ping -c1 -W2
+  "$h" && break; done`), nie auf feste IPs verlassen — die ändern sich mit DHCP/Umgebung. Den so gefundenen
+  Namen dann konsistent für `ssh`/`--build-host`/`--target-host` verwenden.
 - Kandidaten = Hosts mit Rolle `build`. Erreichbarkeit + Geschwindigkeit prüfen:
   `ssh <target> 'nproc; cat /proc/loadavg'` (kurzer Timeout, vollständige Ausgabe).
 - Höchste freie Kapazität (nproc minus Last) gewinnt. Ist kein `build`-Host erreichbar, lokal bauen; gibt es
@@ -116,6 +133,18 @@ nix build .#<attr> --max-jobs <MJ> --cores <CO> …
 
 SPIELKISTE nutzt Lanzaboote (kein systemd-boot). Bei Boot-/Loader-Änderungen dort beachten:
 `boot.lanzaboote`, `pkiBundle = /var/lib/sbctl`.
+
+## Bootloader-Diagnose (NVRAM vs. ESP)
+
+- **`bootctl list` „(reported/absent)" ≠ NVRAM.** Das sind flüchtige Einträge aus der `LoaderEntries`-
+  EFI-Variable (Snapshot vom letzten Boot), die sich beim nächsten Boot selbst neu schreibt — nichts zum
+  Löschen, harmlos. Den **echten** Firmware-Booteintrag immer mit `efibootmgr -v` prüfen, nie aus
+  `bootctl`-Zeilen auf NVRAM schließen.
+- Echte verwaiste NVRAM-Einträge (z.B. auf einer entfernten/toten Partition) mit `efibootmgr -b <NNNN> -B`
+  löschen (`nix run nixpkgs#efibootmgr --` falls nicht im PATH). **Windows-Einträge nur mit Freigabe** —
+  Dual-Boot-relevant.
+- GC räumt die ESP nicht automatisch — manche Configs lösen das per Auto-Resync-Service am `nix-gc.service`
+  (`installBootLoader` als `ExecStartPost`), sonst zieht der nächste `switch`/`boot` die ESP nach.
 
 ## Build-Environments
 
