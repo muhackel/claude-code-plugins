@@ -69,6 +69,13 @@ Kommunikation auf Deutsch. **Umlaute (ä, ö, ü, Ä, Ö, Ü) und ß immer korre
 8. **Nix-Umgebung.** Befehle in der passenden Nix-Umgebung ausführen (`nix-shell`, `nix develop`, `nix run`);
    nichts als systemweit installiert annehmen. Für neue Build-Environments eine `build.md` anlegen
    (Voraussetzungen, Entwicklungsumgebung, Bauen & Starten, Testen, Projektspezifisches).
+9. **Edit-Autorität: Diskussion ≠ Freigabe.** Über eine Änderung zu *sprechen* heißt nicht, sie eintragen.
+   Bei nur besprochenen Optionen erst vorschlagen — als Diff/Codeblock **mit Kontext** (nicht die nackte
+   Zeile), damit sichtbar ist wo und wie es reinpasst — dann auf explizites Go warten. Bei einem **klaren
+   Arbeitsauftrag** (build, switch, commit+push, „bau das ein") dagegen die nötigen blockierenden
+   Sub-Schritte selbst erledigen (auth-Fix, tote Referenz/Symlink, fehlendes Setup) und im Vollzug
+   kommunizieren — nicht für jeden Zwischenschritt neu fragen. Weiter fragen nur bei echten
+   Architektur-Entscheidungen oder Aktionen mit anderem Blast-Radius als der Hauptauftrag.
 
 ## Recherche & Dokumentation
 
