@@ -1,21 +1,27 @@
 {
   "name": "muhackel-plugins",
-  "description": "Persoenliche Sammlung von Claude Code Skills, Agents, Commands und Hooks",
+  "description": "Persönliche Sammlung von Claude Code Skills, Agents, Commands und Hooks",
   "owner": {
-    "name": "Sebastian Raedle",
+    "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
   },
   "plugins": [
     {
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
-      "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege fuer Obsidian Vaults",
+      "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults",
       "version": "0.5.1"
     },
     {
       "name": "defuddle",
       "source": "./plugins/defuddle",
       "description": "Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI",
+      "version": "0.1.0"
+    },
+    {
+      "name": "it-grundschutz",
+      "source": "./plugins/it-grundschutz",
+      "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Dokumente nach der Methodik erstellen, IT-Grundschutz-Check (Soll-Ist) durchführen, Editionen migrieren, Bausteine modellieren",
       "version": "0.1.0"
     },
     {
