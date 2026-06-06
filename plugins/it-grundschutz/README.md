@@ -55,9 +55,10 @@ nix run .#gs -- targets           # Zielobjektkategorien (nur Grundschutz++) —
 nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert: Anforderungen für "Server" (+ Vererbung)
 nix run .#gs -- coverage --targets "Hostsysteme,Netze,Administrierende"  # Soll über mehrere Assets + STM.5.4-Lücke
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
-nix run .#gs -- search "ISMS"     # Volltextsuche
+nix run .#gs -- search "ISMS"     # Suche (nach Token-Überlappung/Score sortiert)
 nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis für gs-dokument
 nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (mehrere Gruppen/IDs) — Basis für gs-review
+nix run .#gs -- crosswalk SYS.1.1.A5  # heuristischer Crosswalk: 2023-ID → Top-Kandidaten in ++ — Basis für gs-crosswalk
 
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5

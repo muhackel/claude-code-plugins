@@ -20,6 +20,8 @@ Kommandos:
   checklist <GRP...> leere Soll-Ist-Check-Vorlage; nimmt ebenfalls --target/--inherit
   coverage --targets <Kat,Kat,...>  Abdeckungs-Modellierung über mehrere Zielobjekte (nur Grundschutz++):
                     Vereinigungs-Soll + Ausweis der querschnittlichen Anf. ohne Zielobjekt (STM.5.4)
+  crosswalk <ID> [--top N]  Heuristischer Crosswalk: Quell-ID (jeweils ANDERE Edition) → Top-Kandidaten
+                    der aktiven Edition per Token-Überlappung (kein offizielles BSI-Mapping)
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
 
 Beispiele:
@@ -27,6 +29,7 @@ Beispiele:
   gs.py targets
   gs.py list --target Hostsysteme --inherit    # Anforderungen für Server (inkl. vererbt von IT-Systeme)
   gs.py coverage --targets "Hostsysteme,Netze,Administrierende"   # Soll über mehrere Assets + STM.5.4-Lücke
+  gs.py crosswalk SYS.1.1.A5    # Edition-2023-ID → passende Grundschutz++-Anforderungen (heuristisch)
   gs.py --edition edition-2023 get SYS.1.1.A5
 """
 import csv
@@ -290,6 +293,56 @@ def fmt_control(c, path, ebene="anwender"):
     return "\n".join(out)
 
 
+# --- Token-Scorer: gemeinsame Heuristik für search und crosswalk ---
+_WORD_RE = re.compile(r"[a-zäöüß0-9]+")
+
+# Funktionswörter + normative Modalverben — tragen keine Trennschärfe.
+STOPWORDS = {
+    "der", "die", "das", "den", "dem", "des", "ein", "eine", "einer", "eines",
+    "einem", "einen", "und", "oder", "aber", "sondern", "auch", "sowie", "bzw",
+    "für", "mit", "von", "bei", "aus", "auf", "durch", "über", "unter", "nach",
+    "vor", "zwischen", "ohne", "gegen", "samt", "per", "via",
+    "in", "im", "an", "am", "zu", "zur", "zum", "als", "wie", "ist", "sind",
+    "war", "wird", "werden", "wurde", "wurden", "sein", "seine", "seinen",
+    "muss", "müssen", "soll", "sollte", "sollten", "sollen", "kann", "können",
+    "darf", "dürfen", "nicht", "nur", "alle", "aller", "allen", "allem",
+    "jede", "jeder", "jedes", "jeden", "diese", "dieser", "dieses", "diesem",
+    "dass", "damit", "sodass", "wenn", "dann", "beim", "haben", "hat", "hatte",
+    "ihre", "ihren", "ihrer", "dabei", "hierzu", "hierfür", "entsprechend",
+    "jeweils", "etc", "ggf", "sowohl", "dessen", "deren", "welche", "welcher",
+    "welches", "einschließlich", "gemäß", "weitere", "weiteren", "sind",
+}
+
+
+def _tokenize(text):
+    """Text → Menge trennscharfer Tokens (lowercase, Stopwörter/Kurzwörter/reine Zahlen raus)."""
+    out = set()
+    for w in _WORD_RE.findall((text or "").lower()):
+        if len(w) >= 3 and not w.isdigit() and w not in STOPWORDS:
+            out.add(w)
+    return out
+
+
+def _token_match(qt, dtokens):
+    """Gewicht eines Query-Tokens gegen die Doc-Tokens: exakt=2, Teilstring (Komposita)=1, sonst 0."""
+    if qt in dtokens:
+        return 2
+    if len(qt) >= 4:
+        for dt in dtokens:
+            if len(dt) >= 4 and (qt in dt or dt in qt):
+                return 1
+    return 0
+
+
+def _overlap(qset, dtokens):
+    return sum(_token_match(q, dtokens) for q in qset)
+
+
+def _overlap_exact(qset, dtokens):
+    """Nur exakte Token-Treffer (weight 1) — für den rauschanfälligen Statement↔Statement-Kanal."""
+    return sum(1 for q in qset if q in dtokens)
+
+
 def cmd_status(cat, methodik):
     m = manifest()
     print(f'Edition:    {m.get("edition", "grundschutz++")}')
@@ -458,7 +511,8 @@ def cmd_get(cat, cid, methodik=None):
             print(fmt_control(mc, mp, "methodik"))
 
 
-def cmd_search(cat, term):
+def _search_substring(cat, term):
+    """Roher Teilstring-Fallback (für Anfragen, die nur aus Stop-/Kurzwörtern bestehen)."""
     t = term.lower()
     hits = []
     for c, path in walk_controls(cat):
@@ -473,6 +527,30 @@ def cmd_search(cat, term):
     for cid, title, top in hits:
         print(f'{cid:<12} [{top:<5}] {title}')
     print(f'\n{len(hits)} Treffer — danach volltext:  gs.py get <ID>')
+
+
+def cmd_search(cat, term):
+    qset = _tokenize(term)
+    if not qset:  # nur Stop-/Kurzwörter — kein trennscharfes Token, roh suchen
+        return _search_substring(cat, term)
+    scored = []
+    for c, path in walk_controls(cat):
+        ttok = _tokenize(c.get("title", ""))
+        btok = ttok | _tokenize(part_text(c, "statement")) | _tokenize(part_text(c, "guidance"))
+        s = _overlap(qset, btok) + _overlap(qset, ttok)  # Titel-Treffer zusätzlich gewichtet
+        if s > 0:
+            top = next((gid for gid, _ in path if gid), "")
+            scored.append((s, c.get("id"), c.get("title", ""), top))
+    if not scored:
+        die(f'Kein Treffer für "{term}".')
+    scored.sort(key=lambda x: (-x[0], x[1] or ""))
+    cap = 40
+    shown = scored[:cap]
+    for s, cid, title, top in shown:
+        print(f'{s:>3}  {cid:<12} [{top:<5}] {title}')
+    extra = len(scored) - len(shown)
+    note = f' ({extra} schwächere nach Score gekürzt — Begriff schärfen)' if extra else ''
+    print(f'\n{len(scored)} Treffer{note} — Score = gewichtete Token-Treffer; volltext:  gs.py get <ID>')
 
 
 def cmd_prozess(methodik):
@@ -633,6 +711,131 @@ def cmd_json(cat, cid, methodik=None):
     print(json.dumps(c, ensure_ascii=False, indent=2))
 
 
+def _other_edition(ed):
+    return "edition-2023" if ed == "grundschutz-pp" else "grundschutz-pp"
+
+
+def load_edition_catalog(edition):
+    """Katalog einer beliebigen Edition laden, ohne die aktiven Globals zu verändern."""
+    p = os.path.join(CORPUS, edition, "catalog.json")
+    if not os.path.exists(p):
+        return None
+    try:
+        with open(p, encoding="utf-8") as f:
+            return json.load(f)["catalog"]
+    except Exception:
+        return None
+
+
+def _int_or_die(s):
+    try:
+        n = int(s)
+    except ValueError:
+        die(f'--top erwartet eine Zahl, nicht "{s}".')
+    if n < 1:
+        die("--top muss >= 1 sein.")
+    return n
+
+
+def _parse_crosswalk_opts(args):
+    cid, topn = None, 8
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--top":
+            if i + 1 >= len(args):
+                die("--top braucht eine Zahl.")
+            topn = _int_or_die(args[i + 1])
+            i += 2
+            continue
+        if a.startswith("--top="):
+            topn = _int_or_die(a.split("=", 1)[1])
+            i += 1
+            continue
+        if cid is None:
+            cid = a
+        i += 1
+    return cid, topn
+
+
+def cmd_crosswalk(target_cat, args):
+    """Heuristischer Crosswalk: Quell-ID (jeweils ANDERE Edition) → Top-Kandidaten der aktiven
+    Edition per Token-Überlappung. KEINE gemeinsame Kennung, KEIN offizielles BSI-Mapping."""
+    cid, topn = _parse_crosswalk_opts(args)
+    if not cid:
+        die('crosswalk braucht eine Quell-ID:  gs.py crosswalk NET.3.3  '
+            '(ID aus der jeweils ANDEREN Edition; Ziel ist die aktive Edition).')
+    target_ed = EDITION
+    source_ed = _other_edition(target_ed)
+    source_cat = load_edition_catalog(source_ed)
+    if source_cat is None:
+        ing = "nix run .#ingest-2023" if source_ed == "edition-2023" else "nix run .#ingest"
+        die(f'Quell-Edition "{source_ed}" nicht geladen — der Crosswalk braucht BEIDE Editionen.\n'
+            f'Erst laden:  {ing}')
+    c, _ = find_control(source_cat, cid)
+    if not c:
+        tc, _ = find_control(target_cat, cid)
+        hint = (f'\n("{cid}" liegt in der AKTIVEN Edition "{target_ed}" — crosswalk erwartet eine '
+                f'ID aus "{source_ed}". Ziel-Edition ggf. mit --edition umstellen.)' if tc else '')
+        die(f'"{cid}" nicht in Quell-Edition "{source_ed}" gefunden.{hint}\n'
+            f'Tipp:  gs.py --edition {source_ed} search <begriff>')
+
+    if prop(c, "status") == "entfallen" or (c.get("title", "").strip().upper() == "ENTFALLEN"):
+        print(f'Crosswalk (heuristisch) — Quelle: {source_ed} → Ziel: {target_ed}')
+        print(f'Quell-Anforderung: {c.get("id")} — {c.get("title", "")}')
+        print(f'\nQuell-Anforderung ist in {source_ed} ENTFALLEN — ein inhaltliches Mapping ist '
+              f'gegenstandslos. (In der Ziel-Edition ggf. ersatzlos aufgegangen oder über die '
+              f'Zielobjektlogik abgedeckt; via gs.py groups/list gegenprüfen.)')
+        return
+
+    title = c.get("title", "")
+    statement = part_text(c, "statement")
+    qt_title = _tokenize(title)
+    qt_stmt = _tokenize(statement) - qt_title
+
+    # Titel ist beim Cross-Edition-Crosswalk das kuratierte Semantik-Label → Titel↔Titel dominiert.
+    # Der Statement↔Statement-Kanal nur exakt (kein Komposita-Substring), sonst flutet langer Prosa-Text.
+    scored = []
+    for tc, _ in walk_controls(target_cat):
+        tt = _tokenize(tc.get("title", ""))
+        ts = _tokenize(part_text(tc, "statement"))
+        s = (4 * _overlap(qt_title, tt)        # Titel ↔ Titel (stärkstes Signal)
+             + _overlap(qt_title, ts)          # Quell-Titel im Ziel-Statement
+             + _overlap(qt_stmt, tt)           # Quell-Statement im Ziel-Titel
+             + _overlap_exact(qt_stmt, ts))    # Statement ↔ Statement, nur exakt (entrauscht)
+        if s > 0:
+            scored.append((s, tc))
+    scored.sort(key=lambda x: (-x[0], x[1].get("id") or ""))
+    top = scored[:topn]
+
+    old = EDITION
+    set_edition(source_ed)
+    src_quelle = src_line("anwender")
+    set_edition(old)
+    tgt_quelle = src_line("anwender")
+
+    print(f'Crosswalk (heuristisch) — Quelle: {source_ed} → Ziel: {target_ed}')
+    print(f'Quell-Anforderung: {c.get("id")} — {title}')
+    excerpt = " ".join(statement.split())
+    if excerpt:
+        print(f'  "{excerpt[:200]}{"…" if len(excerpt) > 200 else ""}"')
+    print()
+    if not top:
+        die('Keine inhaltliche Überlappung gefunden — der Wortlaut der Quell-Anforderung findet in der '
+            f'Ziel-Edition "{target_ed}" kein Echo. Manuell über gs.py search/groups gegenprüfen.')
+    print(f'Top-{len(top)} Kandidaten in {target_ed} (Token-Überlappung — KEIN offizielles BSI-Mapping):')
+    print('| Score | ID | Titel | Zielobjektkategorie | sec_level |')
+    print('|---|---|---|---|---|')
+    for s, tc in top:
+        cats_str = ", ".join(sorted(control_targets(tc))) or "—"
+        print(f'| {s} | {tc.get("id")} | {tc.get("title", "")} | {cats_str} | {prop(tc, "sec_level", "")} |')
+    print(f'\n> Heuristischer Inhaltsvergleich (Wortlaut-Überlappung) — KEINE gemeinsame Kennung und '
+          f'kein offizielles BSI-Mapping. Score = gewichtete Token-Treffer (Titel↔Titel am stärksten). '
+          f'Kandidaten per `gs.py get <ID>` prüfen; die Zuordnung verantwortet der Mensch (ISB).')
+    print(f'Quelle Quell-ID: {src_quelle}')
+    print(f'Quelle Ziel:     {tgt_quelle}')
+
+
 def _parse_edition(args):
     out = []
     edition = DEFAULT_EDITION
@@ -709,6 +912,8 @@ def main():
         cmd_checklist(cat, pos, target, inherit, load_categories())
     elif cmd == "coverage":
         cmd_coverage(cat, rest, load_categories())
+    elif cmd == "crosswalk":
+        cmd_crosswalk(cat, rest)
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
     else:

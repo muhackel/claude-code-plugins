@@ -1,6 +1,6 @@
 ---
 name: gs-crosswalk
-description: "Editionswechsel begleiten: Anforderungen zwischen Edition 2023 und Grundschutz++ abgleichen — was kam hinzu, entfiel, wurde zusammengelegt oder umbenannt. Wichtig: editionsübergreifend gibt es KEINE maschinell nutzbare Brücke (keine gemeinsame Kennung, kein offizielles BSI-Mapping) — das ist ein heuristischer Inhalts-/Wortlautvergleich. Der alt-identifier-Diff funktioniert nur zwischen zwei Ständen DERSELBEN Edition. Nutzen bei Migration, Delta-Analyse oder Mapping auf andere Standards (z.B. ISO 27001)."
+description: "Editionswechsel begleiten: Anforderungen zwischen Edition 2023 und Grundschutz++ abgleichen — was kam hinzu, entfiel, wurde zusammengelegt oder umbenannt. Wichtig: editionsübergreifend gibt es KEINE maschinell nutzbare Brücke (keine gemeinsame Kennung, kein offizielles BSI-Mapping) — das ist ein heuristischer Inhalts-/Wortlautvergleich. Dafür liefert 'gs crosswalk <ID>' heuristische Top-Kandidaten (Token-Überlappung). Der alt-identifier-Diff funktioniert nur zwischen zwei Ständen DERSELBEN Edition. Nutzen bei Migration, Delta-Analyse oder Mapping auf andere Standards (z.B. ISO 27001)."
 ---
 
 # gs-crosswalk — Editionen und Standards abgleichen
@@ -75,9 +75,18 @@ Kein gemeinsamer Schlüssel, also **inhaltlich** abbilden — und das Ergebnis e
    nix run .#gs -- targets                                  # Kategorien-Inventar (für die Zuordnung)
    nix run .#gs -- list --target Hostsysteme --inherit      # ++-Anforderungen zum Ziel "Server"
    ```
-3. **Inhaltlich zuordnen:** je Edition-2023-Anforderung das/die inhaltlich passenden ++-Anforderungen über
-   Titel-/Wortlautvergleich (`gs.py search`, `get`) finden. Status vergeben: `1:1` / `verschoben` /
-   `aufgelöst` (ein Baustein → mehrere Kategorien/Schichten) / `neu` / `entfallen` / `kein Mapping`.
+3. **Inhaltlich zuordnen — assistiert via `gs.py crosswalk <ID>`:** nimmt die Quell-Anforderung der
+   *anderen* Edition, tokenisiert Titel + Statement und rankt die Anforderungen der aktiven Edition nach
+   Wortlaut-Überlappung (Titel↔Titel am stärksten gewichtet, Statement-Kanal entrauscht). Ausgabe: Top-N
+   `Score | ID | Titel | Zielobjektkategorie | sec_level`. Das ist eine **Heuristik** (kein gemeinsamer
+   Schlüssel, kein BSI-Mapping) und ersetzt die Prüfung nicht — Kandidaten per `gs.py get <ID>` verifizieren.
+   Entfallene Quell-Anforderungen werden erkannt und ausgewiesen (kein Mapping erzwungen).
+   ```bash
+   nix run .#gs -- crosswalk SYS.1.1.A5            # Edition-2023-ID → Top-Kandidaten in ++ (heuristisch)
+   nix run .#gs -- --edition edition-2023 crosswalk GC.1.1   # umgekehrt: ++-ID → Kandidaten in 2023
+   ```
+   Status je Anforderung vergeben: `1:1` / `verschoben` / `aufgelöst` (ein Baustein → mehrere
+   Kategorien/Schichten) / `neu` / `entfallen` / `kein Mapping`.
 4. **Lücken benennen:** wo es kein ++-Pendant gibt (z.B. der DocBook-Kreuzbezug Baustein↔Gefährdung, oder eine
    feingranulare Baustein-Anforderung ohne Entsprechung), das klar als „kein Mapping" ausweisen — nicht
    erzwingen. Ergebnis: `2023-ID (Titel) | ++-Zielobjektkategorie | tragende ++-Anforderungen | Status`.

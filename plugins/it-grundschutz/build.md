@@ -35,9 +35,10 @@ nix run .#gs -- list GC KONF.2    # eine/mehrere Selektoren (Schicht/Gruppe oder
 nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
 nix run .#gs -- coverage --targets "Hostsysteme,Netze,Administrierende"  # Vereinigungs-Soll mehrerer Assets + STM.5.4-Ausweis
 nix run .#gs -- get GC.1.1
-nix run .#gs -- search "Notfall"
+nix run .#gs -- search "Notfall"  # nach Token-Überlappung (Score) sortiert
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene)
 nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (eine/mehrere Gruppen oder exakte IDs)
+nix run .#gs -- crosswalk SYS.1.1.A5  # heuristischer Crosswalk: Quell-ID (andere Edition) → Top-Kandidaten
 nix run .#gs -- json GC.1.1       # rohes OSCAL-Control
 
 # Edition 2023 abfragen (--edition vor dem Kommando; alternativ Env GS_EDITION):

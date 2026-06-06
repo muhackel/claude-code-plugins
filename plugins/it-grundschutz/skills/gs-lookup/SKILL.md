@@ -30,7 +30,7 @@ nix run .#gs -- targets           # Zielobjektkategorien + Häufigkeit/Vererbung
 nix run .#gs -- list GC KONF.2    # Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs
 nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
 nix run .#gs -- get GC.1.1        # Anforderung volltext + Methodik-Ebene (falls abweichend)
-nix run .#gs -- search "ISMS"     # Volltextsuche in title/statement/guidance
+nix run .#gs -- search "ISMS"     # Suche in title/statement/guidance, nach Token-Überlappung (Score) sortiert
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene) -> gs-dokument
 nix run .#gs -- json GC.1.1       # rohes OSCAL-Control (für crosswalk/debug)
 ```
@@ -46,8 +46,10 @@ Jede ausgegebene Anforderung enthält:
 3. **Kontext:** Pfad (Schicht → Gruppe), `sec_level`, `effort_level`
 4. **Edition + Quelle + Ebene:** `Grundschutz++ (anwender|methodik, BSI Stand-der-Technik-Bibliothek, Stand <last-modified>)`
 
-Bei Themensuche: zuerst `search`, dann relevante Treffer per `get` volltext. Mehrere Treffer als Tabelle
-(ID | Titel | Schicht | sec_level).
+Bei Themensuche: zuerst `search`, dann relevante Treffer per `get` volltext. `search` rankt nach
+Token-Überlappung (Stopwörter raus, Titel-Treffer höher gewichtet, Komposita per Teilstring) und zeigt je
+Treffer einen Score — mehrere Begriffe sind ODER-verknüpft (kein exakter Phrasen-Substring mehr nötig). Bei
+sehr generischen Begriffen den Suchbegriff schärfen. Mehrere Treffer als Tabelle (ID | Titel | Schicht | sec_level).
 
 ## Wenn kein Korpus da ist
 

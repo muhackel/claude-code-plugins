@@ -103,7 +103,7 @@ Enthaltene Skills:
 - `gs-lookup` — Anforderungen zitierfähig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
 - `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfüllungsgrad + offene Punkte, Audit-Readiness
-- `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++): innerhalb einer Edition per stabilem `alt-identifier`-Diff, editionsübergreifend heuristischer Inhaltsvergleich (kein offizielles BSI-Mapping)
+- `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++): innerhalb einer Edition per stabilem `alt-identifier`-Diff, editionsübergreifend heuristischer Inhaltsvergleich via `gs crosswalk <ID>` (Token-Überlappung, kein offizielles BSI-Mapping)
 - `gs-modellierung` — zutreffende Bausteine/Anforderungen für ein Szenario ermitteln (zielobjektbasiert via `gs list --target` und `gs coverage` über mehrere Assets, mit STM-Vererbung)
 
 Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
