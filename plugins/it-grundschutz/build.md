@@ -45,6 +45,7 @@ nix run .#gs -- json GC.1.1       # rohes OSCAL-Control
 nix run .#gs -- --edition edition-2023 status
 nix run .#gs -- --edition edition-2023 groups
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
+nix run .#gs -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz"  # Bausteinabdeckung (Hinttabelle)
 ```
 
 ## Testen
@@ -69,6 +70,11 @@ nix run .#ingest && nix run .#gs -- status
 - **Zielobjekt-Namespace:** `ingest` cacht zusätzlich `target_object_categories.csv` (BSI-Namespace,
   CC BY-SA 4.0). Sie speist `gs targets` und den Filter `list`/`checklist --target <Kategorie> [--inherit]`
   (Zielobjekt-Vererbung gemäß STM.5.2). Nur Grundschutz++.
+- **Baustein-Hinttabelle (Edition 2023):** `data/edition-2023-baustein-komponenten.csv` — **plugin-eigen
+  (MIT), NICHT Korpus**. Ordnet jedem Baustein generische Asset-Typen zu und speist
+  `gs --edition edition-2023 coverage` (heuristisch, kein offizielles BSI-Mapping). Wird im Git eingecheckt
+  (anders als der Korpus). `gs.py` findet sie über `GS_HINTS_FILE` (von der Flake gesetzt) oder skriptrelativ
+  `../data/`. Ein Drift-Check meldet, wenn Korpus-Bausteine ohne Hint-Zuordnung sind.
 - **Update-Disziplin:** Grundschutz++ wird agil gepflegt — bei Aktualitätsbedarf `nix run .#ingest`.
   Edition 2023 ist statisch (Stand 2023) — einmal `nix run .#ingest-2023` genügt.
 - **Edition 2023:** `scripts/adapter-2023.py` normalisiert das DocBook-XML

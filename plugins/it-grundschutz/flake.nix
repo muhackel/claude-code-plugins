@@ -35,7 +35,7 @@
           ingest-2023 = mkApp "gs-ingest-2023" "Edition 2023 (DocBook-XML) von der BSI-Quelle nach OSCAL normalisieren"
             "${pkgs.python3}/bin/python3 ${./scripts/adapter-2023.py}";
           gs = mkApp "gs" "OSCAL-Lookup im lokalen Grundschutz-Korpus (status/groups/targets/list/get/search/prozess/checklist/coverage/crosswalk/json; --edition, --target)"
-            "${pkgs.python3}/bin/python3 ${./scripts/gs.py}";
+            "${pkgs.coreutils}/bin/env GS_HINTS_FILE=${./data/edition-2023-baustein-komponenten.csv} ${pkgs.python3}/bin/python3 ${./scripts/gs.py}";
         in
         {
           inherit ingest ingest-2023 gs;

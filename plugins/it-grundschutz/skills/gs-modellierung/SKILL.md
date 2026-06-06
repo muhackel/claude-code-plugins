@@ -1,6 +1,6 @@
 ---
 name: gs-modellierung
-description: "Für ein Szenario die zutreffenden Grundschutz-Bausteine und Anforderungen ermitteln: Beschreibung (Komponenten, Prozesse, Schutzbedarf) auf die Schichten/Gruppen und Zielobjektkategorien des Katalogs abbilden (in Grundschutz++ via 'gs list --target', mit Vererbung) und eine begründete, zitierfähige Anforderungsliste erzeugen. Nutzen, wenn 'welche Anforderungen treffen auf X zu' gefragt ist. Nur generisch — keine vertraulichen Verbundsdaten."
+description: "Für ein Szenario die zutreffenden Grundschutz-Bausteine und Anforderungen ermitteln: Beschreibung (Komponenten, Prozesse, Schutzbedarf) auf die Schichten/Gruppen und Zielobjektkategorien des Katalogs abbilden (Grundschutz++ via 'gs list --target' und 'gs coverage' mit Vererbung; Edition 2023 via 'gs coverage' über eine heuristische Komponente->Baustein-Hinttabelle) und eine begründete, zitierfähige Anforderungsliste erzeugen. Nutzen, wenn 'welche Anforderungen treffen auf X zu' gefragt ist. Nur generisch — keine vertraulichen Verbundsdaten."
 ---
 
 # gs-modellierung — Bausteine für ein Szenario
@@ -78,6 +78,26 @@ nix run .#gs -- coverage --targets "Hostsysteme,Externe Netzanschlüsse,Dateiser
 
 Die Anforderungen **ohne** Zielobjektkategorie (querschnittlich/organisatorisch, vgl. `STM.5.4`) erreichst du
 nicht über `--target` — die kommen über die Prozess-Schichten (`GC`/`STM`/`UMS`/…) und Gruppen-Selektoren.
+
+## Edition 2023 — Bausteinabdeckung über `coverage`
+
+Edition 2023 kennt keine Zielobjektkategorien, sondern **Bausteine**. `coverage` funktioniert dort über eine
+**plugin-eigene, heuristische** Komponente→Baustein-Hinttabelle (MIT,
+`data/edition-2023-baustein-komponenten.csv` — NICHT der BSI-Korpus, **kein** offizielles Mapping). Eingabe
+sind generische Asset-Typen statt Kategorien:
+
+```bash
+nix run .#gs -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz,Client,Gebäude/Raum"
+nix run .#gs -- --edition edition-2023 coverage      # ohne Argument: listet die verfügbaren Asset-Typen
+```
+
+- **Vereinigungs-Soll:** alle komponentengebundenen Bausteine, deren Asset-Typ in der Liste vorkommt.
+- **Übergreifend / immer:** prozessuale Bausteine (ISMS/ORP/CON/OPS-Betrieb/DER), die unabhängig von den
+  Assets zu modellieren sind — das Edition-2023-Pendant zur querschnittlichen Gruppe (`STM.5.4`).
+- **Vollständigkeits-Check:** „Nicht modellierte Asset-Typen" plus ein Drift-Check, der meldet, falls
+  Korpus-Bausteine ohne Hint-Zuordnung sind (Tabelle nachzupflegen).
+
+Die Hinttabelle ist eine begründete Schätzung — die finale Baustein-Auswahl trifft der Mensch.
 
 ## Output
 

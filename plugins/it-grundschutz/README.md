@@ -63,6 +63,7 @@ nix run .#gs -- crosswalk SYS.1.1.A5  # heuristischer Crosswalk: 2023-ID → Top
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
 nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Check-Vorlage inkl. entfallen-Markierung
+nix run .#gs -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz"  # Bausteinabdeckung (heuristische Hinttabelle)
 ```
 
 In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).
@@ -75,4 +76,8 @@ In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`buil
 - **Beide Editionen verfügbar.** Grundschutz++ (OSCAL) und Edition 2023 (DocBook-XML → OSCAL via
   `scripts/adapter-2023.py`), getrennt abfragbar über `--edition`. Der formale Baustein↔Gefährdung-Kreuzbezug
   der Edition 2023 ist nicht Teil des Kompendium-XML und daher bewusst ausgelassen (siehe `gs-ingest`).
+- **Heuristische Hilfen, klar gekennzeichnet.** Der editionsübergreifende Crosswalk (`gs crosswalk`) und die
+  Edition-2023-Bausteinabdeckung (`gs coverage`, gespeist aus der plugin-eigenen Hinttabelle
+  `data/edition-2023-baustein-komponenten.csv`, MIT) sind **begründete Heuristiken ohne offizielles
+  BSI-Mapping** — die finale Entscheidung trifft der Mensch.
 - Bruce liefert die normative Grundlage — die Bewertung/Entscheidung trifft der Mensch.

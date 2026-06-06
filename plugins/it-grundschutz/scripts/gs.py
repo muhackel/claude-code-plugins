@@ -18,8 +18,9 @@ Kommandos:
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
   checklist <GRP...> leere Soll-Ist-Check-Vorlage; nimmt ebenfalls --target/--inherit
-  coverage --targets <Kat,Kat,...>  Abdeckungs-Modellierung über mehrere Zielobjekte (nur Grundschutz++):
-                    Vereinigungs-Soll + Ausweis der querschnittlichen Anf. ohne Zielobjekt (STM.5.4)
+  coverage --targets <...>  Abdeckungs-Modellierung über mehrere Assets: Vereinigungs-Soll + Querschnitt.
+                    Grundschutz++: Zielobjektkategorien, querschnittlich = STM.5.4. Edition 2023: generische
+                    Asset-Typen über die plugin-eigene Baustein-Hinttabelle (heuristisch), übergreifend = immer.
   crosswalk <ID> [--top N]  Heuristischer Crosswalk: Quell-ID (jeweils ANDERE Edition) → Top-Kandidaten
                     der aktiven Edition per Token-Überlappung (kein offizielles BSI-Mapping)
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
@@ -114,6 +115,36 @@ def load_categories():
     except Exception:
         return None
     return {"by_name": by_name, "by_uuid": by_uuid, "syn": syn}
+
+
+HINTS_2023 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data",
+                          "edition-2023-baustein-komponenten.csv")
+
+
+def load_baustein_hints():
+    """Plugin-eigene Komponente->Baustein-Hinttabelle (Edition 2023, MIT, heuristisch — NICHT Korpus).
+    Pfad: Env GS_HINTS_FILE (vom flake gesetzt) oder skriptrelativ ../data/...
+    Liefert {by_id, components} oder None, wenn die CSV fehlt."""
+    path = os.environ.get("GS_HINTS_FILE") or HINTS_2023
+    if not os.path.exists(path):
+        return None
+    by_id, components = {}, set()
+    try:
+        with open(path, encoding="utf-8", newline="") as f:
+            rows = (ln for ln in f if not ln.lstrip().startswith("#"))
+            for r in csv.DictReader(rows):
+                bid = (r.get("baustein_id") or "").strip()
+                if not bid:
+                    continue
+                komp = [k.strip() for k in (r.get("komponenten") or "").split(";") if k.strip()]
+                bindung = (r.get("bindung") or "").strip()
+                by_id[bid] = {"titel": (r.get("titel") or "").strip(),
+                              "komponenten": set(komp), "bindung": bindung}
+                if bindung != "übergreifend":
+                    components.update(komp)
+    except Exception:
+        return None
+    return {"by_id": by_id, "components": components}
 
 
 def resolve_category(token, cats):
@@ -702,6 +733,104 @@ def cmd_coverage(cat, args, cats):
           'Relevanzentscheidung je Anforderung trifft der Mensch (STM.5.4)._')
 
 
+def _resolve_component(token, hints):
+    """Asset-Typ-Eingabe (case-insensitiv, exakt) auf einen kanonischen Komponenten-Namen abbilden."""
+    tl = (token or "").strip().lower()
+    if not tl:
+        return None
+    for c in hints["components"]:
+        if c.lower() == tl:
+            return c
+    return None
+
+
+def cmd_coverage_2023(cat, args, hints):
+    """Abdeckungs-Modellierung für Edition 2023 über die plugin-eigene Komponente->Baustein-Hinttabelle
+    (heuristisch, KEIN BSI-Mapping): Vereinigungs-Soll der zutreffenden Bausteine + Ausweis der
+    übergreifenden Bausteine, die unabhängig von den Assets immer zu modellieren sind."""
+    if hints is None:
+        die("Hinttabelle fehlt (data/edition-2023-baustein-komponenten.csv) — Plugin unvollständig?")
+    raw, _ = _parse_coverage_opts(args)
+    comps_all = sorted(hints["components"])
+    if not raw:
+        die('coverage (Edition 2023) braucht Asset-Typen:\n'
+            '  gs.py --edition edition-2023 coverage --targets "Server,Webanwendung,Netz"\n'
+            'Verfügbare Asset-Typen: ' + ", ".join(comps_all))
+
+    resolved, wanted = [], set()
+    for t in raw:
+        canon = _resolve_component(t, hints)
+        resolved.append((t, canon))
+        if canon:
+            wanted.add(canon)
+
+    by_id = hints["by_id"]
+    # Korpus-Bausteine + Titel (autoritativ; 'G 0' Elementare Gefährdungen via Leerzeichen ausschließen)
+    corpus = {}
+    for c, path in walk_controls(cat):
+        if not path:
+            continue
+        bid, btitel = path[-1]
+        if bid and " " not in bid:
+            corpus.setdefault(bid, btitel)
+
+    present = [(bid, rec) for bid, rec in by_id.items() if bid in corpus]
+    gebunden = [(bid, rec) for bid, rec in present if rec["bindung"] != "übergreifend"]
+    cross = [(bid, rec) for bid, rec in present if rec["bindung"] == "übergreifend"]
+    union = [(bid, rec) for bid, rec in gebunden if rec["komponenten"] & wanted]
+
+    def titel(bid, rec):
+        return corpus.get(bid) or rec["titel"]
+
+    print(f'Abdeckungs-Modellierung (Edition 2023, heuristisch) — {src_line()}')
+    print(f'Asset-Typen: {len(resolved)} · Bausteine im Korpus: {len(corpus)}\n')
+
+    print('## Assets (Eingabe → Asset-Typ)')
+    print('| Eingabe | aufgelöst auf | Bausteine |')
+    print('|---|---|---|')
+    for t, canon in resolved:
+        if canon:
+            n = sum(1 for _, rec in gebunden if canon in rec["komponenten"])
+            print(f'| {t} | {canon} | {n} |')
+        else:
+            sugg = _suggest(t, comps_all)
+            tipp = f' (meintest du: {", ".join(sugg)}?)' if sugg else ''
+            print(f'| {t} | **unbekannt**{tipp} | 0 |')
+
+    print(f'\n## Vereinigungs-Soll — {len(union)} komponentengebundene Bausteine')
+    for bid, rec in union:
+        print(f'{bid:<12} {titel(bid, rec)}  [{", ".join(sorted(rec["komponenten"]))}]')
+
+    print(f'\n## Übergreifend / immer zu modellieren — {len(cross)} Bausteine')
+    print('Prozessual/organisatorisch — treffen unabhängig von den Assets praktisch immer zu '
+          '(Pendant zur querschnittlichen Modellierung STM.5.4 in Grundschutz++).')
+    print(", ".join(bid for bid, _ in cross))
+
+    comp_count = Counter()
+    for _, rec in gebunden:
+        for k in rec["komponenten"]:
+            comp_count[k] += 1
+    nicht = [(k, comp_count[k]) for k in comps_all if k not in wanted]
+
+    print('\n## Bilanz')
+    pct = round(100 * len(union) / len(gebunden)) if gebunden else 0
+    print(f'- Vereinigungs-Soll: {len(union)} von {len(gebunden)} komponentengebundenen Bausteinen ({pct}%)')
+    print(f'- Übergreifend (immer): {len(cross)} — unabhängig von der Asset-Liste zu modellieren')
+    if nicht:
+        print('- Nicht modellierte Asset-Typen (Vollständigkeits-Check — fehlt ein Asset?): '
+              + ", ".join(f'{k} ({n})' for k, n in nicht))
+    missing = sorted(set(corpus) - set(by_id))
+    stale = sorted(set(by_id) - set(corpus))
+    if missing:
+        print(f'- [!] Korpus-Bausteine ohne Hint-Zuordnung ({len(missing)}): '
+              + ", ".join(missing) + ' — Hinttabelle nachpflegen.')
+    if stale:
+        print(f'- [!] Hint-Einträge ohne Korpus-Baustein ({len(stale)}): ' + ", ".join(stale))
+    print('\n_Heuristische Modellierungshilfe (kein offizielles BSI-Mapping). Bausteine zitierfähig via '
+          'gs.py --edition edition-2023 list <baustein> / checklist. Die finale Relevanz je Baustein '
+          'entscheidet der Mensch._')
+
+
 def cmd_json(cat, cid, methodik=None):
     c, _ = find_control(cat, cid)
     if not c:
@@ -911,7 +1040,10 @@ def main():
         pos, target, inherit = _split_target_opts(rest)
         cmd_checklist(cat, pos, target, inherit, load_categories())
     elif cmd == "coverage":
-        cmd_coverage(cat, rest, load_categories())
+        if EDITION == "edition-2023":
+            cmd_coverage_2023(cat, rest, load_baustein_hints())
+        else:
+            cmd_coverage(cat, rest, load_categories())
     elif cmd == "crosswalk":
         cmd_crosswalk(cat, rest)
     elif cmd == "json" and rest:
