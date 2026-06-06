@@ -8,7 +8,7 @@ set -euo pipefail
 # Geladen werden drei Ebenen:
 #   anwender  Anwenderkatalog (konkrete Anforderungen)        -> catalog.json
 #   methodik  Methodik-Quellkatalog (Vorgehensweise/das Warum) -> methodik-catalog.json
-#   profile   OSCAL-Profile (verknuepft Methodik <-> Anwender) -> profile.json
+#   profile   OSCAL-Profile (verknüpft Methodik <-> Anwender) -> profile.json
 
 BASE="https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main"
 SRC_REPO="BSI-Bund/Stand-der-Technik-Bibliothek"
@@ -36,7 +36,7 @@ log_err(){  printf '%s[x]%s %s\n' "$c_err"  "$c_off" "$*" >&2; }
 
 for tool in curl jq python3; do
   command -v "$tool" >/dev/null 2>&1 || {
-    log_err "$tool fehlt — in der Nix-Umgebung ausfuehren: 'nix run .#ingest' oder 'nix develop'."; exit 1; }
+    log_err "$tool fehlt — in der Nix-Umgebung ausführen: 'nix run .#ingest' oder 'nix develop'."; exit 1; }
 done
 
 sha256(){ if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1
@@ -56,14 +56,14 @@ for entry in "${SOURCES[@]}"; do
   curl -fsSL "$url" -o "$TMP" || { log_err "Download '$name' fehlgeschlagen."; exit 1; }
 
   case "$typ" in
-    catalog) jq -e '.catalog.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gueltiger OSCAL-Katalog."; exit 1; } ;;
-    profile) jq -e '.profile.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gueltiges OSCAL-Profile."; exit 1; } ;;
+    catalog) jq -e '.catalog.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gültiger OSCAL-Katalog."; exit 1; } ;;
+    profile) jq -e '.profile.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gültiges OSCAL-Profile."; exit 1; } ;;
   esac
 
   newsha="$(sha256 "$TMP")"
   oldsha="$(jq -r --arg n "$name" '.dateien[]? | select(.name==$n) | .sha256' "$MANIFEST" 2>/dev/null || true)"
   if [[ -f "$out" && "$FORCE" -eq 0 && "$newsha" == "$oldsha" ]]; then
-    log_ok "'$name' unveraendert (sha gleich) — uebersprungen."
+    log_ok "'$name' unverändert (sha gleich) — übersprungen."
     continue
   fi
   cp "$TMP" "$out"

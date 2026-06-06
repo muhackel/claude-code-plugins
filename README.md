@@ -1,6 +1,6 @@
 # claude-code-plugins
 
-Persoenliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und Hooks.
+Persönliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und Hooks.
 
 ## Nutzung
 
@@ -28,7 +28,7 @@ git submodule update --init --recursive
 # Global (alle Projekte)
 /plugin install plugin-name@muhackel-plugins --scope user
 
-# Projekt-weit (fuer alle Teammitglieder)
+# Projekt-weit (für alle Teammitglieder)
 /plugin install plugin-name@muhackel-plugins --scope project
 
 # Nur lokal
@@ -41,7 +41,7 @@ git submodule update --init --recursive
 |---|---|
 | `.claude-plugin/marketplace.json` | Marketplace-Index |
 | `plugins/<name>/` | Einzelne Plugins mit eigenem Manifest |
-| `plugins/_template/` | Vorlage fuer neue Plugins |
+| `plugins/_template/` | Vorlage für neue Plugins |
 | `vendors/obsidian-skills/` | Git Submodule: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT) |
 
 ## Neues Plugin erstellen
@@ -52,11 +52,11 @@ git submodule update --init --recursive
 4. Plugin in `.claude-plugin/marketplace.json` eintragen
 5. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
 
-## Verfuegbare Plugins
+## Verfügbare Plugins
 
 ### bibliothekarin
 
-Wissensmanagement-Agent — primaeres Interface fuer den Obsidian Vault.
+Wissensmanagement-Agent — primäres Interface für den Obsidian Vault.
 Wissen einpflegen (INGEST), abrufen und synthetisieren (SYNTH/SEARCH), destillieren (DESTILL) und Vault-Pflege (SCAN, AUDIT, RECHERCHE).
 State Machine mit atomaren Tasks. Arbeitet mit `obsidian` CLI und Dateisystem.
 
@@ -65,8 +65,8 @@ Slash Commands:
 - `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
 
 Agent-Varianten:
-- `bibliothekarin` — Vollstaendig (alle Skills, voller Startup) fuer Ingest, Audit, Scan, Destillation
-- `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) fuer Suche und Synthese (~8.600 Tokens weniger)
+- `bibliothekarin` — Vollständig (alle Skills, voller Startup) für Ingest, Audit, Scan, Destillation
+- `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) für Suche und Synthese (~8.600 Tokens weniger)
 
 Enthaltene Skills (via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
 - obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
@@ -87,7 +87,7 @@ Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (M
 ### it-grundschutz
 
 IT-Grundschutz-Berater (Persona **Bruce**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**.
-Schlaegt BSI-Anforderungen zitierfaehig nach (per ID wie `GC.1.1` oder Thema), modelliert Bausteine fuer
+Schlägt BSI-Anforderungen zitierfähig nach (per ID wie `GC.1.1` oder Thema), modelliert Bausteine für
 Szenarien und begleitet Editionswechsel (Crosswalk). Quelle und Logik sind strikt getrennt: der Agent
 arbeitet nur gegen ein internes OSCAL-Schema, neue Editionen brauchen nur einen neuen Adapter.
 
@@ -100,11 +100,11 @@ Slash Command:
 
 Enthaltene Skills:
 - `gs-ingest` — Korpus laden/cachen/aktualisieren: Anwenderkatalog + Methodik + Profile (Manifest je Datei mit sha256)
-- `gs-lookup` — Anforderungen zitierfaehig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
-- `gs-dokument` — Sicherheitsdokumente nach der Methodik fuehren, als Geruest erzeugen oder pruefen (Gap)
-- `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfuellungsgrad + offene Punkte, Audit-Readiness
+- `gs-lookup` — Anforderungen zitierfähig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
+- `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
+- `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfüllungsgrad + offene Punkte, Audit-Readiness
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++) via OSCAL-Profiles/alt-identifier
-- `gs-modellierung` — zutreffende Bausteine fuer ein generisches Szenario ermitteln
+- `gs-modellierung` — zutreffende Bausteine für ein generisches Szenario ermitteln
 
 Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
 
@@ -116,8 +116,8 @@ Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`,
 
 NixOS-Engineer — baut und pflegt NixOS-Konfigurationen (Flake-first), schreibt eigene Derivations und
 Overlays, pinnt lang bauende Pakete und deployt auf die Maschinen im Netz.
-Dokumentenorientiert (schlaegt vor Annahmen nach), `nix flake check` immer ohne Truncation, Deploy nur auf
-explizite Anweisung. Waehlt den Build-Host dynamisch (schnellste erreichbare Kiste) und drosselt
+Dokumentenorientiert (schlägt vor Annahmen nach), `nix flake check` immer ohne Truncation, Deploy nur auf
+explizite Anweisung. Wählt den Build-Host dynamisch (schnellste erreichbare Kiste) und drosselt
 `--max-jobs`/`--cores` resource-aware gegen OOM bei schweren Builds.
 
 Slash Command:
@@ -130,8 +130,8 @@ Enthaltene Skills:
 - `nix-docs` — Doku-Lookup-Disziplin (search.nixos.org, noogle, nix search, Manpages)
 
 Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein
-Wissensmanagement-Agent installiert (z.B. `bibliothekarin`), kann Nixie laengere Recherche oder das
-Dokumentieren in einer Knowledge Base als Briefing dahin weiterreichen (Orchestrierung ueber den
+Wissensmanagement-Agent installiert (z.B. `bibliothekarin`), kann Nixie längere Recherche oder das
+Dokumentieren in einer Knowledge Base als Briefing dahin weiterreichen (Orchestrierung über den
 Hauptagenten).
 
 ```bash

@@ -1,20 +1,20 @@
 # it-grundschutz
 
-IT-Grundschutz-Berater (Persona **Bruce**) fuer Claude Code. Haelt das BSI-IT-Grundschutz-Kompendium als
-**lokalen OSCAL-Korpus** vor und schlaegt Anforderungen zitierfaehig nach, modelliert Bausteine fuer
-Szenarien, fuehrt den IT-Grundschutz-Check (Soll-Ist-Umsetzungspruefung) durch und begleitet Editionswechsel.
+IT-Grundschutz-Berater (Persona **Bruce**) für Claude Code. Hält das BSI-IT-Grundschutz-Kompendium als
+**lokalen OSCAL-Korpus** vor und schlägt Anforderungen zitierfähig nach, modelliert Bausteine für
+Szenarien, führt den IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung) durch und begleitet Editionswechsel.
 
-## Warum ueberhaupt ein lokaler Korpus?
+## Warum überhaupt ein lokaler Korpus?
 
 Allgemeine Web-Recherche zerfasert das Kompendium (Blog-Zusammenfassungen, veraltete Editionen) und ist
-nicht zitierfaehig. Der Korpus ist dagegen stabil, stark strukturiert (Schichten → Anforderungen mit IDs)
-und stark verlinkt — der Idealfall fuer lokales Vorhalten: offline, reproduzierbar, mit wortgetreuem Zitat.
+nicht zitierfähig. Der Korpus ist dagegen stabil, stark strukturiert (Schichten → Anforderungen mit IDs)
+und stark verlinkt — der Idealfall für lokales Vorhalten: offline, reproduzierbar, mit wortgetreuem Zitat.
 
 ## Architektur: Quelle und Logik getrennt
 
 Der eigentliche Hebel ist die Trennung von **Korpus** (austauschbare Daten) und **Logik** (stabiler Agent +
 Skills). Editionen wechseln das Format — Edition 2023 ist DocBook-XML, Grundschutz++ (seit 2026) ist
-OSCAL/JSON, agil ueber GitHub gepflegt. Der Agent darf das nie direkt sehen.
+OSCAL/JSON, agil über GitHub gepflegt. Der Agent darf das nie direkt sehen.
 
 ```mermaid
 flowchart LR
@@ -53,8 +53,8 @@ nix run .#gs -- groups            # Schichten/Gruppen
 nix run .#gs -- list GC           # Anforderungen einer Schicht
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
-nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis fuer gs-dokument
-nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown) — Basis fuer gs-review
+nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis für gs-dokument
+nix run .#gs -- checklist UMS      # leere Soll-Ist-Check-Vorlage (Markdown) — Basis für gs-review
 
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
@@ -65,8 +65,8 @@ In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`buil
 
 ## Grenzen / Scope
 
-- **Rein generisch.** Nur das oeffentliche BSI-Korpus + generische Modellierung. Firmenspezifische
-  Informationsverbuende, Umsetzungsstaende und vertrauliche Daten gehoeren **nicht** hierher, sondern in ein
+- **Rein generisch.** Nur das öffentliche BSI-Korpus + generische Modellierung. Firmenspezifische
+  Informationsverbünde, Umsetzungsstände und vertrauliche Daten gehören **nicht** hierher, sondern in ein
   getrenntes, vertrauliches Repo/Vault.
 - **Beide Editionen verfügbar.** Grundschutz++ (OSCAL) und Edition 2023 (DocBook-XML → OSCAL via
   `scripts/adapter-2023.py`), getrennt abfragbar über `--edition`. Der formale Baustein↔Gefährdung-Kreuzbezug

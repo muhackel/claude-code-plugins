@@ -1,11 +1,11 @@
 ---
 name: gs-lookup
-description: "Anforderungen und Bausteine zitierfaehig nachschlagen — per ID (z.B. GC.1.1) oder Volltext-/Themensuche im lokalen OSCAL-Katalog. Liefert Wortlaut (statement/guidance, Parameter aufgeloest), Pfad (Schicht/Gruppe), sec_level und effort_level, mit Edition und Quelle — und bei vorhandener Methodik-Ebene zusaetzlich das Vorgehen/Warum dahinter. Nutzen, sobald konkrete Grundschutz-Inhalte gebraucht werden."
+description: "Anforderungen und Bausteine zitierfähig nachschlagen — per ID (z.B. GC.1.1) oder Volltext-/Themensuche im lokalen OSCAL-Katalog. Liefert Wortlaut (statement/guidance, Parameter aufgelöst), Pfad (Schicht/Gruppe), sec_level und effort_level, mit Edition und Quelle — und bei vorhandener Methodik-Ebene zusätzlich das Vorgehen/Warum dahinter. Nutzen, sobald konkrete Grundschutz-Inhalte gebraucht werden."
 ---
 
-# gs-lookup — Zitierfaehig nachschlagen
+# gs-lookup — Zitierfähig nachschlagen
 
-Liest **ausschliesslich** aus dem lokalen Korpus. Nie Inhalte aus dem Modellgedaechtnis erfinden.
+Liest **ausschließlich** aus dem lokalen Korpus. Nie Inhalte aus dem Modellgedächtnis erfinden.
 
 ## Datenmodell (OSCAL Catalog, zwei Ebenen)
 
@@ -14,9 +14,9 @@ Liest **ausschliesslich** aus dem lokalen Korpus. Nie Inhalte aus dem Modellgeda
   Subgruppen → **`controls`** (= Anforderungen, ID-Schema `GC.1.1`).
 - Eine Anforderung: `title`, `params`, `props` (`sec_level` z.B. `normal-SdT`, `effort_level`,
   `alt-identifier` = stabile UUID), `parts` (`statement` = Anforderungstext, `guidance` = Hinweise).
-  Parameter-Platzhalter (`{{ insert: param … }}`) werden beim Lookup aufgeloest.
+  Parameter-Platzhalter (`{{ insert: param … }}`) werden beim Lookup aufgelöst.
 - **Zwei Ebenen, gleiche ID:** *anwender* = die konkrete Anforderung; *methodik* = das Vorgehen/Warum
-  dahinter (nur fuer die ~61 Methodik-IDs). `get` zeigt beide, sofern sie sich unterscheiden.
+  dahinter (nur für die ~61 Methodik-IDs). `get` zeigt beide, sofern sie sich unterscheiden.
 
 ## Kommandos
 
@@ -27,17 +27,17 @@ nix run .#gs -- list GC           # Anforderungen einer Schicht/Gruppe
 nix run .#gs -- get GC.1.1        # Anforderung volltext + Methodik-Ebene (falls abweichend)
 nix run .#gs -- search "ISMS"     # Volltextsuche in title/statement/guidance
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene) -> gs-dokument
-nix run .#gs -- json GC.1.1       # rohes OSCAL-Control (fuer crosswalk/debug)
+nix run .#gs -- json GC.1.1       # rohes OSCAL-Control (für crosswalk/debug)
 ```
 
 (In einer `nix develop`-Shell direkt `scripts/gs.py <cmd>`.)
 
 ## Zitierdisziplin (Pflicht)
 
-Jede ausgegebene Anforderung enthaelt:
+Jede ausgegebene Anforderung enthält:
 
 1. **ID** + **Titel** (`GC.1.1 — Errichtung und Aufrechterhaltung eines ISMS`)
-2. **Wortlaut** aus `statement` unveraendert (Parameter aufgeloest, nicht paraphrasieren), bei Bedarf `guidance`
+2. **Wortlaut** aus `statement` unverändert (Parameter aufgelöst, nicht paraphrasieren), bei Bedarf `guidance`
 3. **Kontext:** Pfad (Schicht → Gruppe), `sec_level`, `effort_level`
 4. **Edition + Quelle + Ebene:** `Grundschutz++ (anwender|methodik, BSI Stand-der-Technik-Bibliothek, Stand <last-modified>)`
 
@@ -46,4 +46,4 @@ Bei Themensuche: zuerst `search`, dann relevante Treffer per `get` volltext. Meh
 
 ## Wenn kein Korpus da ist
 
-Nicht raten — `gs-ingest` ausfuehren, dann erneut nachschlagen.
+Nicht raten — `gs-ingest` ausführen, dann erneut nachschlagen.

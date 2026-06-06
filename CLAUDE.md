@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projekttyp
 
-**Projekt** — Git mit Branches, kein Commit direkt auf main. CLAUDE.md und README.md vor jedem Merge/Commit pruefen.
+**Projekt** — Git mit Branches, kein Commit direkt auf main. CLAUDE.md und README.md vor jedem Merge/Commit prüfen.
 
 ## Was ist das hier?
 
-Ein Claude Code **Marketplace-Repository** — eine persoenliche Sammlung von Plugins (Skills, Agents, Commands, Hooks) die ueber das Plugin-System installierbar sind.
+Ein Claude Code **Marketplace-Repository** — eine persönliche Sammlung von Plugins (Skills, Agents, Commands, Hooks) die über das Plugin-System installierbar sind.
 
 ## Architektur
 
@@ -17,8 +17,8 @@ Ein Claude Code **Marketplace-Repository** — eine persoenliche Sammlung von Pl
 vendors/
   obsidian-skills/                # Git Submodule: kepano/obsidian-skills
 plugins/
-  _template/                      # Vorlage fuer neue Plugins (nicht im Marketplace)
-  <plugin-name>/                  # Jedes Plugin ist eigenstaendig
+  _template/                      # Vorlage für neue Plugins (nicht im Marketplace)
+  <plugin-name>/                  # Jedes Plugin ist eigenständig
     .claude-plugin/plugin.json    # Plugin-Manifest (Name, Version, Komponenten)
     skills/                       # SKILL.md Dateien (oder Symlinks nach vendors/)
     agents/                       # Agent-Definitionen (.md)

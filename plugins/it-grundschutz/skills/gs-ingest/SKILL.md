@@ -20,7 +20,7 @@ Repo: `BSI-Bund/Stand-der-Technik-Bibliothek` (GitHub), Format **OSCAL 1.1.x** (
 | **profile** | `Quellkataloge/Methodik-Grundschutz++/Grundschutz++-profile.json` | `profile.json` |
 
 `anwender` = konkrete Anforderungen (~651), `methodik` = Vorgehensweise (~61, IDs ⊆ Anwender), `profile`
-verknuepft beide. Die `++` im Pfad muessen URL-encodiert werden (`%2B%2B`).
+verknüpft beide. Die `++` im Pfad müssen URL-encodiert werden (`%2B%2B`).
 
 ## Datenort (nie ins Plugin-Git)
 
@@ -40,11 +40,11 @@ $GS_CORPUS_DIR            (default: ~/.local/share/it-grundschutz/corpus)
 
 ## Nix-Umgebung zuerst
 
-Skripte brauchen `python3`, `curl`, `jq`, `coreutils` — ueber das Flake bereitstellen:
+Skripte brauchen `python3`, `curl`, `jq`, `coreutils` — über das Flake bereitstellen:
 
 ```bash
 nix run .#ingest            # Grundschutz++: alle drei Ebenen laden/aktualisieren
-nix run .#ingest -- --force # Neuladen erzwingen (sonst sha-basiert uebersprungen)
+nix run .#ingest -- --force # Neuladen erzwingen (sonst sha-basiert übersprungen)
 nix run .#ingest-2023       # Edition 2023: DocBook-XML laden + nach OSCAL normalisieren
 nix develop                 # Shell mit den Tools, dann scripts/ direkt
 ```
@@ -54,7 +54,7 @@ nix develop                 # Shell mit den Tools, dann scripts/ direkt
 1. **Status:** `nix run .#gs -- status` — welche Ebenen liegen vor, welcher Stand, wie viele Anforderungen?
 2. **Laden/Aktualisieren:** `nix run .#ingest` zieht je Ebene die Datei, validiert das OSCAL-JSON
    (Katalog vs. Profile), schreibt sie und baut das `manifest.json` neu. Je Datei wird per **sha256**
-   entschieden, ob sich etwas geaendert hat — unveraenderte Dateien werden uebersprungen.
+   entschieden, ob sich etwas geändert hat — unveränderte Dateien werden übersprungen.
 3. **Verifizieren:** nach dem Ingest `status` erneut — Zahlen plausibel, `last-modified` aktuell?
 4. **Nicht spammen:** nicht bei jeder Sitzung ungefragt neu ziehen; Update anbieten, wenn das Manifest alt ist.
 

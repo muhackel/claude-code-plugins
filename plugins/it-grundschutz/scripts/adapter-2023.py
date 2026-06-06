@@ -4,7 +4,7 @@
 Normalisiert das vom BSI als DocBook 5.0 bereitgestellte XML
 (`XML_Kompendium_2023.xml`) in das kanonische interne Schema dieses Plugins
 (OSCAL-Katalog, strukturgleich zum Grundschutz++-Anwenderkatalog), damit
-Lookup (gs.py) und Crosswalk editionsuebergreifend einheitlich dagegen laufen.
+Lookup (gs.py) und Crosswalk editionsübergreifend einheitlich dagegen laufen.
 
 Quelle: bsi.bund.de — Lizenz CC BY-SA 4.0. Der erzeugte Korpus wird bewusst
 NICHT ins Plugin-Git eingecheckt, sondern ins lokale Datenverzeichnis gelegt.
@@ -14,17 +14,17 @@ Struktur des DocBook (verifiziert gegen Edition 2023, v4):
     chapter "SYS IT-Systeme"          -> Schicht (group id=SYS)
       section "SYS.1.1 Allgemeiner Server"  -> Baustein (group id=SYS.1.1)
         section "Beschreibung"              -> group.parts name=overview
-        section "Gefaehrdungslage"          -> group.parts name=guidance (Prosa)
+        section "Gefährdungslage"          -> group.parts name=guidance (Prosa)
         section "Anforderungen"
           section "Basis-Anforderungen"
             section "SYS.1.1.A1 ... (B) [Rolle]" -> control
           section "Standard-Anforderungen"  (S)
-          section "Anforderungen bei erhoehtem Schutzbedarf" (H)
-        section "Weiterfuehrende Informationen"
-    chapter "Elementare Gefaehrdungen"  -> group id="G 0" mit je control "G 0.x"
+          section "Anforderungen bei erhöhtem Schutzbedarf" (H)
+        section "Weiterführende Informationen"
+    chapter "Elementare Gefährdungen"  -> group id="G 0" mit je control "G 0.x"
 
 Qualifizierungsstufe steht im Anforderungstitel als (B)/(S)/(H) und ist die
-massgebliche Quelle fuer sec_level (Kreuzgeprueft gegen die Quali-Abschnitte:
+maßgebliche Quelle für sec_level (Kreuzgeprüft gegen die Quali-Abschnitte:
 0 Abweichungen bei 2124 Anforderungen).
 """
 import argparse
@@ -107,10 +107,10 @@ def find_subsection(node, predicate):
 
 
 def render_prose(node, skip_first_title=True):
-    """DocBook-Blockinhalt eines Abschnitts in Markdown-aehnliche Prosa.
+    """DocBook-Blockinhalt eines Abschnitts in Markdown-ähnliche Prosa.
 
-    Beruecksichtigt para/simpara (Absaetze), itemizedlist (Spiegelstriche) und
-    orderedlist (nummeriert). Verschachtelte Listen werden eingerueckt.
+    Berücksichtigt para/simpara (Absätze), itemizedlist (Spiegelstriche) und
+    orderedlist (nummeriert). Verschachtelte Listen werden eingerückt.
     """
     blocks = []
 
@@ -147,7 +147,7 @@ def render_prose(node, skip_first_title=True):
         elif lt in ("itemizedlist", "orderedlist"):
             blocks.append("\n".join(render_list(child, 0)))
         elif lt == "section":
-            # Unterabschnitt (z.B. Gefaehrdungslage-Szenarien): Titel + Prosa
+            # Unterabschnitt (z.B. Gefährdungslage-Szenarien): Titel + Prosa
             sub = render_prose(child, skip_first_title=True)
             st = title_of(child)
             if sub:
@@ -169,7 +169,7 @@ def build_control(req_section, stats):
     raw = title_of(req_section)
     m = REQ_TITLE_RE.match(raw)
     if not m:
-        log_warn(f"Anforderungstitel nicht parsebar, uebersprungen: {raw!r}")
+        log_warn(f"Anforderungstitel nicht parsebar, übersprungen: {raw!r}")
         stats["skipped"] += 1
         return None
     raw_id, name, marker, role = m.group(1), m.group(2).strip(), m.group(3), m.group(4)
@@ -269,7 +269,7 @@ def build_threats_group(chapter, stats):
         raw = title_of(sec)
         m = THREAT_RE.match(raw)
         if not m:
-            log_warn(f"Gefaehrdungstitel nicht parsebar: {raw!r}")
+            log_warn(f"Gefährdungstitel nicht parsebar: {raw!r}")
             continue
         tid = re.sub(r"\s+", " ", m.group(1)).strip()
         tname = m.group(2).strip()
@@ -447,8 +447,8 @@ def main():
     if stats["id_fixed"]:
         log_warn(f"normalisierte IDs (Quell-Tippfehler): {stats['id_fixed']}")
     if stats["skipped"]:
-        log_warn(f"uebersprungene (nicht parsebare) Anforderungen: {stats['skipped']}")
-    log_info("Hinweis: Der formale Baustein<->Gefaehrdung-Kreuzbezug "
+        log_warn(f"übersprungene (nicht parsebare) Anforderungen: {stats['skipped']}")
+    log_info("Hinweis: Der formale Baustein<->Gefährdung-Kreuzbezug "
              "(Kreuzreferenztabellen) ist NICHT Teil des Kompendium-XML und "
              "daher bewusst ausgelassen — siehe SKILL/README.")
 

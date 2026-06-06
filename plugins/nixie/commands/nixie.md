@@ -14,7 +14,7 @@ Routing-Hinweis:
   `bibliothekarin`), ist dieser die bessere Wahl — dann ihn spawnen statt Nixie.
 - Mischfall (Nix-Aufgabe, die nebenbei tiefe Recherche braucht): Nixie spawnen. Sie recherchiert selbst;
   ist ein Wissensmanagement-Agent installiert, kann sie optional ein Recherche-Briefing zurückliefern, das
-  du anschliessend an diesen gibst.
+  du anschließend an diesen gibst.
 
 Kein Text angegeben: Nixie ohne Auftrag spawnen — sie führt ihren STARTUP aus (Repo/Host-Kontext,
 Build-Host-Config) und fragt nach dem Auftrag.

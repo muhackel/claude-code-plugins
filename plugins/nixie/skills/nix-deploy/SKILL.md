@@ -120,7 +120,7 @@ nix build .#<attr> --max-jobs <MJ> --cores <CO> …
 ```
 
 - **Swap zählt nicht als Job-Kapazität** — nur als OOM-Puffer für den einzelnen Link-Peak. Swap-Thrashing
-  reisst sonst Timeouts/Checks.
+  reißt sonst Timeouts/Checks.
 - Drosselung greift **nur**, wenn der Dry-Run schwere/mittlere Pakete als "will be built" zeigt. Ein kleines
   Einzelpaket ohne Riesen-Dependency → keine Drosselung.
 - Beispiel (128 GiB RAM, heavy): `--max-jobs = floor(128/24) = 5`.

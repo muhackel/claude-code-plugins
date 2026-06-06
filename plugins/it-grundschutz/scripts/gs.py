@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Lookup-CLI fuer den lokalen Grundschutz-OSCAL-Korpus.
+"""Lookup-CLI für den lokalen Grundschutz-OSCAL-Korpus.
 
 Multi-Edition: --edition <grundschutz-pp|edition-2023> (oder Env GS_EDITION),
-Default 'grundschutz-pp'. Der Schalter waehlt den Korpus-Unterordner.
+Default 'grundschutz-pp'. Der Schalter wählt den Korpus-Unterordner.
 
 Grundschutz++ hat zwei Ebenen (gleiche ID GC.1.1): 'anwender' = konkrete
 Anforderung, 'methodik' = Vorgehensweise/das Warum dahinter. Edition 2023 hat
@@ -12,11 +12,11 @@ Kommandos:
   status            Korpus-Status (Ebenen, Anzahl Anforderungen)
   groups            Schichten/Gruppen-Baum (Anwenderkatalog)
   list <GRUPPE>     Anforderungen einer Schicht/Gruppe (z.B. GC, GC.1, SYS, SYS.1.1)
-  get <ID>          Anforderung volltext, zitierfaehig — inkl. Methodik-Ebene, falls vorhanden
+  get <ID>          Anforderung volltext, zitierfähig — inkl. Methodik-Ebene, falls vorhanden
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
   checklist <GRP>   leere Soll-Ist-Check-Vorlage einer Gruppe/Schicht als Markdown-Tabelle
-  json <ID>         rohes OSCAL-Control (fuer crosswalk/debug)
+  json <ID>         rohes OSCAL-Control (für crosswalk/debug)
 
 Beispiele:
   gs.py status
@@ -258,7 +258,7 @@ def cmd_search(cat, term):
             top = next((gid for gid, _ in path if gid), "")
             hits.append((c.get("id"), c.get("title", ""), top))
     if not hits:
-        die(f'Kein Treffer fuer "{term}".')
+        die(f'Kein Treffer für "{term}".')
     for cid, title, top in hits:
         print(f'{cid:<12} [{top:<5}] {title}')
     print(f'\n{len(hits)} Treffer — danach volltext:  gs.py get <ID>')
@@ -289,7 +289,7 @@ def cmd_checklist(cat, grp):
     def esc(s):
         return (s or "").replace("|", "\\|").replace("\n", " ").strip()
 
-    hinweis = ("Grundschutz++ Umsetzung formal binaer ja/nein, siehe UMS.1.1"
+    hinweis = ("Grundschutz++ Umsetzung formal binär ja/nein, siehe UMS.1.1"
                if EDITION == "grundschutz-pp"
                else "klassischer IT-Grundschutz-Check, Edition 2023 / BSI-Standard 200-2")
     print(f'# Soll-Ist-Check (leere Vorlage) — {grp.upper()}')

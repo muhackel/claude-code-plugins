@@ -3,7 +3,7 @@
   "description": "Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI — token-effizienter als WebFetch",
   "version": "0.1.0",
   "author": {
-    "name": "Sebastian Raedle",
+    "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
   },
   "license": "MIT",
