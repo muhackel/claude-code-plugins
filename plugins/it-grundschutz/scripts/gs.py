@@ -11,21 +11,27 @@ nur eine Ebene (klassische Schichten ISMS/ORP/.../INF + Bausteine).
 Kommandos:
   status            Korpus-Status (Ebenen, Anzahl Anforderungen)
   groups            Schichten/Gruppen-Baum (Anwenderkatalog)
+  targets           Zielobjektkategorien + Häufigkeiten (nur Grundschutz++, aus dem Namespace)
   list <GRP...>     Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs (z.B. GC, KONF.2, KONF.8.1)
+                    optional gefiltert:  --target <Kategorie> [--inherit]  (Vererbung gemäß STM.5.2)
   get <ID>          Anforderung volltext, zitierfähig — inkl. Methodik-Ebene, falls vorhanden
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
-  checklist <GRP...> leere Soll-Ist-Check-Vorlage einer/mehrerer Gruppen/IDs als Markdown-Tabelle
+  checklist <GRP...> leere Soll-Ist-Check-Vorlage; nimmt ebenfalls --target/--inherit
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
 
 Beispiele:
   gs.py status
+  gs.py targets
+  gs.py list --target Hostsysteme --inherit    # Anforderungen für Server (inkl. vererbt von IT-Systeme)
   gs.py --edition edition-2023 get SYS.1.1.A5
 """
+import csv
 import json
 import os
 import re
 import sys
+from collections import Counter
 
 PARAM_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([^}\s,]+)\s*\}\}")
 
@@ -40,15 +46,17 @@ PP = os.path.join(CORPUS, DEFAULT_EDITION)
 CATALOG = os.path.join(PP, "catalog.json")            # Anwenderkatalog
 METHODIK = os.path.join(PP, "methodik-catalog.json")  # Methodik-Quellkatalog (nur Grundschutz++)
 MANIFEST = os.path.join(PP, "manifest.json")
+CATEGORIES = os.path.join(PP, "target_object_categories.csv")  # Zielobjekt-Namespace (nur Grundschutz++)
 
 
 def set_edition(edition):
-    global EDITION, PP, CATALOG, METHODIK, MANIFEST
+    global EDITION, PP, CATALOG, METHODIK, MANIFEST, CATEGORIES
     EDITION = edition
     PP = os.path.join(CORPUS, edition)
     CATALOG = os.path.join(PP, "catalog.json")
     METHODIK = os.path.join(PP, "methodik-catalog.json")
     MANIFEST = os.path.join(PP, "manifest.json")
+    CATEGORIES = os.path.join(PP, "target_object_categories.csv")
 
 
 def die(msg, code=1):
@@ -72,6 +80,54 @@ def load_methodik():
             return json.load(f)["catalog"]
     except Exception:
         return None
+
+
+def load_categories():
+    """Zielobjekt-Namespace target_object_categories.csv laden (nur Grundschutz++).
+    Liefert {by_name, by_uuid, syn} oder None, wenn die CSV fehlt."""
+    if not os.path.exists(CATEGORIES):
+        return None
+    by_name, by_uuid, syn = {}, {}, {}
+    try:
+        with open(CATEGORIES, encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                name = (r.get("Zielobjektkategorie") or "").strip()
+                if not name:
+                    continue
+                syns = [s.strip() for s in (r.get("Synonyme") or "").split(",") if s.strip()]
+                rec = {"name": name, "typ": (r.get("Typ") or "").strip(),
+                       "definition": (r.get("Definition") or "").strip(), "synonyme": syns,
+                       "uuid": (r.get("UUID") or "").strip(),
+                       "child_of": (r.get("ChildOfUUID") or "").strip()}
+                by_name[name] = rec
+                by_uuid[rec["uuid"]] = name
+                syn.setdefault(name.lower(), name)
+                for s in syns:
+                    syn.setdefault(s.lower(), name)
+    except Exception:
+        return None
+    return {"by_name": by_name, "by_uuid": by_uuid, "syn": syn}
+
+
+def resolve_category(token, cats):
+    """Eingabe (Name oder Synonym, case-insensitiv) auf den kanonischen Kategorienamen abbilden."""
+    if not cats or not token:
+        return None
+    return cats["syn"].get(token.strip().lower())
+
+
+def category_chain(name, cats):
+    """Kategorie + alle Vorfahren (ChildOfUUID-Kette, zyklensicher)."""
+    out, seen = [], set()
+    cur = name
+    while cur and cur not in seen:
+        seen.add(cur)
+        out.append(cur)
+        rec = cats["by_name"].get(cur)
+        if not rec or not rec["child_of"]:
+            break
+        cur = cats["by_uuid"].get(rec["child_of"])
+    return out
 
 
 def manifest():
@@ -113,6 +169,20 @@ def prop(c, name, default=None):
         if p.get("name") == name:
             return p.get("value")
     return default
+
+
+def control_targets(c):
+    """Zielobjektkategorien einer Anforderung (Prop am statement-/_stm-Part)."""
+    vals = set()
+    for part in c.get("parts", []) or []:
+        if part.get("name") == "statement":
+            for pr in part.get("props", []) or []:
+                if pr.get("name") == "target_object_categories":
+                    for v in (pr.get("value") or "").split(","):
+                        v = v.strip()
+                        if v:
+                            vals.add(v)
+    return vals
 
 
 def _collect_prose(part, acc):
@@ -233,14 +303,62 @@ def _select(cat, selectors):
     return out
 
 
-def cmd_list(cat, grps):
-    rows = _select(cat, grps)
+def _apply_target(rows, target, inherit, cats):
+    """rows (Liste (control, path)) auf eine Zielobjektkategorie filtern.
+    Mit Vererbung (--inherit) zählen auch Anforderungen an Vorfahren-Kategorien."""
+    if not target:
+        return rows
+    resolved = resolve_category(target, cats) if cats else None
+    if resolved:
+        wanted = set(category_chain(resolved, cats)) if inherit else {resolved}
+    else:
+        if cats:
+            print(f'[!] "{target}" nicht im Zielobjekt-Namespace — exakter String-Match. '
+                  f'Tipp:  gs.py targets', file=sys.stderr)
+        wanted = {target}
+    return [(c, p) for c, p in rows if control_targets(c) & wanted]
+
+
+def cmd_targets(cat, cats):
+    cnt = Counter()
+    for c, _ in walk_controls(cat):
+        for t in control_targets(c):
+            cnt[t] += 1
+    if not cnt:
+        if EDITION != "grundschutz-pp":
+            die("'targets' gibt es nur in Grundschutz++ — Edition 2023 kennt keine Zielobjektkategorien.")
+        die("Keine Zielobjektkategorien im Korpus. Erst laden/aktualisieren:  nix run .#ingest")
+    print(f'Zielobjektkategorien — {src_line()}')
+    if cats:
+        print('Filter:  gs.py list --target <Kategorie> [--inherit]  (Synonyme werden aufgelöst)\n')
+        print('| Kategorie | Anf. | Typ | Eltern (erbt von) | Synonyme |')
+        print('|---|---|---|---|---|')
+        for name, n in cnt.most_common():
+            rec = cats["by_name"].get(name, {})
+            parent = cats["by_uuid"].get(rec.get("child_of", ""), "")
+            syn = ", ".join(rec.get("synonyme", []))
+            print(f'| {name} | {n} | {rec.get("typ", "")} | {parent} | {syn} |')
+    else:
+        for name, n in cnt.most_common():
+            print(f'{n:4}  {name}')
+        print('\n(Namespace-CSV fehlt — nur Häufigkeiten. nix run .#ingest für Definitionen/Vererbung.)')
+    print(f'\n{sum(cnt.values())} Zuordnungen über {len(cnt)} Kategorien — '
+          f'Namespace target_object_categories.csv (CC BY-SA 4.0).')
+
+
+def cmd_list(cat, grps, target=None, inherit=False, cats=None):
+    if not grps and not target:
+        die('list braucht eine Gruppe/ID oder --target <Kategorie>. Tipp:  gs.py groups | gs.py targets')
+    rows = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
+    rows = _apply_target(rows, target, inherit, cats)
     if not rows:
-        die(f'Keine Anforderungen unter "{" ".join(grps)}". Tipp:  gs.py groups')
+        sel = (" ".join(grps) + (f' --target {target}' if target else "")).strip()
+        die(f'Keine Anforderungen für "{sel}". Tipp:  gs.py groups | gs.py targets')
     for c, _ in rows:
         sl = prop(c, "sec_level", "")
         print(f'{c.get("id"):<12} {c.get("title", "")}  [{sl}]')
-    print(f'\n{len(rows)} Anforderungen — {src_line()}')
+    tinfo = f' · Ziel: {target}{" +Vererbung" if inherit else ""}' if target else ""
+    print(f'\n{len(rows)} Anforderungen{tinfo} — {src_line()}')
 
 
 def cmd_get(cat, cid, methodik=None):
@@ -288,10 +406,14 @@ def cmd_prozess(methodik):
         print()
 
 
-def cmd_checklist(cat, grps):
-    rows = _select(cat, grps)
+def cmd_checklist(cat, grps, target=None, inherit=False, cats=None):
+    if not grps and not target:
+        die('checklist braucht eine Gruppe/ID oder --target <Kategorie>. Tipp:  gs.py groups | gs.py targets')
+    rows = _select(cat, grps) if grps else [(c, p) for c, p in walk_controls(cat)]
+    rows = _apply_target(rows, target, inherit, cats)
     if not rows:
-        die(f'Keine Anforderungen unter "{" ".join(grps)}". Tipp:  gs.py groups')
+        sel = (" ".join(grps) + (f' --target {target}' if target else "")).strip()
+        die(f'Keine Anforderungen für "{sel}". Tipp:  gs.py groups | gs.py targets')
 
     def esc(s):
         return (s or "").replace("|", "\\|").replace("\n", " ").strip()
@@ -299,7 +421,9 @@ def cmd_checklist(cat, grps):
     hinweis = ("Grundschutz++ Umsetzung formal binär ja/nein, siehe UMS.1.1"
                if EDITION == "grundschutz-pp"
                else "klassischer IT-Grundschutz-Check, Edition 2023 / BSI-Standard 200-2")
-    label = ", ".join(g.upper() for g in grps)
+    label = (", ".join(g.upper() for g in grps) or "alle")
+    if target:
+        label += f' (Ziel: {target}{" +Vererbung" if inherit else ""})'
     print(f'# Soll-Ist-Check (leere Vorlage) — {label}')
     print(f'# {src_line()}')
     print(f'# Status je Anforderung: entbehrlich | ja | teilweise | nein ({hinweis})')
@@ -346,6 +470,31 @@ def _parse_edition(args):
     return edition, out
 
 
+def _split_target_opts(args):
+    """--target <Kategorie> und --inherit aus den Argumenten lösen; Rest = Selektoren."""
+    pos, target, inherit = [], None, False
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--target":
+            if i + 1 >= len(args):
+                die("--target braucht eine Kategorie. Tipp:  gs.py targets")
+            target = args[i + 1]
+            i += 2
+            continue
+        if a.startswith("--target="):
+            target = a.split("=", 1)[1]
+            i += 1
+            continue
+        if a == "--inherit":
+            inherit = True
+            i += 1
+            continue
+        pos.append(a)
+        i += 1
+    return pos, target, inherit
+
+
 def main():
     edition, args = _parse_edition(sys.argv[1:])
     set_edition(edition)
@@ -358,8 +507,11 @@ def main():
         cmd_status(cat, methodik)
     elif cmd == "groups":
         cmd_groups(cat)
+    elif cmd == "targets":
+        cmd_targets(cat, load_categories())
     elif cmd == "list" and rest:
-        cmd_list(cat, rest)
+        pos, target, inherit = _split_target_opts(rest)
+        cmd_list(cat, pos, target, inherit, load_categories())
     elif cmd == "get" and rest:
         cmd_get(cat, rest[0], methodik)
     elif cmd == "search" and rest:
@@ -367,7 +519,8 @@ def main():
     elif cmd == "prozess":
         cmd_prozess(methodik)
     elif cmd == "checklist" and rest:
-        cmd_checklist(cat, rest)
+        pos, target, inherit = _split_target_opts(rest)
+        cmd_checklist(cat, pos, target, inherit, load_categories())
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
     else:

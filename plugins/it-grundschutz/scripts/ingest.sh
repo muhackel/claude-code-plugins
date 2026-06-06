@@ -5,10 +5,11 @@ set -euo pipefail
 # Quelle: BSI-Bund/Stand-der-Technik-Bibliothek — Lizenz CC BY-SA 4.0
 # Der Korpus wird bewusst NICHT ins Plugin-Git eingecheckt (Lizenz-Trennung), sondern hier abgelegt.
 #
-# Geladen werden drei Ebenen:
-#   anwender  Anwenderkatalog (konkrete Anforderungen)        -> catalog.json
-#   methodik  Methodik-Quellkatalog (Vorgehensweise/das Warum) -> methodik-catalog.json
-#   profile   OSCAL-Profile (verknüpft Methodik <-> Anwender) -> profile.json
+# Geladen werden vier Quellen:
+#   anwender             Anwenderkatalog (konkrete Anforderungen)         -> catalog.json
+#   methodik             Methodik-Quellkatalog (Vorgehensweise/das Warum)  -> methodik-catalog.json
+#   profile              OSCAL-Profile (verknüpft Methodik <-> Anwender)   -> profile.json
+#   zielobjektkategorien Namespace-CSV (Zielobjekte + Vererbung, STM)      -> target_object_categories.csv
 
 BASE="https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main"
 SRC_REPO="BSI-Bund/Stand-der-Technik-Bibliothek"
@@ -19,6 +20,7 @@ SOURCES=(
   "anwender|Anwenderkataloge/Grundschutz%2B%2B/Grundschutz%2B%2B-catalog.json|catalog.json|catalog"
   "methodik|Quellkataloge/Methodik-Grundschutz%2B%2B/BSI-Methodik-Grundschutz%2B%2B-catalog.json|methodik-catalog.json|catalog"
   "profile|Quellkataloge/Methodik-Grundschutz%2B%2B/Grundschutz%2B%2B-profile.json|profile.json|profile"
+  "zielobjektkategorien|Dokumentation/namespaces/target_object_categories.csv|target_object_categories.csv|csv"
 )
 
 GS_CORPUS_DIR="${GS_CORPUS_DIR:-$HOME/.local/share/it-grundschutz/corpus}"
@@ -58,6 +60,7 @@ for entry in "${SOURCES[@]}"; do
   case "$typ" in
     catalog) jq -e '.catalog.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gültiger OSCAL-Katalog."; exit 1; } ;;
     profile) jq -e '.profile.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gültiges OSCAL-Profile."; exit 1; } ;;
+    csv)     head -1 "$TMP" | grep -q 'Zielobjektkategorie' || { log_err "'$name' ist keine gültige Zielobjektkategorien-CSV."; exit 1; } ;;
   esac
 
   newsha="$(sha256 "$TMP")"
@@ -91,18 +94,22 @@ for entry in sources:
     if not os.path.exists(fp):
         continue
     raw = open(fp, "rb").read()
-    d = json.loads(raw.decode("utf-8"))
     rec = {
         "name": name, "datei": fn, "typ": typ,
         "raw_url": f"https://raw.githubusercontent.com/{repo}/main/{path}",
         "sha256": hashlib.sha256(raw).hexdigest(),
     }
-    root = d.get("catalog") or d.get("profile") or {}
-    meta = root.get("metadata", {})
-    rec["titel"] = meta.get("title")
-    rec["last_modified"] = meta.get("last-modified") or meta.get("version")
-    if typ == "catalog":
-        rec["anzahl_anforderungen"] = count_controls(root)
+    if typ == "csv":
+        rec["titel"] = "Zielobjektkategorien (Namespace)"
+        rec["anzahl_kategorien"] = max(0, len(raw.decode("utf-8").splitlines()) - 1)
+    else:
+        d = json.loads(raw.decode("utf-8"))
+        root = d.get("catalog") or d.get("profile") or {}
+        meta = root.get("metadata", {})
+        rec["titel"] = meta.get("title")
+        rec["last_modified"] = meta.get("last-modified") or meta.get("version")
+        if typ == "catalog":
+            rec["anzahl_anforderungen"] = count_controls(root)
     dateien.append(rec)
 
 json.dump({"edition": "grundschutz++", "quelle_repo": repo, "lizenz": lic,

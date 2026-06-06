@@ -104,7 +104,7 @@ Enthaltene Skills:
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
 - `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfüllungsgrad + offene Punkte, Audit-Readiness
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++) via OSCAL-Profiles/alt-identifier
-- `gs-modellierung` — zutreffende Bausteine für ein generisches Szenario ermitteln
+- `gs-modellierung` — zutreffende Bausteine/Anforderungen für ein Szenario ermitteln (zielobjektbasiert via `gs list --target`, mit STM-Vererbung)
 
 Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
 

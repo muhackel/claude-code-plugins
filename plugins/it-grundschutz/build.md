@@ -30,7 +30,9 @@ nix run .#ingest-2023 -- --file kompendium.xml  # offline: lokale XML statt Down
 
 nix run .#gs -- status            # Korpus-Status (= Default-App: nix run . -- status)
 nix run .#gs -- groups
+nix run .#gs -- targets           # Zielobjektkategorien + Häufigkeit/Vererbung (nur Grundschutz++)
 nix run .#gs -- list GC KONF.2    # eine/mehrere Selektoren (Schicht/Gruppe oder exakte ID)
+nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
 nix run .#gs -- get GC.1.1
 nix run .#gs -- search "Notfall"
 nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene)
@@ -62,6 +64,9 @@ nix run .#ingest && nix run .#gs -- status
   `grundschutz-pp/` und `edition-2023/`.
 - **Manifest:** je Edition ein `manifest.json` (Quelle, `sha256`, Abrufdatum, Lizenz, Anzahl). `ingest`
   (Grundschutz++) aktualisiert nur bei geändertem `last-modified` (oder `--force`).
+- **Zielobjekt-Namespace:** `ingest` cacht zusätzlich `target_object_categories.csv` (BSI-Namespace,
+  CC BY-SA 4.0). Sie speist `gs targets` und den Filter `list`/`checklist --target <Kategorie> [--inherit]`
+  (Zielobjekt-Vererbung gemäß STM.5.2). Nur Grundschutz++.
 - **Update-Disziplin:** Grundschutz++ wird agil gepflegt — bei Aktualitätsbedarf `nix run .#ingest`.
   Edition 2023 ist statisch (Stand 2023) — einmal `nix run .#ingest-2023` genügt.
 - **Edition 2023:** `scripts/adapter-2023.py` normalisiert das DocBook-XML

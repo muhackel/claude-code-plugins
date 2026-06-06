@@ -90,6 +90,7 @@ statt pro Gruppe einzeln:
 ```bash
 nix run .#gs -- checklist UMS                              # eine ganze Schicht (Grundschutz++)
 nix run .#gs -- checklist KONF.2 KONF.8.1 BER.3            # modellierte Soll-Liste: Gruppen + exakte IDs
+nix run .#gs -- checklist KONF BER --target Hostsysteme --inherit   # Soll-Ist-Vorlage für ein Asset (Server)
 nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Edition 2023 (entfallen wird vorbelegt)
 ```
 

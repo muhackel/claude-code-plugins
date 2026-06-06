@@ -51,6 +51,8 @@ nix run .#ingest-2023             # Edition 2023 (DocBook-XML -> OSCAL)
 nix run .#gs -- status            # Korpus-Status
 nix run .#gs -- groups            # Schichten/Gruppen
 nix run .#gs -- list GC KONF.2    # Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs
+nix run .#gs -- targets           # Zielobjektkategorien (nur Grundschutz++) — Basis für gs-modellierung
+nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert: Anforderungen für "Server" (+ Vererbung)
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
 nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis für gs-dokument
