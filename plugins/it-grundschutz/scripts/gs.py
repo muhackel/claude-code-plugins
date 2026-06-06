@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Lookup-CLI fuer den lokalen Grundschutz-OSCAL-Korpus.
 
+Zwei Ebenen (gleiche ID GC.1.1): 'anwender' = konkrete Anforderung,
+'methodik' = Vorgehensweise/das Warum dahinter.
+
 Kommandos:
-  status            Korpus-Status (Version, Anzahl Schichten/Anforderungen)
-  groups            Schichten/Gruppen-Baum
+  status            Korpus-Status (Ebenen, Anzahl Anforderungen)
+  groups            Schichten/Gruppen-Baum (Anwenderkatalog)
   list <GRUPPE>     Anforderungen einer Schicht/Gruppe (z.B. GC, GC.1)
-  get <ID>          eine Anforderung volltext, zitierfaehig (z.B. GC.1.1)
-  search <BEGRIFF>  Volltextsuche in Titel/statement/guidance
+  get <ID>          Anforderung volltext, zitierfaehig — inkl. Methodik-Ebene, falls vorhanden
+  search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
+  prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
   json <ID>         rohes OSCAL-Control (fuer crosswalk/debug)
 """
 import json
@@ -17,8 +21,10 @@ import sys
 PARAM_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([^}\s,]+)\s*\}\}")
 
 CORPUS = os.environ.get("GS_CORPUS_DIR", os.path.expanduser("~/.local/share/it-grundschutz/corpus"))
-CATALOG = os.path.join(CORPUS, "grundschutz-pp", "catalog.json")
-MANIFEST = os.path.join(CORPUS, "grundschutz-pp", "manifest.json")
+PP = os.path.join(CORPUS, "grundschutz-pp")
+CATALOG = os.path.join(PP, "catalog.json")           # Anwenderkatalog
+METHODIK = os.path.join(PP, "methodik-catalog.json")  # Methodik-Quellkatalog
+MANIFEST = os.path.join(PP, "manifest.json")
 
 
 def die(msg, code=1):
@@ -33,6 +39,16 @@ def load_catalog():
         return json.load(f)["catalog"]
 
 
+def load_methodik():
+    if not os.path.exists(METHODIK):
+        return None
+    try:
+        with open(METHODIK, encoding="utf-8") as f:
+            return json.load(f)["catalog"]
+    except Exception:
+        return None
+
+
 def manifest():
     try:
         with open(MANIFEST, encoding="utf-8") as f:
@@ -41,8 +57,16 @@ def manifest():
         return {}
 
 
-def src_line():
-    return f'Grundschutz++ (BSI Stand-der-Technik-Bibliothek, Stand {manifest().get("last_modified", "?")}) — Lizenz CC BY-SA 4.0'
+def _last_modified(name):
+    for d in manifest().get("dateien", []) or []:
+        if d.get("name") == name:
+            return d.get("last_modified")
+    return "?"
+
+
+def src_line(ebene="anwender"):
+    return (f'Grundschutz++ ({ebene}, BSI Stand-der-Technik-Bibliothek, '
+            f'Stand {_last_modified(ebene)}) — Lizenz CC BY-SA 4.0')
 
 
 def walk_controls(node, path=()):
@@ -96,6 +120,8 @@ def part_text(c, name):
 
 
 def find_control(cat, cid):
+    if not cat:
+        return None, None
     cid = cid.strip().lower()
     for c, path in walk_controls(cat):
         if (c.get("id") or "").lower() == cid:
@@ -103,7 +129,7 @@ def find_control(cat, cid):
     return None, None
 
 
-def fmt_control(c, path):
+def fmt_control(c, path, ebene="anwender"):
     out = [f'### {c.get("id")} — {c.get("title", "")}']
     crumbs = " → ".join(f'{gid} {gt}'.strip() for gid, gt in path if gid)
     if crumbs:
@@ -121,22 +147,27 @@ def fmt_control(c, path):
     gd = part_text(c, "guidance")
     if gd:
         out.append("\nHinweise:\n" + gd)
-    out.append(f'\nQuelle: {src_line()}')
+    out.append(f'\nQuelle: {src_line(ebene)}')
     return "\n".join(out)
 
 
-def cmd_status(cat):
+def cmd_status(cat, methodik):
     m = manifest()
-    n_groups = len(cat.get("groups", []) or [])
-    n_ctrl = sum(1 for _ in walk_controls(cat))
-    print(f'Titel:        {cat.get("metadata", {}).get("title", "?")}')
-    print(f'Edition:      {m.get("edition", "grundschutz++")}')
-    print(f'Stand:        {m.get("last_modified", cat.get("metadata", {}).get("last-modified", "?"))}')
-    print(f'Abgerufen:    {m.get("abgerufen_am", "?")}')
-    print(f'OSCAL:        {cat.get("metadata", {}).get("oscal-version", "?")}')
-    print(f'Schichten:    {n_groups}')
-    print(f'Anforderungen:{n_ctrl:>4}')
-    print(f'Korpus:       {CATALOG}')
+    print(f'Edition:    {m.get("edition", "grundschutz++")}')
+    print(f'Abgerufen:  {m.get("abgerufen_am", "?")}')
+    print(f'Lizenz:     {m.get("lizenz", "CC BY-SA 4.0")}')
+    print(f'OSCAL:      {cat.get("metadata", {}).get("oscal-version", "?")}')
+    print(f'Korpus:     {PP}')
+    print("\nEbenen:")
+    dateien = m.get("dateien")
+    if dateien:
+        for d in dateien:
+            extra = f' — {d["anzahl_anforderungen"]} Anf.' if d.get("anzahl_anforderungen") else ""
+            print(f'  {d["name"]:<9} {d.get("titel") or d["datei"]}{extra}  (Stand {d.get("last_modified", "?")})')
+    else:
+        print(f'  anwender  {cat.get("metadata", {}).get("title", "?")} — {sum(1 for _ in walk_controls(cat))} Anf.')
+        if methodik:
+            print(f'  methodik  {methodik.get("metadata", {}).get("title", "?")} — {sum(1 for _ in walk_controls(methodik))} Anf.')
 
 
 def cmd_groups(cat):
@@ -168,11 +199,21 @@ def cmd_list(cat, grp):
     print(f'\n{len(rows)} Anforderungen — {src_line()}')
 
 
-def cmd_get(cat, cid):
+def cmd_get(cat, cid, methodik=None):
     c, path = find_control(cat, cid)
     if not c:
         die(f'Anforderung "{cid}" nicht gefunden. Tipp:  gs.py search <begriff>')
-    print(fmt_control(c, path))
+    print(fmt_control(c, path, "anwender"))
+    mc, mp = find_control(methodik, cid)
+    if mc:
+        same = (part_text(mc, "statement") == part_text(c, "statement")
+                and part_text(mc, "guidance") == part_text(c, "guidance"))
+        if same:
+            print(f'\n(Methodik-Ebene {mc.get("id")} vorhanden — Text identisch; '
+                  f'die Anforderung stammt 1:1 aus der Methodik-Vorgabe.)')
+        else:
+            print("\n--- Methodik-Ebene (Vorgehen / das Warum) ---")
+            print(fmt_control(mc, mp, "methodik"))
 
 
 def cmd_search(cat, term):
@@ -192,8 +233,21 @@ def cmd_search(cat, term):
     print(f'\n{len(hits)} Treffer — danach volltext:  gs.py get <ID>')
 
 
-def cmd_json(cat, cid):
+def cmd_prozess(methodik):
+    if not methodik:
+        die("Keine Methodik-Ebene im Korpus. Erst aktualisieren:  nix run .#ingest")
+    print(f'Vorgehensweise Grundschutz++ (Methodik-Ebene) — {src_line("methodik")}\n')
+    for g in methodik.get("groups", []) or []:
+        print(f'{g.get("id")} — {g.get("title")}')
+        for c, _ in walk_controls(g):
+            print(f'    {c.get("id"):<10} {c.get("title", "")}')
+        print()
+
+
+def cmd_json(cat, cid, methodik=None):
     c, _ = find_control(cat, cid)
+    if not c:
+        c, _ = find_control(methodik, cid)
     if not c:
         die(f'Anforderung "{cid}" nicht gefunden.')
     print(json.dumps(c, ensure_ascii=False, indent=2))
@@ -205,18 +259,21 @@ def main():
         die(__doc__)
     cmd, rest = args[0], args[1:]
     cat = load_catalog()
+    methodik = load_methodik()
     if cmd == "status":
-        cmd_status(cat)
+        cmd_status(cat, methodik)
     elif cmd == "groups":
         cmd_groups(cat)
     elif cmd == "list" and rest:
         cmd_list(cat, rest[0])
     elif cmd == "get" and rest:
-        cmd_get(cat, rest[0])
+        cmd_get(cat, rest[0], methodik)
     elif cmd == "search" and rest:
         cmd_search(cat, " ".join(rest))
+    elif cmd == "prozess":
+        cmd_prozess(methodik)
     elif cmd == "json" and rest:
-        cmd_json(cat, rest[0])
+        cmd_json(cat, rest[0], methodik)
     else:
         die(__doc__)
 

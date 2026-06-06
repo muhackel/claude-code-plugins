@@ -1,6 +1,6 @@
 {
   "name": "it-grundschutz",
-  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ lokal vorhalten, Anforderungen per ID/Thema zitierfaehig nachschlagen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine fuer Szenarien modellieren. Quelle und Logik strikt getrennt fuer schmerzfreie Editionswechsel.",
+  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfaehig nachschlagen, Sicherheitsdokumente nach der Methodik erstellen/pruefen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine fuer Szenarien modellieren. Quelle und Logik strikt getrennt fuer schmerzfreie Editionswechsel.",
   "version": "0.1.0",
   "author": {
     "name": "Sebastian Rädle",

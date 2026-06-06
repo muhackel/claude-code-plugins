@@ -99,8 +99,9 @@ Slash Command:
 - `/bruce` — Bruce direkt aufrufen (mit optionalem Auftrag)
 
 Enthaltene Skills:
-- `gs-ingest` — Korpus von der BSI-Quelle laden/cachen/aktualisieren (Manifest mit Version/sha256)
-- `gs-lookup` — Anforderungen zitierfaehig nachschlagen (ID/Volltext, mit Edition & Quelle)
+- `gs-ingest` — Korpus laden/cachen/aktualisieren: Anwenderkatalog + Methodik + Profile (Manifest je Datei mit sha256)
+- `gs-lookup` — Anforderungen zitierfaehig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
+- `gs-dokument` — Sicherheitsdokumente nach der Methodik fuehren, als Geruest erzeugen oder pruefen (Gap)
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++) via OSCAL-Profiles/alt-identifier
 - `gs-modellierung` — zutreffende Bausteine fuer ein generisches Szenario ermitteln
 

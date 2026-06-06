@@ -1,18 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Grundschutz++ OSCAL-Katalog von der BSI-Stand-der-Technik-Bibliothek laden und lokal cachen.
-# Quelle: BSI-Bund/Stand-der-Technik-Bibliothek (GitHub) — Lizenz CC BY-SA 4.0
+# Grundschutz++ aus der BSI-Stand-der-Technik-Bibliothek (GitHub) laden und lokal cachen.
+# Quelle: BSI-Bund/Stand-der-Technik-Bibliothek — Lizenz CC BY-SA 4.0
 # Der Korpus wird bewusst NICHT ins Plugin-Git eingecheckt (Lizenz-Trennung), sondern hier abgelegt.
+#
+# Geladen werden drei Ebenen:
+#   anwender  Anwenderkatalog (konkrete Anforderungen)        -> catalog.json
+#   methodik  Methodik-Quellkatalog (Vorgehensweise/das Warum) -> methodik-catalog.json
+#   profile   OSCAL-Profile (verknuepft Methodik <-> Anwender) -> profile.json
 
-RAW_URL="https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/Anwenderkataloge/Grundschutz%2B%2B/Grundschutz%2B%2B-catalog.json"
+BASE="https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main"
 SRC_REPO="BSI-Bund/Stand-der-Technik-Bibliothek"
-SRC_PATH="Anwenderkataloge/Grundschutz++/Grundschutz++-catalog.json"
 LICENSE_ID="CC BY-SA 4.0"
+
+# name | pfad-im-repo (roh, +-encodiert) | zieldatei | typ(catalog|profile)
+SOURCES=(
+  "anwender|Anwenderkataloge/Grundschutz%2B%2B/Grundschutz%2B%2B-catalog.json|catalog.json|catalog"
+  "methodik|Quellkataloge/Methodik-Grundschutz%2B%2B/BSI-Methodik-Grundschutz%2B%2B-catalog.json|methodik-catalog.json|catalog"
+  "profile|Quellkataloge/Methodik-Grundschutz%2B%2B/Grundschutz%2B%2B-profile.json|profile.json|profile"
+)
 
 GS_CORPUS_DIR="${GS_CORPUS_DIR:-$HOME/.local/share/it-grundschutz/corpus}"
 DEST_DIR="$GS_CORPUS_DIR/grundschutz-pp"
-CATALOG="$DEST_DIR/catalog.json"
 MANIFEST="$DEST_DIR/manifest.json"
 
 FORCE=0
@@ -29,52 +39,78 @@ for tool in curl jq python3; do
     log_err "$tool fehlt — in der Nix-Umgebung ausfuehren: 'nix run .#ingest' oder 'nix develop'."; exit 1; }
 done
 
+sha256(){ if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1
+          else shasum -a 256 "$1" | cut -d' ' -f1; fi; }
+
 mkdir -p "$DEST_DIR"
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
-log_info "Lade Grundschutz++-Katalog von $SRC_REPO ..."
-curl -fsSL "$RAW_URL" -o "$TMP" || { log_err "Download fehlgeschlagen."; exit 1; }
+changed=0
+for entry in "${SOURCES[@]}"; do
+  IFS='|' read -r name path dest typ <<<"$entry"
+  url="$BASE/$path"
+  out="$DEST_DIR/$dest"
 
-if ! jq -e '.catalog.metadata' "$TMP" >/dev/null 2>&1; then
-  log_err "Antwort ist kein gueltiger OSCAL-Katalog (catalog.metadata fehlt)."; exit 1
-fi
-NEW_LM="$(jq -r '.catalog.metadata."last-modified" // .catalog.metadata.version // "unbekannt"' "$TMP")"
+  log_info "Lade '$name' ..."
+  curl -fsSL "$url" -o "$TMP" || { log_err "Download '$name' fehlgeschlagen."; exit 1; }
 
-if [[ -f "$CATALOG" && "$FORCE" -eq 0 ]]; then
-  OLD_LM="$(jq -r '.last_modified // "x"' "$MANIFEST" 2>/dev/null || echo x)"
-  if [[ "$OLD_LM" == "$NEW_LM" ]]; then
-    log_ok "Korpus aktuell (Stand $OLD_LM). Kein Update noetig — '--force' erzwingt."; exit 0
+  case "$typ" in
+    catalog) jq -e '.catalog.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gueltiger OSCAL-Katalog."; exit 1; } ;;
+    profile) jq -e '.profile.metadata'  "$TMP" >/dev/null 2>&1 || { log_err "'$name' ist kein gueltiges OSCAL-Profile."; exit 1; } ;;
+  esac
+
+  newsha="$(sha256 "$TMP")"
+  oldsha="$(jq -r --arg n "$name" '.dateien[]? | select(.name==$n) | .sha256' "$MANIFEST" 2>/dev/null || true)"
+  if [[ -f "$out" && "$FORCE" -eq 0 && "$newsha" == "$oldsha" ]]; then
+    log_ok "'$name' unveraendert (sha gleich) — uebersprungen."
+    continue
   fi
-  log_info "Neuere Version verfuegbar: $OLD_LM -> $NEW_LM"
-fi
+  cp "$TMP" "$out"
+  changed=1
+  log_ok "'$name' aktualisiert -> $dest"
+done
 
-if command -v sha256sum >/dev/null 2>&1; then SHA="$(sha256sum "$TMP" | cut -d' ' -f1)"
-else SHA="$(shasum -a 256 "$TMP" | cut -d' ' -f1)"; fi
-
-mv "$TMP" "$CATALOG"; trap - EXIT
-
-NGROUPS="$(jq '[.catalog.groups[]?] | length' "$CATALOG")"
-NCTRL="$(python3 - "$CATALOG" <<'PY'
-import json,sys
-d=json.load(open(sys.argv[1],encoding="utf-8"))
-def c(n):
-    t=len(n.get("controls",[]) or [])
-    for g in n.get("groups",[]) or []: t+=c(g)
-    return t
-print(c(d["catalog"]))
-PY
-)"
-
+# Manifest aus den finalen Dateien neu aufbauen
 ABG="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-jq -n \
-  --arg repo "$SRC_REPO" --arg path "$SRC_PATH" --arg url "$RAW_URL" \
-  --arg lm "$NEW_LM" --arg abg "$ABG" --arg sha "$SHA" --arg lic "$LICENSE_ID" \
-  --argjson ngroups "$NGROUPS" --argjson nctrl "$NCTRL" \
-  '{quelle:{repo:$repo,pfad:$path,raw_url:$url},edition:"grundschutz++",
-    last_modified:$lm,abgerufen_am:$abg,sha256:$sha,lizenz:$lic,
-    anzahl_schichten:$ngroups,anzahl_anforderungen:$nctrl}' > "$MANIFEST"
+python3 - "$DEST_DIR" "$MANIFEST" "$SRC_REPO" "$LICENSE_ID" "$ABG" "${SOURCES[@]}" <<'PY'
+import hashlib, json, os, sys
+dest_dir, manifest, repo, lic, abg = sys.argv[1:6]
+sources = sys.argv[6:]
 
-log_ok  "Korpus gespeichert: $CATALOG"
-log_ok  "Schichten: $NGROUPS | Anforderungen: $NCTRL | Stand: $NEW_LM"
-log_info "Manifest: $MANIFEST  (Lizenz: $LICENSE_ID)"
+def count_controls(node):
+    t = len(node.get("controls", []) or [])
+    for g in node.get("groups", []) or []:
+        t += count_controls(g)
+    return t
+
+dateien = []
+for entry in sources:
+    name, path, fn, typ = entry.split("|")
+    fp = os.path.join(dest_dir, fn)
+    if not os.path.exists(fp):
+        continue
+    raw = open(fp, "rb").read()
+    d = json.loads(raw.decode("utf-8"))
+    rec = {
+        "name": name, "datei": fn, "typ": typ,
+        "raw_url": f"https://raw.githubusercontent.com/{repo}/main/{path}",
+        "sha256": hashlib.sha256(raw).hexdigest(),
+    }
+    root = d.get("catalog") or d.get("profile") or {}
+    meta = root.get("metadata", {})
+    rec["titel"] = meta.get("title")
+    rec["last_modified"] = meta.get("last-modified") or meta.get("version")
+    if typ == "catalog":
+        rec["anzahl_anforderungen"] = count_controls(root)
+    dateien.append(rec)
+
+json.dump({"edition": "grundschutz++", "quelle_repo": repo, "lizenz": lic,
+           "abgerufen_am": abg, "dateien": dateien},
+          open(manifest, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PY
+trap - EXIT; rm -f "$TMP"
+
+[[ "$changed" -eq 0 ]] && log_info "Korpus war bereits aktuell ('--force' erzwingt Neuladen)."
+log_ok "Manifest geschrieben: $MANIFEST  (Lizenz: $LICENSE_ID)"
+jq -r '.dateien[] | "  \(.name): \(.titel // .datei)" + (if .anzahl_anforderungen then " (\(.anzahl_anforderungen) Anf., Stand \(.last_modified))" else "" end)' "$MANIFEST"

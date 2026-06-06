@@ -20,8 +20,8 @@ OSCAL/JSON, agil ueber GitHub gepflegt. Der Agent darf das nie direkt sehen.
 flowchart LR
     A["DocBook-XML<br/>(Edition 2023)"] --> ADAPTER
     B["OSCAL/JSON<br/>(Grundschutz++)"] --> ADAPTER
-    ADAPTER["Adapter<br/>(gs-ingest)"] --> SCHEMA["internes OSCAL-Schema<br/>(catalog.json + manifest)"]
-    SCHEMA --> LOGIK["Agent Bruce + Skills<br/>(lookup · crosswalk · modellierung)"]
+    ADAPTER["Adapter<br/>(gs-ingest)"] --> SCHEMA["internes OSCAL-Schema<br/>(Anwenderkatalog + Methodik)"]
+    SCHEMA --> LOGIK["Agent Bruce + Skills<br/>(lookup · dokument · crosswalk · modellierung)"]
 ```
 
 Kanonisches internes Format ist **OSCAL** (NIST-Standard). Grundschutz++ ist schon OSCAL (nur laden),
@@ -49,8 +49,9 @@ nix run .#ingest
 nix run .#gs -- status            # Korpus-Status
 nix run .#gs -- groups            # Schichten/Gruppen
 nix run .#gs -- list GC           # Anforderungen einer Schicht
-nix run .#gs -- get GC.1.1        # eine Anforderung volltext, zitierfaehig
+nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
+nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis fuer gs-dokument
 ```
 
 In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).

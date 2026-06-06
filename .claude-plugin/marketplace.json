@@ -21,7 +21,7 @@
     {
       "name": "it-grundschutz",
       "source": "./plugins/it-grundschutz",
-      "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ lokal vorhalten, Anforderungen zitierfaehig nachschlagen, Editionen migrieren, Bausteine fuer Szenarien modellieren",
+      "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfaehig nachschlagen, Dokumente nach der Methodik erstellen, Editionen migrieren, Bausteine modellieren",
       "version": "0.1.0"
     },
     {
