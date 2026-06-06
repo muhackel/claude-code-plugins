@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 """Lookup-CLI fuer den lokalen Grundschutz-OSCAL-Korpus.
 
-Zwei Ebenen (gleiche ID GC.1.1): 'anwender' = konkrete Anforderung,
-'methodik' = Vorgehensweise/das Warum dahinter.
+Multi-Edition: --edition <grundschutz-pp|edition-2023> (oder Env GS_EDITION),
+Default 'grundschutz-pp'. Der Schalter waehlt den Korpus-Unterordner.
+
+Grundschutz++ hat zwei Ebenen (gleiche ID GC.1.1): 'anwender' = konkrete
+Anforderung, 'methodik' = Vorgehensweise/das Warum dahinter. Edition 2023 hat
+nur eine Ebene (klassische Schichten ISMS/ORP/.../INF + Bausteine).
 
 Kommandos:
   status            Korpus-Status (Ebenen, Anzahl Anforderungen)
   groups            Schichten/Gruppen-Baum (Anwenderkatalog)
-  list <GRUPPE>     Anforderungen einer Schicht/Gruppe (z.B. GC, GC.1)
+  list <GRUPPE>     Anforderungen einer Schicht/Gruppe (z.B. GC, GC.1, SYS, SYS.1.1)
   get <ID>          Anforderung volltext, zitierfaehig — inkl. Methodik-Ebene, falls vorhanden
   search <BEGRIFF>  Volltextsuche in Titel/statement/guidance (Anwenderkatalog)
   prozess           Vorgehensweise als Schrittfolge (Methodik-Ebene, GC->STM->UMS->PERF->VRB)
   json <ID>         rohes OSCAL-Control (fuer crosswalk/debug)
+
+Beispiele:
+  gs.py status
+  gs.py --edition edition-2023 get SYS.1.1.A5
 """
 import json
 import os
@@ -20,11 +28,26 @@ import sys
 
 PARAM_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([^}\s,]+)\s*\}\}")
 
+EDITIONS = ("grundschutz-pp", "edition-2023")
+DEFAULT_EDITION = os.environ.get("GS_EDITION", "grundschutz-pp")
+
 CORPUS = os.environ.get("GS_CORPUS_DIR", os.path.expanduser("~/.local/share/it-grundschutz/corpus"))
-PP = os.path.join(CORPUS, "grundschutz-pp")
-CATALOG = os.path.join(PP, "catalog.json")           # Anwenderkatalog
-METHODIK = os.path.join(PP, "methodik-catalog.json")  # Methodik-Quellkatalog
+
+# Modul-Globals; werden in main() je nach Edition gesetzt (set_edition).
+EDITION = DEFAULT_EDITION
+PP = os.path.join(CORPUS, DEFAULT_EDITION)
+CATALOG = os.path.join(PP, "catalog.json")            # Anwenderkatalog
+METHODIK = os.path.join(PP, "methodik-catalog.json")  # Methodik-Quellkatalog (nur Grundschutz++)
 MANIFEST = os.path.join(PP, "manifest.json")
+
+
+def set_edition(edition):
+    global EDITION, PP, CATALOG, METHODIK, MANIFEST
+    EDITION = edition
+    PP = os.path.join(CORPUS, edition)
+    CATALOG = os.path.join(PP, "catalog.json")
+    METHODIK = os.path.join(PP, "methodik-catalog.json")
+    MANIFEST = os.path.join(PP, "manifest.json")
 
 
 def die(msg, code=1):
@@ -34,7 +57,8 @@ def die(msg, code=1):
 
 def load_catalog():
     if not os.path.exists(CATALOG):
-        die(f"Kein Korpus unter {CATALOG}.\nErst laden:  nix run .#ingest")
+        ingest = "nix run .#ingest-2023" if EDITION == "edition-2023" else "nix run .#ingest"
+        die(f"Kein Korpus unter {CATALOG}.\nErst laden:  {ingest}")
     with open(CATALOG, encoding="utf-8") as f:
         return json.load(f)["catalog"]
 
@@ -65,6 +89,12 @@ def _last_modified(name):
 
 
 def src_line(ebene="anwender"):
+    if EDITION == "edition-2023":
+        stand = _last_modified("kompendium")
+        if stand == "?":
+            stand = "Edition 2023"
+        return (f'IT-Grundschutz-Kompendium {stand} (BSI, DocBook-XML) '
+                f'— Lizenz CC BY-SA 4.0')
     return (f'Grundschutz++ ({ebene}, BSI Stand-der-Technik-Bibliothek, '
             f'Stand {_last_modified(ebene)}) — Lizenz CC BY-SA 4.0')
 
@@ -253,8 +283,32 @@ def cmd_json(cat, cid, methodik=None):
     print(json.dumps(c, ensure_ascii=False, indent=2))
 
 
+def _parse_edition(args):
+    out = []
+    edition = DEFAULT_EDITION
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--edition":
+            if i + 1 >= len(args):
+                die("--edition braucht ein Argument: " + " | ".join(EDITIONS))
+            edition = args[i + 1]
+            i += 2
+            continue
+        if a.startswith("--edition="):
+            edition = a.split("=", 1)[1]
+            i += 1
+            continue
+        out.append(a)
+        i += 1
+    if edition not in EDITIONS:
+        die(f'Unbekannte Edition "{edition}". Erlaubt: ' + " | ".join(EDITIONS))
+    return edition, out
+
+
 def main():
-    args = sys.argv[1:]
+    edition, args = _parse_edition(sys.argv[1:])
+    set_edition(edition)
     if not args:
         die(__doc__)
     cmd, rest = args[0], args[1:]

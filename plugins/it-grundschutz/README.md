@@ -25,7 +25,8 @@ flowchart LR
 ```
 
 Kanonisches internes Format ist **OSCAL** (NIST-Standard). Grundschutz++ ist schon OSCAL (nur laden),
-Edition 2023 bekaeme spaeter einen DocBook→OSCAL-Adapter. Eine neue Edition = ein neuer Adapter, sonst nichts.
+Edition 2023 wird über den DocBook→OSCAL-Adapter `scripts/adapter-2023.py` normalisiert. Eine neue
+Edition = ein neuer Adapter, sonst nichts.
 
 ## Quelle & Lizenz
 
@@ -43,7 +44,8 @@ Wegen des Lizenz-Unterschieds wird der Korpus **nicht** ins Plugin-Git eingechec
 
 ```bash
 # Korpus laden/aktualisieren
-nix run .#ingest
+nix run .#ingest                  # Grundschutz++ (OSCAL von GitHub)
+nix run .#ingest-2023             # Edition 2023 (DocBook-XML -> OSCAL)
 
 # Nachschlagen
 nix run .#gs -- status            # Korpus-Status
@@ -52,6 +54,9 @@ nix run .#gs -- list GC           # Anforderungen einer Schicht
 nix run .#gs -- get GC.1.1        # eine Anforderung volltext + Methodik-Ebene (das Warum)
 nix run .#gs -- search "ISMS"     # Volltextsuche
 nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis fuer gs-dokument
+
+# Edition 2023 abfragen (--edition vor dem Kommando)
+nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
 ```
 
 In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`build.md`](./build.md).
@@ -61,6 +66,7 @@ In Claude Code: `/bruce <auftrag>` ruft den Agenten auf. Build-Details in [`buil
 - **Rein generisch.** Nur das oeffentliche BSI-Korpus + generische Modellierung. Firmenspezifische
   Informationsverbuende, Umsetzungsstaende und vertrauliche Daten gehoeren **nicht** hierher, sondern in ein
   getrenntes, vertrauliches Repo/Vault.
-- **Aktuell nur Grundschutz++.** Edition-2023-Adapter und vollwertiger Crosswalk sind vorbereitet, aber noch
-  nicht implementiert (siehe Skills `gs-crosswalk`, `gs-ingest`).
+- **Beide Editionen verfügbar.** Grundschutz++ (OSCAL) und Edition 2023 (DocBook-XML → OSCAL via
+  `scripts/adapter-2023.py`), getrennt abfragbar über `--edition`. Der formale Baustein↔Gefährdung-Kreuzbezug
+  der Edition 2023 ist nicht Teil des Kompendium-XML und daher bewusst ausgelassen (siehe `gs-ingest`).
 - Bruce liefert die normative Grundlage — die Bewertung/Entscheidung trifft der Mensch.

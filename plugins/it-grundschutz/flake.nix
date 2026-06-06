@@ -32,11 +32,13 @@
           };
           ingest = mkApp "gs-ingest" "Grundschutz++-OSCAL-Korpus von der BSI-Quelle laden/aktualisieren"
             "${pkgs.bash}/bin/bash ${./scripts/ingest.sh}";
-          gs = mkApp "gs" "OSCAL-Lookup im lokalen Grundschutz-Korpus (status/groups/list/get/search/json)"
+          ingest-2023 = mkApp "gs-ingest-2023" "Edition 2023 (DocBook-XML) von der BSI-Quelle nach OSCAL normalisieren"
+            "${pkgs.python3}/bin/python3 ${./scripts/adapter-2023.py}";
+          gs = mkApp "gs" "OSCAL-Lookup im lokalen Grundschutz-Korpus (status/groups/list/get/search/json; --edition)"
             "${pkgs.python3}/bin/python3 ${./scripts/gs.py}";
         in
         {
-          inherit ingest gs;
+          inherit ingest ingest-2023 gs;
           default = gs;
         });
     };
