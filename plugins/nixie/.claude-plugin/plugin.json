@@ -1,7 +1,7 @@
 {
   "name": "nixie",
   "description": "NixOS-Engineer: Flake-first Configs, eigene Derivations & Overlays, Paket-Pinning, resource-aware Remote-Builds auf der schnellsten Kiste, dokumentenorientiert",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"

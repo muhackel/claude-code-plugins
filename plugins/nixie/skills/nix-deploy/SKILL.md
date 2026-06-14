@@ -20,7 +20,19 @@ Terminal).
 
 **Immer vollständig laufen lassen.** Niemals nach `| tail`, `| head` oder `2>/dev/null` pipen — das versteckt
 genau die Fehler, die geprüft werden sollen. Volle Ausgabe lesen und auswerten. Läuft vor jeder
-Fertigstellung einer Änderung. Bei vielen Checks ggf. `--keep-going`, um alle Fehler auf einmal zu sehen.
+Fertigstellung einer Änderung.
+
+**`flake check` IST ein schwerer Build — drosseln ist Pflicht, nicht optional.** Er baut die Toplevels
+**aller** Hosts gleichzeitig (jeder `nixosConfigurations.<h>.config.system.build.toplevel`, inkl. *mehrerer*
+NVIDIA-Treiber, Kernel-Module, webkitgtk …) und ignoriert `--build-host` — läuft also **immer lokal** auf der
+aktuellen Kiste. Das ist der RAM-schwerste nix-Lauf überhaupt. Konsequenzen:
+- **Immer mit kalkuliertem `--max-jobs`/`--cores`** starten (Flags stehen direkt am `nix`-Aufruf:
+  `nix flake check --max-jobs <MJ> --cores <CO> -L`). Da es keinen praktikablen Dry-Run über alle Hosts gibt,
+  defensiv als **heavy** einstufen (siehe Drosselungs-Sektion) — nie ungedrosselt mit Default-Parallelität.
+- **Im Vordergrund**, nicht mit `run_in_background` (siehe Build-Sichtbarkeit). Einen bauenden Job nie
+  verwaisen lassen — RAM beobachten, bis er durch ist.
+- `--keep-going` (alle Fehler auf einmal) **nur auf einem bereits gedrosselten Lauf** — auf einem
+  ungedrosselten verlängert es nur den RAM-Druck und das OOM-Fenster.
 
 ## nixos-rebuild (ng) — CLI-Form
 
@@ -89,7 +101,9 @@ Die erlaubte Stufe ergibt sich aus der **konkreten Anfrage** des Users — nicht
 
 ## Resource-aware Build-Drosselung (kein OOM)
 
-Schwere C++/Rust-Builds (v.a. parallel) sprengen RAM. Vorgehen:
+Die Regel hängt an **„es werden Pakete kompiliert"**, nicht am Befehlsnamen: `nixos-rebuild build/switch`,
+`nix build` UND `nix flake check` fallen alle darunter. Schwere C++/Rust-Builds (v.a. parallel) sprengen
+RAM. Vorgehen:
 
 ```
 # 1) Werte des Build-Hosts (lokal: /proc/meminfo & nproc; remote: via ssh <target>)
@@ -99,6 +113,7 @@ nproc = Kernzahl
 # 2) Was wird wirklich GEBAUT (nicht aus Cache geholt)?
 nixos-rebuild dry-build …            # System-Rebuild: "would be built / would be fetched"
 nix build .#<attr> --dry-run …       # einzelnes Flake-Attribut
+nix flake check …                    # KEIN praktikabler Dry-Run über alle Hosts → defensiv als heavy
 #   (vollständig lesen — kein tail)
 
 # 3) Schwerste Klasse in der Build-Liste bestimmen
