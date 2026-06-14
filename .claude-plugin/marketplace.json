@@ -28,7 +28,7 @@
       "name": "nixie",
       "source": "./plugins/nixie",
       "description": "NixOS-Engineer: Flake-first Configs, eigene Derivations & Overlays, Paket-Pinning, resource-aware Remote-Builds auf der schnellsten Kiste, dokumentenorientiert",
-      "version": "0.2.1"
+      "version": "0.2.2"
     }
   ]
 }

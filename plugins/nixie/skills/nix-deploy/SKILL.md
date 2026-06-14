@@ -122,10 +122,9 @@ medium = llvm | gcc | rustc | qtbase | webkit | linux-kernel | … (große C/C++
 light  = alles andere
 
 # 4) Jobs/Cores setzen — als Top-Level-Flags VOR der Aktion
-heavy  → MJ = clamp(floor(mem / 24), 1, nproc)      # Swap NICHT mitzählen
-         CO = clamp(floor(nproc / MJ), 4, nproc)
-medium → MJ = clamp(floor(mem / 6),  1, nproc)
-         CO = clamp(floor(nproc / MJ), 4, nproc)
+heavy  → MJ = clamp(floor(mem / 20), 1, nproc)      # Swap NICHT mitzählen
+         CO = clamp(nproc - MJ, 1, nproc)           # cores NICHT drosseln — nur die Job-Slots abziehen
+medium → MJ = clamp(floor(mem / 6),  1, nproc)       # nur Jobs drosseln, CO weglassen
 light  → keine Drosselung (MJ/CO weglassen)
 
 # anwenden:
@@ -136,9 +135,13 @@ nix build .#<attr> --max-jobs <MJ> --cores <CO> …
 
 - **Swap zählt nicht als Job-Kapazität** — nur als OOM-Puffer für den einzelnen Link-Peak. Swap-Thrashing
   reißt sonst Timeouts/Checks.
+- **Nur `--max-jobs` drosselt RAM, nicht `--cores`.** Der OOM-Druck kommt von parallelen Jobs (jeder hält
+  seinen eigenen Heap/Link-Peak). `--cores` steuert nur die Parallelität *innerhalb* eines Jobs; es runterzu-
+  drehen bringt RAM-seitig nichts, macht aber die single-threaded configure-Stage langsamer. Darum cores
+  **nicht** über die Jobs aufteilen, sondern bei `nproc - MJ` lassen (Default-„alle Cores" wäre `0`).
 - Drosselung greift **nur**, wenn der Dry-Run schwere/mittlere Pakete als "will be built" zeigt. Ein kleines
   Einzelpaket ohne Riesen-Dependency → keine Drosselung.
-- Beispiel (128 GiB RAM, heavy): `--max-jobs = floor(128/24) = 5`.
+- Beispiel (128 GiB RAM, 16 Cores, heavy): `--max-jobs = floor(128/20) = 6`, `--cores = 16 - 6 = 10`.
 
 ### Empfehlung an den User (dokumentieren, nicht erzwingen)
 - Disk-Swap ≈ `min(RAM, 64 GiB)`, `vm.swappiness = 10` — fängt den einzelnen Heavy-Link ab.
