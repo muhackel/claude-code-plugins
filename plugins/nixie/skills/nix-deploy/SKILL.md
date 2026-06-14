@@ -16,6 +16,29 @@ pipen. Gilt analog für `cargo build`, `make` u.a. Wenn ein Build sehr lang ist 
 werden muss, kurz mit dem User klären (sein Standard-Workflow ist `nixos-rebuild switch --sudo` im eigenen
 Terminal).
 
+## Lange Builds als Subagent — delegieren statt verwaisen
+
+Läuft Nixie als **Subagent** (via Agent/Task-Tool gespawnt — der Normalfall beim `/nixie`-Command), gilt eine
+harte Grenze: Die Harness **detacht jeden Bash-Call nach ~120 s automatisch in den Hintergrund und beendet
+den Subagent-Turn** — und ein Subagent wird danach **nicht wieder aufgeweckt** (anders als der Hauptloop, der
+auf die Completion-Notification reagiert). Ein kompilier-schwerer Schritt (`nixos-rebuild build/switch`,
+`nix flake check`, große `nix copy`-Closures) lässt sich darum als Subagent **nicht** „im Vordergrund bis
+durch" fahren — er verwaist zwangsläufig, der Build läuft führungslos weiter und die Folgeschritte
+(Auswertung, commit, switch) bleiben liegen. Das ist KEIN Bug zum Umgehen, sondern die dokumentierte
+Architektur (Subagenten = selbstbegrenzte Tasks mit Summary; lange Arbeit gehört zum Hauptagenten).
+
+Regel für den Subagent-Fall:
+- **Vorbereiten, nicht durchziehen.** Alles bis zum Build erledigen: `dry-build` lesen, Drosselung berechnen
+  (Drosselungs-Sektion), den **exakten, gedrosselten Befehl** fertig zusammenstellen.
+- **Den fertigen Befehl an den Aufrufer zurückgeben** (Hauptloop/User), der ihn im resilienten Kontext bzw.
+  im eigenen Terminal ausführt — dort bleibt auch die Live-Sichtbarkeit erhalten.
+- **Kurze, sicher unter ~120 s terminierende Schritte** macht der Subagent selbst: eval, `dry-build`-Analyse,
+  `lsblk`, git, `flake.lock`-Manipulation, Erreichbarkeitstest. Auch eine reine Aktivierung bei warmem Store
+  (Build schon im Cache, nur `switch`) darf der Subagent fahren — aber konservativ schätzen; im Zweifel
+  delegieren.
+- Der Grund ist die **Build-Dauer**, nicht sudo: `nixos-rebuild switch --sudo` läuft beim User passwortlos
+  durch — ein kurzer Aktivierungs-`switch` scheitert also nicht am sudo, sondern nur lange Builds am Detach.
+
 ## `nix flake check` — Regel
 
 **Immer vollständig laufen lassen.** Niemals nach `| tail`, `| head` oder `2>/dev/null` pipen — das versteckt
@@ -30,7 +53,8 @@ aktuellen Kiste. Das ist der RAM-schwerste nix-Lauf überhaupt. Konsequenzen:
   `nix flake check --max-jobs <MJ> --cores <CO> -L`). Da es keinen praktikablen Dry-Run über alle Hosts gibt,
   defensiv als **heavy** einstufen (siehe Drosselungs-Sektion) — nie ungedrosselt mit Default-Parallelität.
 - **Im Vordergrund**, nicht mit `run_in_background` (siehe Build-Sichtbarkeit). Einen bauenden Job nie
-  verwaisen lassen — RAM beobachten, bis er durch ist.
+  verwaisen lassen — RAM beobachten, bis er durch ist. **Als Subagent gar nicht erst selbst fahren** —
+  vorbereiten und den fertigen Befehl delegieren (siehe „Lange Builds als Subagent").
 - `--keep-going` (alle Fehler auf einmal) **nur auf einem bereits gedrosselten Lauf** — auf einem
   ungedrosselten verlängert es nur den RAM-Druck und das OOM-Fenster.
 

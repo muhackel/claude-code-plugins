@@ -1,5 +1,21 @@
 # nixie — Backlog
 
+## ✅ BEHOBEN (2026-06-14): Subagent verwaist bei langen Builds (flake check / switch / nix copy)
+
+**Symptom:** Nixie startet als Subagent einen langen Build; die Harness detacht ihn nach ~120 s und
+beendet den Subagent-Turn. Der Subagent wird nicht wieder aufgeweckt → Build läuft führungslos weiter,
+Folgeschritte (Auswertung, commit, switch) bleiben liegen. Trat zweimal in Folge auf (flake check, Deploy).
+
+**Ursache:** Subagent-Lebenszyklus endet mit dem Turn; ~120 s Auto-Backgrounding (Bash-Default-Timeout).
+Belegt via claude-code-guide aus der offiziellen Doku (Subagenten = selbstbegrenzte Tasks mit Summary;
+lange Arbeit gehört zum Hauptagenten/Orchestrator).
+
+**Fix umgesetzt** in `skills/nix-deploy/SKILL.md` (v0.2.3): neue Sektion „Lange Builds als Subagent —
+delegieren statt verwaisen" — kompilier-schwere Schritte vorbereiten (dry-build, Drosselung, exakter
+Befehl) und an Hauptloop/User zurückgeben statt selbst durchzuziehen; nur sicher <120 s terminierende
+Schritte selbst. Verweis an der flake-check-Regel ergänzt. Klargestellt: Grund ist die Build-Dauer, nicht
+sudo (`switch --sudo` läuft beim User passwortlos).
+
 ## ✅ BEHOBEN (2026-06-14): `--max-jobs`-Drosselung greift nicht bei `nix flake check`
 
 **Fix umgesetzt** in `skills/nix-deploy/SKILL.md`: `flake check`-Regel (Z. 19 ff.) um die
