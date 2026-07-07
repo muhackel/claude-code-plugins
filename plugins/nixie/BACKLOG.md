@@ -1,5 +1,70 @@
 # nixie — Backlog
 
+---
+## Aus Auto-Memory migriertes User-Feedback (2026-07-06) — in nix-deploy-Skill encodieren
+> Diese drei Punkte stammen aus konsolidierten Feedback-Memorys und werden **provisorisch global** in `~/.claude/CLAUDE.md` (Sektion „Nix-Builds zur Laufzeit") gehalten, bis der Skill sie trägt. Nach dem Encodieren dort entfernen.
+
+### 🔴 OFFEN: Long-Running-Builds nie durch tail/head/grep pipen (User verliert Live-Visibility)
+`nix build`/`nixos-rebuild`/`nix flake check` (und `cargo build`/`make`) **nie** durch `| tail -N`/`| head`/`| grep` pipen (auch nicht `2>&1 | tail`), **nie** `run_in_background` — der User beobachtet den Build live im Terminal; jede Pipe/jeder Background-Job macht ihn blind, und ein erneuter sichtbarer Lauf kostet die Wartezeit doppelt. **Fix-Richtung:** `skills/nix-deploy/SKILL.md` → Build-Kommandos im Vordergrund, ggf. `-L`; Errors danach aus dem Drv-Log (`nix log <drv>`); bei sehr langen Läufen mit User klären, ob er selbst rebuildet (`nixos-rebuild switch --sudo`).
+
+### 🔴 OFFEN: RAM-bewusste Drosselung als konkrete Heuristik (ergänzt die BEHOBEN-Einträge unten)
+Die max-jobs-Drosselung ist im Skill adressiert (siehe ✅ unten), aber die **konkrete RAM-Heuristik** fehlt noch explizit: vor schweren Builds `free -h`; `--max-jobs = (frei − Puffer) / ~6 GiB pro schwerem Job`; `--cores` **nicht** beschneiden; `--keep-going` nur auf gedrosselten Läufen. Beispiel-Vorfall (2026-06-14): ungedrosselter `nix flake check -L --keep-going` als verwaister Background-Job → OOM-Killer mähte Desktop-Apps + den nix-Prozess selbst trotz 46 GiB. **Fix-Richtung:** Heuristik in die „Resource-aware Build-Drosselung"-Sektion aufnehmen.
+
+### 🔴 OFFEN: Host-Erreichbarkeit LAN-first (nackter Hostname), -wifi nur Fallback
+Beim Erreichen/Deployen von Hosts zuerst die LAN-Adresse testen (nackter Hostname ohne Suffix bzw. `<host>.local`), `<host>-wifi` nur wenn LAN nicht erreichbar — LAN ist schneller/stabiler für Remote-Builds und `--target-host`. Namensschema (verifiziert 2026-06-06): `hal9000`→10.0.1.3 (LAN) / `hal9000-wifi`→10.0.1.4; `bfg9000-wifi`→10.0.1.7; `<host>.local` → LAN-IP. **Fix-Richtung:** In der Host-/Target-Auswahl des Skills einen Reachability-Check `for h in <host> <host>-wifi; do ping -c1 -W2 "$h" && break; done` vorsehen und den gefundenen Namen für ssh/`--target-host` nutzen.
+
+---
+## 🔴 OFFEN (2026-06-15): Kein Weitersprechen mit laufender Nixie → Neustart erzwingt Verwaisung der Erstinstanz
+
+**Symptom:** Erste Nixie-Instanz läuft als Subagent und hat einen langen Export gestartet. Der Hauptloop
+will ihr eine Folge-Entscheidung durchgeben (`SendMessage` an die Agenten-ID), aber das Tool ist in der
+Umgebung nicht verfügbar. Workaround war, eine **zweite** Nixie zu starten. Die erste lief derweil
+führungslos weiter und verwaiste nach ~10 min — und riss dabei den von ihr gestarteten Export ab.
+
+**Ursache:** Zwei verkettete Lücken. (1) `SendMessage`/Continue-an-Agent steht nicht zuverlässig bereit,
+also lässt sich eine in Arbeit befindliche Nixie nicht steuern — man muss neu starten. (2) Der Neustart
+ändert nichts an der bereits führungslos laufenden Erstinstanz; deren Detach (~10 min) killt den Job.
+
+**Fix-Richtung:** Nixie/Skill so gestalten, dass langlaufende Arbeit gar nicht erst *in* der Subagenten-
+Instanz startet (siehe nix-deploy-Eintrag unten) — dann ist „mit ihr weitersprechen" nicht nötig. Falls
+Steuerung doch gebraucht wird: dokumentieren, dass der Hauptloop NICHT eine zweite Instanz parallel zur
+noch laufenden ersten starten darf (alte erst sauber beenden/abwarten).
+
+## 🔴 OFFEN (2026-06-15): nix-deploy v0.2.3-Fix greift nicht für lange Exports / `nix copy` auf USB
+
+**Symptom:** Trotz des v0.2.3-Fixes hat die Nixie-Subagenten-Instanz einen langen `nix-store --export | zstd`
+(44 GiB Closure → ~12 GiB auf exFAT-USB) **selbst** gestartet statt ihn an den Hauptloop zurückzugeben.
+Sie verwaiste nach ~10 min, die Pipe brach mittendrin ab → korruptes Archiv (`zstd -t`: *premature end*),
+plus eine zu früh erzeugte (falsche) `.sha256`.
+
+**Ursache:** Der v0.2.3-Text adressiert primär *kompilier-schwere* Schritte (dry-build/Drosselung). Ein
+reiner Export/`nix copy` ist nicht CPU-/Build-lastig, fällt aber unter dieselbe Detach-Falle (Dauer ≫ 120 s).
+Die „delegieren statt verwaisen"-Regel wird auf Exporte nicht angewandt.
+
+**Fix-Richtung:** In `skills/nix-deploy/SKILL.md` die Delegations-Regel explizit auf **jeden** langlaufenden
+Schritt ausweiten — nicht nur Builds, sondern auch `nix-store --export`/`nix copy`/Archiv-Kompression auf
+externe Medien. Kriterium = *Wanduhr-Dauer > ~120 s*, nicht *„ist es ein Build"*. Bei Export zusätzlich:
+`.sha256` erst NACH erfolgreichem Abschluss + Integritätscheck (`zstd -t`) erzeugen, `set -euo pipefail`
+(pipefail!), damit ein abgebrochener Pipe hart fehlschlägt statt ein Teilarchiv zu hinterlassen.
+
+## 🔴 OFFEN (2026-06-15): nix-deploy liefert untaugliche nixos-rebuild-ng-Flags (`--build-host localhost`, `-S`)
+
+**Symptom:** Der von Nixie gelieferte Remote-Deploy-Befehl scheiterte zweimal an Flags:
+- `--build-host localhost` erzwingt eine echte SSH-Verbindung zu localhost → scheitert am veralteten
+  localhost-Eintrag in `~/.ssh/known_hosts` (*Host key changed*). Für „lokal bauen" ist `--build-host`
+  schlicht überflüssig (Default = nativer lokaler Build ohne SSH).
+- `-S` / `--ask-elevate-password` erzwingt einen **interaktiven** Passwort-Prompt — im non-interaktiven
+  Hauptloop unbedienbar, selbst wenn auf dem Target passwordless sudo verfügbar ist.
+
+**Ursache:** Skill kennt die nixos-rebuild-ng-Semantik (Python-Rewrite) nicht: `-S` = Prompt erzwingen
+(nicht „sudo nutzen"); `--build-host localhost` = SSH-Loopback statt nativ.
+
+**Fix-Richtung:** In `skills/nix-deploy/SKILL.md` Remote-Deploy-Vorlage korrigieren:
+`nixos-rebuild switch --flake .#HOST --target-host muhackel@<host> --elevate=sudo --use-substitutes`
+— **kein** `--build-host` für lokalen Build, **kein** `-S`; `--elevate=sudo` nutzt passwordless sudo ohne
+Prompt. Vorab-Check `ssh -o BatchMode=yes muhackel@<host> 'sudo -n true'`. `--max-jobs` nur wenn dry-build
+echte heavy-Builds zeigt.
+
 ## ✅ BEHOBEN (2026-06-14): Subagent verwaist bei langen Builds (flake check / switch / nix copy)
 
 **Symptom:** Nixie startet als Subagent einen langen Build; die Harness detacht ihn nach ~120 s und
