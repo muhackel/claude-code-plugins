@@ -60,6 +60,10 @@ nix run .#gs -- prozess           # Vorgehensweise (Methodik-Ebene) — Basis f�
 nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (mehrere Gruppen/IDs) — Basis für gs-review
 nix run .#gs -- crosswalk SYS.1.1.A5  # heuristischer Crosswalk: 2023-ID → Top-Kandidaten in ++ — Basis für gs-crosswalk
 
+# Baustein-Vorrat (projekt-lokal materialisieren) — Basis für gs-cache
+nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md --title "IAM" SYS.1.1 CON.1 ORP.4  # Volltexte je Baustein
+nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md APP.2.3   # zusätzliche IDs nachziehen (idempotent)
+
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
 nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Check-Vorlage inkl. entfallen-Markierung

@@ -22,7 +22,7 @@
       "name": "it-grundschutz",
       "source": "./plugins/it-grundschutz",
       "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Dokumente nach der Methodik erstellen, IT-Grundschutz-Check (Soll-Ist) durchführen, Editionen migrieren, Bausteine modellieren",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     {
       "name": "nixie",
