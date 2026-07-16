@@ -87,9 +87,11 @@ Kein Auftrag angegeben: STARTUP ausführen (Korpus-Status melden) und nach dem A
   `UMS.1.1`, plus `status=entfallen` in Edition 2023) erheben und auswerten: Erfüllungsgrad je Schicht/Stufe,
   offene Punkte, Realisierungsliste, Audit-Readiness. Status/Verantwortliche/Termine sind firmenspezifisch
   (Platzhalter, vertrauliches Repo) — `gs.py checklist <gruppe>` liefert die leere Vorlage.
-- **Vorrat pflegen:** Für ein Projekt mit festem Baustein-Satz einmal einen Volltext-Vorrat neben den
-  Projektdateien materialisieren (`gs-cache`), danach Bausteintexte **direkt aus dem Vorrat lesen** statt
-  je ID neu `gs get` gegen den Korpus zu fahren. Rebuild/Nachziehen bei Korpus-Update oder wachsendem Satz.
+- **Vorrat pflegen:** Für ein Projekt einen Volltext-Vorrat neben den Projektdateien materialisieren
+  (`gs-cache`) und Bausteintexte **direkt aus dem Vorrat lesen** statt je ID neu `gs get` zu fahren.
+  Edition 2023: den Satz aus dem **Szenario** (`--targets` = Asset-Typen des Plans) ableiten. Ändert sich
+  der Netzplan (Komponente rein/raus), **Rebuild** → der Satz wird deckungsgleich (neue Bausteine rein,
+  weggefallene gepruned), von Hand angeheftete Bausteine bleiben. Bei Korpus-Update ebenfalls neu bauen.
 - **Dokumentenorientiert:** Ergebnisse so aufbereiten, dass sie in ein ISMS/eine Doku übernehmbar sind
   (IDs, Wortlaut, Quelle, Edition). Wo sinnvoll als Tabelle.
 

@@ -15,56 +15,65 @@ Der Vorrat ist die **Volltext-Ergänzung** zur kuratierten, begründeten Auswahl
 `IAM-Grundschutz-Bausteine`-artige Notizen). Die Auswahl (welche Bausteine) kommt aus `gs-modellierung`
 oder einer expliziten Liste; dieser Skill liefert die Texte dazu.
 
-## Baustein-Satz bestimmen
+## Zwei Modi
 
-- Aus einer Modellierung: `gs coverage`/`gs list --target …` (siehe `gs-modellierung`) → die zutreffenden
-  Baustein-IDs.
-- Oder explizit: eine gegebene Liste (z.B. `SYS.1.1 CON.1 ORP.4 NET.3.4 APP.2.1 …`).
-- IDs sind **Bausteine** (Gruppen, z.B. `SYS.1.1`) — der Vorrat rendert dann Übersicht/Gefährdungslage +
-  alle Anforderungen darunter. Einzelne Anforderungs-IDs (`CON.1.A4`) werden ebenfalls akzeptiert.
+**(1) Szenario-Modus (empfohlen, Edition 2023)** — der Satz wird aus den **Asset-Typen des Plans**
+abgeleitet (`--targets`, dieselbe Heuristik wie `gs coverage`: komponentengebundene Bausteine +
+übergreifende). Ändert sich der Netzplan, wird der Satz beim Rebuild **deckungsgleich** nachgeführt.
 
-## Erzeugen
+**(2) Manuell-Modus** — explizite Baustein-IDs (`SYS.1.1 CON.1 …`), additiv, ohne Pruning. Für
+grundschutz-pp der einzige Weg (dort modelliert `coverage` Anforderungen, keine Baustein-Menge).
+
+Bausteine sind **Gruppen** (z.B. `SYS.1.1`) → gerendert werden Übersicht/Gefährdungslage + alle
+Anforderungen darunter. Einzelne Anforderungs-IDs (`CON.1.A4`) sind ebenfalls erlaubt.
+
+## Erzeugen (Szenario)
 
 ```bash
-nix run .#gs -- [--edition edition-2023] cache \
+nix run .#gs -- --edition edition-2023 cache \
   --out <projektpfad>/<Name>-Bausteine-Vorrat.md \
   --title "IAM-Stack" \
-  SYS.1.1 CON.1 ORP.4 NET.3.4 APP.2.1
+  --targets "Server,Netz,Verzeichnisdienst,Virtualisierung" \
+  APP.2.3            # optionale Hand-Pins (Bausteine, die die Heuristik nicht liefert)
 ```
 
-- **`--out`** (Pflicht): Zielpfad. Die Datei liegt **neben den Projektdateien** — meist im Vault-Projektordner.
-  Keinen Ort ausdenken; ist es ein externer Ordner, nennt der User ihn. Elternverzeichnis wird angelegt.
-- **`--edition`**: `edition-2023` (klassisches Kompendium) oder `grundschutz-pp` (Default). Muss zur
-  Projektmethodik passen.
-- **`--title`**: Überschrift/Frontmatter-Titel des Vorrats.
+- **`--out`** (Pflicht): Zielpfad **neben den Projektdateien** — meist im Vault-Projektordner. Keinen Ort
+  ausdenken; ist es ein externer Ordner, nennt der User ihn. Elternverzeichnis wird angelegt.
+- **`--targets`**: Asset-Typen des Plans (Liste via `gs --edition edition-2023 coverage` ohne Argument).
+- **Positionale IDs** bei gesetztem `--targets` = **Hand-Pins**: Bausteine, die immer im Vorrat bleiben,
+  auch wenn die Heuristik sie nicht ableitet (vgl. die „bedingt/prüfen"-Zeilen einer Modellierungs-Note).
+- **`--title`**: Überschrift/Frontmatter-Titel.
 
-Der Vorrat bekommt YAML-Frontmatter (`gs_cache: true`, `edition`, `quelle_sha256`, `erzeugt`, `bausteine`)
-und je Baustein den Volltext — Anforderungs-Wortlaut **textgleich zu `gs get`** (Parameter aufgelöst,
-`sec_level`/`effort_level`, Pfad, Quelle CC BY-SA 4.0).
+Der Vorrat bekommt YAML-Frontmatter (`gs_cache`, `edition`, `targets`, `quelle_sha256`, `erzeugt`,
+`bausteine`, `bausteine_manuell`) und je Baustein den Volltext — Anforderungs-Wortlaut **textgleich zu
+`gs get`** (Parameter aufgelöst, `sec_level`/`effort_level`, Pfad, Quelle CC BY-SA 4.0).
 
-## Rebuild / Nachziehen (idempotent)
+## Rebuild — aus dem Szenario neu ableiten (mit Pruning)
 
-Der Rebuild ist einfach **dasselbe Kommando erneut** — Idempotenz über den `sha256` der `catalog.json`:
+Der Rebuild ist **dasselbe Kommando erneut**. Im Szenario-Modus wird der Satz aus `targets` **neu
+abgeleitet** und **deckungsgleich** gemacht — neue Bausteine rein, weggefallene raus; Hand-Pins bleiben.
+Idempotenz über den `sha256` der `catalog.json` + unveränderte `targets`/Pins.
 
 ```bash
-# auffrischen (IDs aus der Datei), überspringt wenn Korpus unverändert:
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md
+# Komponente ergänzen (z.B. Windows-Server -> Asset-Typ "Server" liefert SYS.1.2.2; neuer Typ -> dessen Bausteine):
+nix run .#gs -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz,Verzeichnisdienst,Datenbank"
+#   -> meldet: nachgezogen: APP.4.3 …
 
-# zusätzliche Bausteine nachziehen (werden an den bestehenden Satz ergänzt):
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md APP.2.3 APP.6
+# Komponente entfällt -> targets reduzieren -> deren Bausteine werden gepruned (Hand-Pins bleiben):
+nix run .#gs -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz"
+#   -> meldet: entfernt (pruned): …
 
-# Re-Render erzwingen (z.B. nach einer Renderer-Änderung in gs.py, obwohl der Korpus gleich blieb):
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md --force
+# Hand-Pin entfernen:
+nix run .#gs -- --edition edition-2023 cache --out <datei>.md --unpin APP.2.3
 
-# Frische prüfen (gespeicherter sha vs. aktueller Korpus):
+# unverändert -> nichts zu tun;  --force erzwingt Re-Render;  --status zeigt Frische + targets + Pins
 nix run .#gs -- --edition edition-2023 cache --out <datei>.md --status
 ```
 
-- Ist der Korpus **unverändert** und werden **keine neuen IDs** übergeben (und kein `--force`), meldet der
-  Lauf „Vorrat aktuell — nichts zu tun".
-- Neue IDs werden zum gespeicherten Satz **gemergt** (nachgezogen), die Datei komplett neu geschrieben.
-- Änderte sich der Korpus (`gs-ingest`), meldet `--status` „VERALTET" → einmal ohne `--force` neu bauen
-  auffrischt alle Texte.
+- Wird `--targets` beim Rebuild weggelassen, gelten die **gespeicherten** `targets` (nur auffrischen).
+- **Manuell-Modus** (keine `targets` gespeichert/übergeben): neue IDs werden additiv **nachgezogen**,
+  ohne Pruning; `--unpin` gibt es dort nicht.
+- Änderte sich der Korpus (`gs-ingest`), meldet `--status` „VERALTET" → einmal neu bauen frischt alle Texte auf.
 
 ## Nutzung durch den Agenten
 
