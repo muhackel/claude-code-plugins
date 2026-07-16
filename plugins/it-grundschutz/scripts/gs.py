@@ -24,10 +24,14 @@ Kommandos:
   crosswalk <ID> [--top N]  Heuristischer Crosswalk: Quell-ID (jeweils ANDERE Edition) → Top-Kandidaten
                     der aktiven Edition per Token-Überlappung (kein offizielles BSI-Mapping)
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
-  cache --out <datei.md> <BAUSTEIN-ID...>  projekt-lokaler Baustein-Vorrat: Volltexte (wie 'get') je
-                    Baustein in eine Markdown-Datei materialisieren. Flags: --title "..", --force,
-                    --status (Frische prüfen). Erneut ausführen = Rebuild (idempotent über sha256 der
-                    catalog.json); zusätzliche IDs werden nachgezogen, --force erzwingt Re-Render.
+  cache --out <datei.md> [BAUSTEIN-ID...]  projekt-lokaler Baustein-Vorrat: Volltexte (wie 'get') je
+                    Baustein in eine Markdown-Datei materialisieren. Zwei Modi:
+                    (1) Szenario (Edition 2023):  --targets "Server,Netz,.."  leitet den Satz ab (wie
+                        coverage); Rebuild re-derived MIT Pruning (Satz deckungsgleich zum Plan).
+                        Positionale IDs = Hand-Pins (bleiben), --unpin <ID> entfernt einen.
+                    (2) Manuell:  explizite Baustein-IDs (additiv, kein Pruning).
+                    Flags: --title "..", --force (Re-Render), --status (Frische prüfen). Idempotent
+                    über sha256 der catalog.json; erneut ausführen = Rebuild.
 
 Beispiele:
   gs.py status
@@ -1079,21 +1083,20 @@ def _read_frontmatter(path):
     end = text.find("\n---", 3)
     if end < 0:
         return None
-    meta = {"bausteine": []}
+    meta = {}
     cur_list = None
     for line in text[3:end].strip("\n").splitlines():
         if line.startswith("  - "):
-            if cur_list:
-                meta[cur_list].append(line[4:].strip())
+            if cur_list is not None:
+                meta.setdefault(cur_list, []).append(line[4:].strip())
             continue
         cur_list = None
         if ":" in line:
             k, _, v = line.partition(":")
             k, v = k.strip(), v.strip()
             if v == "":
-                if k == "bausteine":
-                    cur_list = "bausteine"
-                    meta["bausteine"] = []
+                cur_list = k
+                meta.setdefault(k, [])
             else:
                 meta[k] = v.strip('"')
     return meta
@@ -1109,10 +1112,35 @@ def _cache_uniq(ids):
     return out
 
 
+def derive_bausteine_2023(cat, hints, targets):
+    """Baustein-Satz aus Asset-Typen ableiten (Edition 2023, plugin-eigene Hinttabelle, heuristisch —
+    dieselbe Menge wie 'coverage'): übergreifende Bausteine (immer) + komponentengebundene, deren
+    Komponenten die Assets treffen. Liefert (bids_geordnet, unbekannte_asset_typen)."""
+    wanted, unknown = set(), []
+    for t in targets:
+        canon = _resolve_component(t, hints)
+        if canon:
+            wanted.add(canon)
+        else:
+            unknown.append(t)
+    corpus = set()
+    for _, path in walk_controls(cat):
+        if not path:
+            continue
+        bid, _ = path[-1]
+        if bid and " " not in bid:  # 'G 0' (Elementare Gefährdungen) ausschließen
+            corpus.add(bid)
+    present = [(bid, rec) for bid, rec in hints["by_id"].items() if bid in corpus]
+    cross = [bid for bid, rec in present if rec["bindung"] == "übergreifend"]
+    union = [bid for bid, rec in present
+             if rec["bindung"] != "übergreifend" and rec["komponenten"] & wanted]
+    return cross + union, unknown
+
+
 def cmd_cache(cat, rest):
     out = title = None
     force = status = False
-    pos = []
+    targets, unpin, pos = [], [], []
     i = 0
     while i < len(rest):
         a = rest[i]
@@ -1121,6 +1149,12 @@ def cmd_cache(cat, rest):
             i += 2
         elif a == "--title" and i + 1 < len(rest):
             title = rest[i + 1]
+            i += 2
+        elif a == "--targets" and i + 1 < len(rest):
+            targets += [t.strip() for t in rest[i + 1].split(",") if t.strip()]
+            i += 2
+        elif a == "--unpin" and i + 1 < len(rest):
+            unpin.append(rest[i + 1])
             i += 2
         elif a == "--force":
             force = True
@@ -1132,39 +1166,74 @@ def cmd_cache(cat, rest):
             pos.append(a)
             i += 1
     if not out:
-        die('cache braucht --out <datei.md>.  Beispiel:  gs.py cache --out projekt/Vorrat.md CON.1 ORP.4')
+        die('cache braucht --out <datei.md>.  Beispiel:  '
+            'gs.py cache --out projekt/Vorrat.md --targets "Server,Netz"  |  ... CON.1 ORP.4')
 
     existing = _read_frontmatter(out)
     cur_sha = _catalog_sha()
+    old_ids = existing.get("bausteine", []) if existing else []
+    old_targets = existing.get("targets", []) if existing else []
+    old_pins = existing.get("bausteine_manuell", []) if existing else []
 
     if status:
         if not existing:
             die(f'Kein Vorrat unter {out}.')
-        stale = existing.get("quelle_sha256") != cur_sha
-        n = len(existing.get("bausteine", []))
-        print(f'Vorrat {out}\n  Edition:   {existing.get("edition", "?")}\n'
-              f'  Bausteine: {n}\n  Erzeugt:   {existing.get("erzeugt", "?")}\n'
-              f'  Zustand:   {"VERALTET (Korpus geändert) — rebuild nötig" if stale else "aktuell"}')
+        lines = [f'Vorrat {out}', f'  Edition:   {existing.get("edition", "?")}',
+                 f'  Bausteine: {len(old_ids)}']
+        if old_targets:
+            lines.append(f'  Targets:   {", ".join(old_targets)}')
+        if old_pins:
+            lines.append(f'  Hand-Pins: {", ".join(old_pins)}')
+        lines += [f'  Erzeugt:   {existing.get("erzeugt", "?")}',
+                  f'  Zustand:   {"VERALTET (Korpus geändert) — rebuild nötig" if existing.get("quelle_sha256") != cur_sha else "aktuell"}']
+        print("\n".join(lines))
         return
 
-    ids = _cache_uniq(pos)
-    if existing:
-        old_ids = existing.get("bausteine", [])
-        new_ids = [i for i in ids if i.lower() not in {o.lower() for o in old_ids}]
-        merged = old_ids + new_ids
-        if existing.get("quelle_sha256") == cur_sha and not new_ids and not force:
-            print(f'Vorrat aktuell ({len(old_ids)} Bausteine) — nichts zu tun. '
-                  f'(--force erzwingt Neubau, zusätzliche IDs werden nachgezogen.)')
-            return
-        ids = merged
-        title = title or existing.get("titel")
-    elif not ids:
-        die('Neuer Vorrat braucht mindestens eine Baustein-ID (oder --rebuild auf eine bestehende Datei).')
+    eff_targets = _cache_uniq(targets) if targets else old_targets
 
-    title = title or os.path.splitext(os.path.basename(out))[0]
+    if eff_targets:
+        # Szenario-Modus: Baustein-Satz aus Asset-Typen ableiten (mit Pruning), Hand-Pins überleben.
+        if EDITION != "edition-2023":
+            die('Szenario-Modus (--targets) gibt es nur für Edition 2023 (Baustein-Hinttabelle). '
+                'Für Grundschutz++ die Bausteine explizit als IDs angeben.')
+        hints = load_baustein_hints()
+        if hints is None:
+            die("Hinttabelle fehlt (data/edition-2023-baustein-komponenten.csv) — Plugin unvollständig?")
+        derived, unknown = derive_bausteine_2023(cat, hints, eff_targets)
+        if unknown:
+            die(f'Unbekannte Asset-Typen: {", ".join(unknown)}.\n'
+                f'Verfügbar: {", ".join(sorted(hints["components"]))}')
+        pins = _cache_uniq(old_pins + pos)
+        if unpin:
+            drop = {u.lower() for u in unpin}
+            pins = [p for p in pins if p.lower() not in drop]
+        dl = {d.lower() for d in derived}
+        final = derived + [p for p in pins if p.lower() not in dl]
+    else:
+        # Manuell-Modus (additive ID-Liste, rückwärtskompatibel zu v0.2.0).
+        if unpin:
+            die('--unpin gibt es nur im Szenario-Modus (--targets).')
+        new_ids = [i for i in _cache_uniq(pos) if i.lower() not in {o.lower() for o in old_ids}]
+        final = old_ids + new_ids
+        pins = old_pins
+
+    if not final:
+        die('Vorrat braucht mindestens eine Baustein-ID oder --targets <Asset-Typen>.')
+
+    title = title or (existing.get("titel") if existing else None) or os.path.splitext(os.path.basename(out))[0]
+
+    added = [b for b in final if b.lower() not in {o.lower() for o in old_ids}]
+    removed = [o for o in old_ids if o.lower() not in {f.lower() for f in final}]
+    sha_same = bool(existing) and existing.get("quelle_sha256") == cur_sha
+    targets_same = {t.lower() for t in old_targets} == {t.lower() for t in eff_targets}
+    pins_same = {p.lower() for p in old_pins} == {p.lower() for p in pins}
+    if existing and sha_same and not added and not removed and targets_same and pins_same and not force:
+        print(f'Vorrat aktuell ({len(final)} Bausteine) — nichts zu tun. '
+              f'(--force erzwingt Re-Render.)')
+        return
 
     blocks, missing = [], []
-    for bid in ids:
+    for bid in final:
         g, gpath = find_group(cat, bid)
         if g is not None:
             blocks.append(render_baustein(g, gpath))
@@ -1174,19 +1243,26 @@ def cmd_cache(cat, rest):
             blocks.append(fmt_control(c, cpath, "anwender"))
             continue
         missing.append(bid)
-
     if missing:
         die(f'Nicht gefunden: {", ".join(missing)}. Prüfen mit:  gs.py groups | gs.py search <begriff>')
 
-    head = ["---", "gs_cache: true", f"edition: {EDITION}", f"titel: {title}",
-            f"quelle_sha256: {cur_sha}", f"erzeugt: {date.today().isoformat()}", "bausteine:"]
-    head += [f"  - {i}" for i in ids]
+    head = ["---", "gs_cache: true", f"edition: {EDITION}", f"titel: {title}"]
+    if eff_targets:
+        head.append("targets:")
+        head += [f"  - {t}" for t in eff_targets]
+    head += [f"quelle_sha256: {cur_sha}", f"erzeugt: {date.today().isoformat()}", "bausteine:"]
+    head += [f"  - {i}" for i in final]
+    if pins:
+        head.append("bausteine_manuell:")
+        head += [f"  - {p}" for p in pins]
+    hint = ("--targets \"…\" [--unpin ID]" if eff_targets else "[neue IDs] [--force]")
     head += [f'description: "Materialisierter Grundschutz-Baustein-Vorrat ({EDITION}) — generiert von '
              f'gs cache, nicht händisch editieren."', "---", "",
              f"# {title} — Baustein-Vorrat (Volltext)", "",
              "> **Generiert von `gs cache` — nicht händisch editieren.** "
-             "Auffrischen/nachziehen:  `nix run .#gs -- cache --out <diese Datei> [neue IDs] [--force]`.",
-             f"> Edition: {EDITION} · {src_line()} · {len(ids)} Bausteine.", ""]
+             f"Rebuild:  `nix run .#gs -- cache --out <diese Datei> {hint}`.",
+             f"> Edition: {EDITION} · {src_line()} · {len(final)} Bausteine"
+             + (f" (aus Targets: {', '.join(eff_targets)})" if eff_targets else "") + ".", ""]
     body = "\n".join(head) + "\n" + "\n\n".join(blocks) + "\n"
 
     d = os.path.dirname(os.path.abspath(out))
@@ -1195,8 +1271,16 @@ def cmd_cache(cat, rest):
     with open(tmp, "w", encoding="utf-8") as f:
         f.write(body)
     os.replace(tmp, out)
+
     verb = "aktualisiert" if existing else "erzeugt"
-    print(f'Vorrat {verb}: {out} ({len(ids)} Bausteine, Edition {EDITION}).')
+    msg = f'Vorrat {verb}: {out} ({len(final)} Bausteine, Edition {EDITION}).'
+    if existing and added:
+        msg += f'\n  nachgezogen: {", ".join(added)}'
+    if existing and removed:
+        msg += f'\n  entfernt (pruned): {", ".join(removed)}'
+    if pins:
+        msg += f'\n  Hand-Pins behalten: {", ".join(pins)}'
+    print(msg)
 
 
 def main():

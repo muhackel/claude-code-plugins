@@ -61,8 +61,9 @@ nix run .#gs -- checklist UMS KONF.2  # leere Soll-Ist-Check-Vorlage (mehrere Gr
 nix run .#gs -- crosswalk SYS.1.1.A5  # heuristischer Crosswalk: 2023-ID → Top-Kandidaten in ++ — Basis für gs-crosswalk
 
 # Baustein-Vorrat (projekt-lokal materialisieren) — Basis für gs-cache
-nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md --title "IAM" SYS.1.1 CON.1 ORP.4  # Volltexte je Baustein
-nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md APP.2.3   # zusätzliche IDs nachziehen (idempotent)
+nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md --title "IAM" --targets "Server,Netz,Verzeichnisdienst" APP.2.3  # Satz aus Szenario ableiten (+ Hand-Pin)
+nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md --targets "Server,Netz,Verzeichnisdienst,Datenbank"            # Rebuild: neue Bausteine rein, weggefallene gepruned (Δ-Ausgabe)
+nix run .#gs -- --edition edition-2023 cache --out projekt/Vorrat.md --status   # Frische + targets + Hand-Pins
 
 # Edition 2023 abfragen (--edition vor dem Kommando)
 nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
