@@ -24,6 +24,10 @@ Kommandos:
   crosswalk <ID> [--top N]  Heuristischer Crosswalk: Quell-ID (jeweils ANDERE Edition) → Top-Kandidaten
                     der aktiven Edition per Token-Überlappung (kein offizielles BSI-Mapping)
   json <ID>         rohes OSCAL-Control (für crosswalk/debug)
+  cache --out <datei.md> <BAUSTEIN-ID...>  projekt-lokaler Baustein-Vorrat: Volltexte (wie 'get') je
+                    Baustein in eine Markdown-Datei materialisieren. Flags: --title "..", --force,
+                    --status (Frische prüfen). Erneut ausführen = Rebuild (idempotent über sha256 der
+                    catalog.json); zusätzliche IDs werden nachgezogen, --force erzwingt Re-Render.
 
 Beispiele:
   gs.py status
@@ -35,11 +39,13 @@ Beispiele:
 """
 import csv
 import difflib
+import hashlib
 import json
 import os
 import re
 import sys
 from collections import Counter
+from datetime import date
 
 PARAM_RE = re.compile(r"\{\{\s*insert:\s*param,\s*([^}\s,]+)\s*\}\}")
 
@@ -1013,6 +1019,186 @@ def _split_target_opts(args):
     return pos, target, inherit
 
 
+# --- cache: projekt-lokaler Baustein-Vorrat (Volltexte materialisieren) ---
+
+def walk_groups(node, path=()):
+    """Yieldet (gruppe, pfad-zum-elter) rekursiv über den Gruppenbaum."""
+    here = path + (((node.get("id"), node.get("title")),)) if node.get("id") else path
+    for g in node.get("groups", []) or []:
+        yield g, here
+        yield from walk_groups(g, here)
+
+
+def find_group(cat, gid):
+    """Baustein/Gruppe per ID (analog find_control). Liefert (gruppe, elter-pfad)."""
+    if not cat:
+        return None, None
+    gid = gid.strip().lower()
+    for g, path in walk_groups(cat):
+        if (g.get("id") or "").lower() == gid:
+            return g, path
+    return None, None
+
+
+def render_baustein(node, parent_path):
+    """Voller Baustein-Text: Überblick/Gefährdungslage der Gruppe + fmt_control je Anforderung.
+    Der Anforderungs-Wortlaut ist textgleich zu 'gs get'."""
+    out = [f'## {node.get("id")} — {node.get("title", "")}']
+    crumbs = " → ".join(f'{gid} {gt}'.strip() for gid, gt in parent_path if gid)
+    if crumbs:
+        out.append(f'Pfad: {crumbs}')
+    ov = part_text(node, "overview")
+    if ov:
+        out.append("\nBeschreibung:\n" + ov)
+    gd = part_text(node, "guidance")
+    if gd:
+        out.append("\nGefährdungslage:\n" + gd)
+    ctrls = list(walk_controls(node, parent_path))
+    out.append(f'\n{len(ctrls)} Anforderungen:')
+    for c, cpath in ctrls:
+        out.append("\n" + fmt_control(c, cpath, "anwender"))
+    return "\n".join(out)
+
+
+def _catalog_sha():
+    h = hashlib.sha256()
+    with open(CATALOG, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _read_frontmatter(path):
+    """Minimaler YAML-Frontmatter-Leser (nur die Keys, die 'gs cache' schreibt)."""
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    if not text.startswith("---"):
+        return None
+    end = text.find("\n---", 3)
+    if end < 0:
+        return None
+    meta = {"bausteine": []}
+    cur_list = None
+    for line in text[3:end].strip("\n").splitlines():
+        if line.startswith("  - "):
+            if cur_list:
+                meta[cur_list].append(line[4:].strip())
+            continue
+        cur_list = None
+        if ":" in line:
+            k, _, v = line.partition(":")
+            k, v = k.strip(), v.strip()
+            if v == "":
+                if k == "bausteine":
+                    cur_list = "bausteine"
+                    meta["bausteine"] = []
+            else:
+                meta[k] = v.strip('"')
+    return meta
+
+
+def _cache_uniq(ids):
+    seen, out = set(), []
+    for i in ids:
+        i = i.strip()
+        if i and i.lower() not in seen:
+            seen.add(i.lower())
+            out.append(i)
+    return out
+
+
+def cmd_cache(cat, rest):
+    out = title = None
+    force = status = False
+    pos = []
+    i = 0
+    while i < len(rest):
+        a = rest[i]
+        if a == "--out" and i + 1 < len(rest):
+            out = rest[i + 1]
+            i += 2
+        elif a == "--title" and i + 1 < len(rest):
+            title = rest[i + 1]
+            i += 2
+        elif a == "--force":
+            force = True
+            i += 1
+        elif a == "--status":
+            status = True
+            i += 1
+        else:
+            pos.append(a)
+            i += 1
+    if not out:
+        die('cache braucht --out <datei.md>.  Beispiel:  gs.py cache --out projekt/Vorrat.md CON.1 ORP.4')
+
+    existing = _read_frontmatter(out)
+    cur_sha = _catalog_sha()
+
+    if status:
+        if not existing:
+            die(f'Kein Vorrat unter {out}.')
+        stale = existing.get("quelle_sha256") != cur_sha
+        n = len(existing.get("bausteine", []))
+        print(f'Vorrat {out}\n  Edition:   {existing.get("edition", "?")}\n'
+              f'  Bausteine: {n}\n  Erzeugt:   {existing.get("erzeugt", "?")}\n'
+              f'  Zustand:   {"VERALTET (Korpus geändert) — rebuild nötig" if stale else "aktuell"}')
+        return
+
+    ids = _cache_uniq(pos)
+    if existing:
+        old_ids = existing.get("bausteine", [])
+        new_ids = [i for i in ids if i.lower() not in {o.lower() for o in old_ids}]
+        merged = old_ids + new_ids
+        if existing.get("quelle_sha256") == cur_sha and not new_ids and not force:
+            print(f'Vorrat aktuell ({len(old_ids)} Bausteine) — nichts zu tun. '
+                  f'(--force erzwingt Neubau, zusätzliche IDs werden nachgezogen.)')
+            return
+        ids = merged
+        title = title or existing.get("titel")
+    elif not ids:
+        die('Neuer Vorrat braucht mindestens eine Baustein-ID (oder --rebuild auf eine bestehende Datei).')
+
+    title = title or os.path.splitext(os.path.basename(out))[0]
+
+    blocks, missing = [], []
+    for bid in ids:
+        g, gpath = find_group(cat, bid)
+        if g is not None:
+            blocks.append(render_baustein(g, gpath))
+            continue
+        c, cpath = find_control(cat, bid)
+        if c is not None:
+            blocks.append(fmt_control(c, cpath, "anwender"))
+            continue
+        missing.append(bid)
+
+    if missing:
+        die(f'Nicht gefunden: {", ".join(missing)}. Prüfen mit:  gs.py groups | gs.py search <begriff>')
+
+    head = ["---", "gs_cache: true", f"edition: {EDITION}", f"titel: {title}",
+            f"quelle_sha256: {cur_sha}", f"erzeugt: {date.today().isoformat()}", "bausteine:"]
+    head += [f"  - {i}" for i in ids]
+    head += [f'description: "Materialisierter Grundschutz-Baustein-Vorrat ({EDITION}) — generiert von '
+             f'gs cache, nicht händisch editieren."', "---", "",
+             f"# {title} — Baustein-Vorrat (Volltext)", "",
+             "> **Generiert von `gs cache` — nicht händisch editieren.** "
+             "Auffrischen/nachziehen:  `nix run .#gs -- cache --out <diese Datei> [neue IDs] [--force]`.",
+             f"> Edition: {EDITION} · {src_line()} · {len(ids)} Bausteine.", ""]
+    body = "\n".join(head) + "\n" + "\n\n".join(blocks) + "\n"
+
+    d = os.path.dirname(os.path.abspath(out))
+    os.makedirs(d, exist_ok=True)
+    tmp = out + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(body)
+    os.replace(tmp, out)
+    verb = "aktualisiert" if existing else "erzeugt"
+    print(f'Vorrat {verb}: {out} ({len(ids)} Bausteine, Edition {EDITION}).')
+
+
 def main():
     edition, args = _parse_edition(sys.argv[1:])
     set_edition(edition)
@@ -1048,6 +1234,8 @@ def main():
         cmd_crosswalk(cat, rest)
     elif cmd == "json" and rest:
         cmd_json(cat, rest[0], methodik)
+    elif cmd == "cache":
+        cmd_cache(cat, rest)
     else:
         die(__doc__)
 
