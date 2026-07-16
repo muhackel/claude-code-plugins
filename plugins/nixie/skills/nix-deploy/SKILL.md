@@ -21,9 +21,12 @@ Terminal).
 Läuft Nixie als **Subagent** (via Agent/Task-Tool gespawnt — der Normalfall beim `/nixie`-Command), gilt eine
 harte Grenze: Die Harness **detacht jeden Bash-Call nach ~120 s automatisch in den Hintergrund und beendet
 den Subagent-Turn** — und ein Subagent wird danach **nicht wieder aufgeweckt** (anders als der Hauptloop, der
-auf die Completion-Notification reagiert). Ein kompilier-schwerer Schritt (`nixos-rebuild build/switch`,
-`nix flake check`, große `nix copy`-Closures) lässt sich darum als Subagent **nicht** „im Vordergrund bis
-durch" fahren — er verwaist zwangsläufig, der Build läuft führungslos weiter und die Folgeschritte
+auf die Completion-Notification reagiert). Das Kriterium ist **Wanduhr-Dauer > ~120 s**, NICHT „ist es ein
+Build". Betroffen sind also nicht nur kompilier-schwere Schritte (`nixos-rebuild build/switch`,
+`nix flake check`), sondern **genauso** reine I/O-Long-Runner: `nix-store --export`/`nix copy` großer
+Closures, Archiv-Kompression (`zstd`) auf externe/langsame Medien (USB, exFAT). Alle lassen sich als
+Subagent **nicht** „im Vordergrund bis durch" fahren — der Schritt verwaist zwangsläufig, läuft führungslos
+weiter (bei einem Export reißt dabei die Pipe mittendrin ab → korruptes Teilarchiv) und die Folgeschritte
 (Auswertung, commit, switch) bleiben liegen. Das ist KEIN Bug zum Umgehen, sondern die dokumentierte
 Architektur (Subagenten = selbstbegrenzte Tasks mit Summary; lange Arbeit gehört zum Hauptagenten).
 
@@ -36,8 +39,16 @@ Regel für den Subagent-Fall:
   `lsblk`, git, `flake.lock`-Manipulation, Erreichbarkeitstest. Auch eine reine Aktivierung bei warmem Store
   (Build schon im Cache, nur `switch`) darf der Subagent fahren — aber konservativ schätzen; im Zweifel
   delegieren.
-- Der Grund ist die **Build-Dauer**, nicht sudo: `nixos-rebuild switch --sudo` läuft beim User passwortlos
-  durch — ein kurzer Aktivierungs-`switch` scheitert also nicht am sudo, sondern nur lange Builds am Detach.
+- Der Grund ist die **Dauer**, nicht sudo: `nixos-rebuild switch --sudo` läuft beim User passwortlos
+  durch — ein kurzer Aktivierungs-`switch` scheitert also nicht am sudo, sondern nur lange Läufe am Detach.
+- **Nie eine zweite Nixie starten, solange die erste noch läuft.** Ein Neustart steuert die bereits
+  führungslos laufende Erstinstanz nicht — die verwaist nach ~10 min und reißt ihren Job (Build/Export) ab.
+  Die „delegieren statt verwaisen"-Regel macht „mit der laufenden Nixie weitersprechen" ohnehin unnötig; ist
+  eine Erstinstanz noch aktiv, erst sauber beenden/abwarten.
+- **Export-Integrität** (wenn ein Export doch im resilienten Kontext läuft): `set -euo pipefail` (das
+  `pipefail` ist essenziell — sonst maskiert ein grüner `zstd` einen abgebrochenen `nix-store --export`
+  davor), und die `.sha256` **erst nach** erfolgreichem Integritätscheck (`zstd -t <archiv>`) erzeugen —
+  sonst hinterlässt ein abgebrochener Pipe ein Teilarchiv samt falscher, zu früh geschriebener Prüfsumme.
 
 ## `nix flake check` — Regel
 
@@ -66,11 +77,17 @@ Aktueller `nixos-rebuild` ist die ng-Variante (Python-Rewrite). Wichtig:
   geladen" liefert `dry-build` (nicht mehr `--dry-run`).
 - **Nix-Build-Flags stehen VOR der Aktion:** `nixos-rebuild --max-jobs N --cores M <aktion>`
   (auch `--keep-going`, `--option …`).
-- **Aktivierung als Nicht-Root:** `--sudo` (lokal) bzw. `-S`/`--ask-sudo-password` (fragt Sudo-Passwort,
-  nötig für Remote-Aktivierung via `--target-host`).
+- **Aktivierung als Nicht-Root (Elevation):** `--elevate {none,sudo,run0}`; `--sudo` = Alias für
+  `--elevate=sudo` und nutzt **passwortloses** sudo **ohne** Prompt — der Default-Weg, lokal wie remote.
+  `-S`/`--ask-elevate-password` (Alt-Alias `--ask-sudo-password`) **erzwingt einen interaktiven
+  Passwort-Prompt** und impliziert `--elevate=sudo` — im nicht-interaktiven Hauptloop **unbedienbar**, nur
+  wenn das Ziel-sudo wirklich ein Passwort verlangt. Für Remote-Aktivierung via `--target-host` mit
+  passwortlosem sudo: `--elevate=sudo` **ohne** `-S`; vorab prüfen `ssh -o BatchMode=yes user@<ziel> 'sudo -n true'`.
 - **Host-Flags:** `--build-host user@host` (Kompilation dort), `--target-host user@host` (Aktivierung dort);
-  beide nehmen einen ssh-erreichbaren Host, SSH-Optionen via `NIX_SSHOPTS`. `--use-substitutes`, wenn der
-  Ziel-/Build-Host schneller am Cache hängt als die Hosts untereinander.
+  beide nehmen einen ssh-erreichbaren Host, SSH-Optionen via `NIX_SSHOPTS`. **Für lokalen Build `--build-host`
+  weglassen** (Default = nativer lokaler Build ohne SSH) — `--build-host localhost` erzwingt eine echte
+  SSH-Loopback-Verbindung und scheitert an veralteten `known_hosts`-Einträgen (*Host key changed*).
+  `--use-substitutes`, wenn der Ziel-/Build-Host schneller am Cache hängt als die Hosts untereinander.
 - **Flake-Auswahl:** `--flake .#<host>` (sonst Auto-Erkennung über Hostname).
 
 ## Eskalationsstufen (Default = niedrigste)
@@ -83,8 +100,10 @@ Die erlaubte Stufe ergibt sich aus der **konkreten Anfrage** des Users — nicht
    Vorher ansagen.
 3. **Remote-Build:** `nixos-rebuild switch --sudo --build-host user@<fast>` — Kompilation auf der schnellen
    Kiste, Aktivierung lokal.
-4. **Remote-Deploy:** `nixos-rebuild switch --build-host user@<fast> --target-host user@<ziel> -S
-   [--use-substitutes] --flake .#<ziel>` — baut auf der schnellen Kiste, aktiviert auf einem anderen Host.
+4. **Remote-Deploy:** `nixos-rebuild switch --target-host user@<ziel> --build-host user@<fast>
+   --elevate=sudo [--use-substitutes] --flake .#<ziel>` — baut auf der schnellen Kiste, aktiviert auf einem
+   anderen Host. **Kein `-S`** (erzwänge einen unbedienbaren Passwort-Prompt); passwortloses Ziel-sudo vorab
+   prüfen: `ssh -o BatchMode=yes user@<ziel> 'sudo -n true'`. Für lokalen Build `--build-host` weglassen.
    Nur auf explizite Anweisung; Ziel-Host vorher nennen und bestätigen lassen.
 
 ## Build-Host-Auswahl
@@ -130,8 +149,9 @@ Die Regel hängt an **„es werden Pakete kompiliert"**, nicht am Befehlsnamen: 
 RAM. Vorgehen:
 
 ```
-# 1) Werte des Build-Hosts (lokal: /proc/meminfo & nproc; remote: via ssh <target>)
-mem   = MemTotal in GiB
+# 1) Kapazität des Build-Hosts (lokal: /proc/meminfo & nproc; remote: via ssh <target>)
+avail = MemAvailable in GiB          # `free -h` Spalte "available" bzw. /proc/meminfo MemAvailable
+                                     # NICHT die "free"-Spalte — buff/cache ist reclaimable
 nproc = Kernzahl
 
 # 2) Was wird wirklich GEBAUT (nicht aus Cache geholt)?
@@ -140,32 +160,38 @@ nix build .#<attr> --dry-run …       # einzelnes Flake-Attribut
 nix flake check …                    # KEIN praktikabler Dry-Run über alle Hosts → defensiv als heavy
 #   (vollständig lesen — kein tail)
 
-# 3) Schwerste Klasse in der Build-Liste bestimmen
-heavy  = chromium | electron | webkitgtk | qtwebengine | firefox | thunderbird | spidermonkey | …
-medium = llvm | gcc | rustc | qtbase | webkit | linux-kernel | … (große C/C++/Rust)
-light  = alles andere
+# 3) Wird etwas Schweres gebaut? (dann drosseln; sonst nicht)
+heavy/medium = chromium | electron | webkitgtk | qtwebengine | firefox | thunderbird |
+               llvm | gcc | rustc | qtbase | linux-kernel | … (große C/C++/Rust-Builds)
+light        = kleines Einzelpaket ohne Riesen-Dependency → NICHT drosseln (MJ/CO weglassen)
 
-# 4) Jobs/Cores setzen — als Top-Level-Flags VOR der Aktion
-heavy  → MJ = clamp(floor(mem / 20), 1, nproc)      # Swap NICHT mitzählen
-         CO = clamp(nproc - MJ, 1, nproc)           # cores NICHT drosseln — nur die Job-Slots abziehen
-medium → MJ = clamp(floor(mem / 6),  1, nproc)       # nur Jobs drosseln, CO weglassen
-light  → keine Drosselung (MJ/CO weglassen)
+# 4) Bei heavy/medium: Jobs/Cores als Top-Level-Flags VOR der Aktion
+# --max-jobs = RAM-Hebel: ~1 schwerer Job pro 16 GiB available (freier RAM, NICHT MemTotal)
+MJ = clamp(floor(avail / 16), 1, nproc)
+# --cores = NIX_BUILD_CORES PRO Job (man nix.conf): 15/16 der VERBAUTEN Kerne, abgerundet
+CO = clamp(floor(nproc * 15 / 16), 1, nproc)     # 32→30, 20→18, 16→15, 4→3
 
 # anwenden:
 nixos-rebuild --max-jobs <MJ> --cores <CO> <aktion> …      # z.B. dry-build/build/switch
 nix build .#<attr> --max-jobs <MJ> --cores <CO> …
-# bei Remote-Build (--build-host) zählen mem/nproc des Remote-Hosts (via ssh ermittelt)
+nix flake check   --max-jobs <MJ> --cores <CO> -L
+# bei Remote-Build (--build-host) zählen avail/nproc des Remote-Hosts (via ssh ermittelt)
 ```
 
+- **`--max-jobs` = RAM-Hebel, `--cores` = CPU-Hebel — zwei getrennte Ressourcen.** `--max-jobs` bestimmt,
+  wie viele Derivations *parallel* bauen; jeder Job hält seinen eigenen Heap/Link-Peak → **er** treibt den
+  RAM. Basis ist der **freie** RAM (`MemAvailable`, nicht `MemTotal`, nicht die `free`-Spalte): ~1 schwerer
+  Job pro 16 GiB available. `free -h` als Preflight vor schweren Builds.
+- **`--cores` = NIX_BUILD_CORES pro Job** (`man nix.conf`: „the number of CPU cores to use for **each build
+  job**", unabhängig von `--max-jobs`, kein geteilter Pool). Fest auf **15/16 der verbauten Kerne, abgerundet**
+  (`floor(nproc*15/16)`): lässt ~1/16 der Kerne fürs Desktop frei, ohne die Builds spürbar zu bremsen. Zwei
+  Heavy-Jobs treffen ihren Parallel-Peak selten gleichzeitig → das erzeugt keine Dauer-100-%-Last.
 - **Swap zählt nicht als Job-Kapazität** — nur als OOM-Puffer für den einzelnen Link-Peak. Swap-Thrashing
   reißt sonst Timeouts/Checks.
-- **Nur `--max-jobs` drosselt RAM, nicht `--cores`.** Der OOM-Druck kommt von parallelen Jobs (jeder hält
-  seinen eigenen Heap/Link-Peak). `--cores` steuert nur die Parallelität *innerhalb* eines Jobs; es runterzu-
-  drehen bringt RAM-seitig nichts, macht aber die single-threaded configure-Stage langsamer. Darum cores
-  **nicht** über die Jobs aufteilen, sondern bei `nproc - MJ` lassen (Default-„alle Cores" wäre `0`).
 - Drosselung greift **nur**, wenn der Dry-Run schwere/mittlere Pakete als "will be built" zeigt. Ein kleines
   Einzelpaket ohne Riesen-Dependency → keine Drosselung.
-- Beispiel (128 GiB RAM, 16 Cores, heavy): `--max-jobs = floor(128/20) = 6`, `--cores = 16 - 6 = 10`.
+- Beispiel (spielkiste: 37 GiB available, 32 Cores, heavy): `--max-jobs = floor(37/16) = 2`,
+  `--cores = floor(32*15/16) = 30` → `--max-jobs 2 --cores 30`. Weitere Cores-Stützstellen: 20→18, 16→15, 4→3.
 
 ### Empfehlung an den User (dokumentieren, nicht erzwingen)
 - Disk-Swap ≈ `min(RAM, 64 GiB)`, `vm.swappiness = 10` — fängt den einzelnen Heavy-Link ab.
