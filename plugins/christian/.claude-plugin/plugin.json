@@ -9,6 +9,5 @@
   "license": "MIT",
   "keywords": ["vpn", "openvpn", "wireguard", "ipsec", "strongswan", "wan", "tunnel", "nftables", "frr", "router", "linux", "openwrt"],
   "skills": "./skills",
-  "agents": "./agents",
   "commands": "./commands"
 }

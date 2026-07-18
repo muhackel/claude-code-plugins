@@ -9,6 +9,5 @@
   "license": "MIT",
   "keywords": ["netzwerk", "network-engineer", "cisco", "ios-xe", "mikrotik", "routeros", "palo-alto", "pan-os", "aruba", "bgp", "ospf", "vlan", "diagnose", "troubleshooting"],
   "skills": "./skills",
-  "agents": "./agents",
   "commands": "./commands"
 }
