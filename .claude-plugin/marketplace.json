@@ -41,6 +41,12 @@
       "source": "./plugins/christian",
       "description": "Linux-VPN- & Router-Appliance-Spezialist (Christian Scheele): Reference-first, sichere WAN-Verbindungen zwischen Netzen. OpenVPN (Kern-Expertise), WireGuard, IPsec (strongSwan/Libreswan), Mesh-Overlays, L2-Tunnel; Linux-Router-Stack (nftables/FRR/BIRD/NAT); WAN-Kopplungs-Design; gestufter Live-Deploy mit Blast-Radius-Respekt. Delegiert NixOS→nixie, Krypto→bruce",
       "version": "0.1.0"
+    },
+    {
+      "name": "grimm",
+      "source": "./plugins/grimm",
+      "description": "Behörden-Schreibstilist (Grimm): 'grimmifiziert' Sachverhalte ins nüchterne Verwaltungs- und Anordnungsdeutsch — Nominalstil, Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), exakte Datums-/Aktenbezüge, hoheitlicher Ton. Baut ganze Dokumente nach dem behördlichen Führungsschema (Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Form, nicht Fakten: setzt Platzhalter statt zu raten, bewertet nicht die fachliche Sache",
+      "version": "0.1.0"
     }
   ]
 }
