@@ -1,0 +1,12 @@
+# Die Offline-Diagramm-Doku (Mermaid + PlantUML) liegt bewusst AUSSERHALB des Repos
+# unter XDG (~/.local/share/bibliothekarin/diagram-docs) und wird nie getrackt —
+# siehe fetch-docs / scripts/fetch-diagram-docs.sh.
+
+# Lokale Render-Test-Artefakte (Sample-Diagramme aus build.md)
+/sample.mmd
+/sample.puml
+/sample.svg
+/sample.png
+
+# Optionaler Kladde-Ordner für Render-Tests
+/scratch/
