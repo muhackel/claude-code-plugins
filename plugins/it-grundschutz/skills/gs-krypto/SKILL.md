@@ -40,6 +40,13 @@ Wo **BSI und NIST voneinander abweichen** (z.B. brainpool- vs. NIST-Kurven, zul�
 Migrationsfristen): **beide nennen** und den Unterschied **kennzeichnen** — nicht stillschweigend eine
 Seite bevorzugen.
 
+**Häufigster Stolperstein — Kurven-Layering:** TR-02102-**1** (Anhang B.3) empfiehlt als EC-Kurven
+**brainpool**; die Protokoll-Teile **-2 (TLS), -3 (IPsec), -4 (SSH)** heben im jeweiligen Kontext
+zusätzlich die **NIST-Kurven** (secp/nistp 256/384/521) auf die Empfehlungsliste. Curve25519/Ed25519
+stehen in **keinem** Teil (Stand 2026-01). Im Protokollkontext den **Protokoll-Teil führen lassen** —
+sonst lehnt man eine dort zulässige NIST-Kurve fälschlich ab oder gibt curve25519/ed25519 als
+„TR-konform" frei, obwohl sie es nicht sind.
+
 ### Beschaffung: PDF ziehen, nicht auf WebFetch-Prosa verlassen
 
 TR-02102 und die NIST-SPs liegen als **PDF** vor. WebFetch liefert diese oft nur als
