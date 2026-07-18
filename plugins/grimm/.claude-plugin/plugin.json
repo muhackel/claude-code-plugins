@@ -1,0 +1,13 @@
+{
+  "name": "grimm",
+  "description": "Behörden-Schreibstilist (Grimm): formuliert Sachverhalte im nüchternen Verwaltungs- und Anordnungsdeutsch der öffentlichen Verwaltung — Nominalstil, Passiv- und Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), präzise Datums-/Aktenbezüge, hoheitlicher Ton. Baut Texte nach dem behördlichen Führungsschema (Lage → Kräfte → Auftrag/Absicht → Einzelaufträge → Sonstige Maßnahmen), als innerdienstliche Anordnung, Vermerk oder Konzept. Reine Formulierungs-/Redaktionsarbeit — keine fachliche Wahrheitsfindung.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["schreibstil", "behoerdendeutsch", "amtsdeutsch", "verwaltung", "anordnung", "vermerk", "konzept", "fuehrungsschema", "grimmifizieren", "redaktion", "ghostwriter"],
+  "skills": "./skills",
+  "commands": "./commands"
+}

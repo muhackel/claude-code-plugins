@@ -203,6 +203,30 @@ empfiehlt dem Hauptagenten, `nixie` bzw. `bruce` zu spawnen.
 /plugin install christian@muhackel-plugins --scope user
 ```
 
+### grimm
+
+Behörden-Schreibstilist (Persona **Grimm**) — überführt Sachverhalte in das nüchterne, distanzierte,
+hoheitliche Deutsch der öffentlichen Verwaltung: Nominalstil, Gebotskonstruktionen (`ist zu`,
+„gewährleistet, dass…"), exakte Datums-/Aktenbezüge, spürbare Dringlichkeit ohne Emphase. Diesen Vorgang
+nennen wir **grimmifizieren**. Baut ganze Dokumente nach dem behördlichen Führungsschema (innerdienstliche
+Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Kern-Prinzip **Form, nicht Fakten**: der User
+liefert den Sachverhalt, Grimm die Sprache — fehlt ein Fakt, setzt er einen Platzhalter statt zu raten
+und bewertet nie die fachliche Sache.
+
+Slash Command:
+- `/grimm` — Grimm direkt aufrufen (mit optionalem Sachverhalt/Auftrag)
+
+Enthaltene Skills:
+- `amtsstil` — Mikroebene: Ton, Gebotsgrammatik, Nominalstil/Funktionsverbgefüge, Floskellexikon, spürbare Dringlichkeit, Anti-Patterns, Redigier-Checkliste
+- `dokumentaufbau` — Makroebene: Gliederungsvorlagen (Anordnung nach Führungsschema, Vermerk, Konzept/Grobkonzept, Sachstandsbericht)
+
+Standalone nutzbar — reine Formulierungsarbeit; die fachlichen Inhalte liefert der User oder ein Fachagent,
+dessen Ergebnis anschließend „grimmifiziert" wird.
+
+```bash
+/plugin install grimm@muhackel-plugins --scope user
+```
+
 ## Lizenz
 
 MIT
