@@ -105,6 +105,7 @@ Enthaltene Skills:
 - `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfüllungsgrad + offene Punkte, Audit-Readiness
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++): innerhalb einer Edition per stabilem `alt-identifier`-Diff, editionsübergreifend heuristischer Inhaltsvergleich via `gs crosswalk <ID>` (Token-Überlappung, kein offizielles BSI-Mapping)
 - `gs-modellierung` — zutreffende Bausteine/Anforderungen für ein Szenario ermitteln (Grundschutz++ zielobjektbasiert via `gs list --target`/`gs coverage` mit STM-Vererbung; Edition 2023 via `gs coverage` über eine heuristische Komponente→Baustein-Hinttabelle)
+- `gs-krypto` — kryptographische Verfahren/Schlüssellängen/Cipher-Suiten zitierfähig nach **BSI TR-02102** (Teile -1 bis -4) bewerten, mit NIST/FIPS-Gegenprobe. Kommt **live** aus der offiziellen Quelle (bewusste Ausnahme von der Korpus-first-Regel — Krypto-Fristen verschieben sich jährlich); typischer Zulieferfall ist die VPN-Config-Härtung für `christian`
 
 Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
 
@@ -136,6 +137,57 @@ Hauptagenten).
 
 ```bash
 /plugin install nixie@muhackel-plugins --scope user
+```
+
+### bertram
+
+Netzwerk-Engineer (Persona **Bertram Fritz**) — vendor-agnostische Diagnose und Konfiguration nach dem
+**Reference-first-Prinzip**: CLI-Syntax und Best Practices kommen aus der Vendor-Referenz, nicht aus dem
+Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS ↔ RouterOS ↔
+PAN-OS ↔ Aruba ↔ Junos) und Architektur-/Segmentierungs-Design. Live-Zugriff ist gestuft: read-only als
+Default, schreibende Eingriffe nur auf explizite Anforderung mit Rollback-Netz (Blast-Radius-Respekt).
+
+Slash Command:
+- `/bertram` — Bertram direkt aufrufen (mit optionalem Auftrag)
+
+Enthaltene Skills:
+- `net-reference` — Reference-first-Disziplin: Quellen je Vendor, Workflow präzisieren→holen→verifizieren→zitierfähig→anwenden
+- `net-diagnose` — L1→L7-Diagnosesequenzen mit Show-Kommandos, Output-Deutung und Anti-Patterns
+- `net-config` — Config erzeugen mit Pre-Deployment-Validierung, Dialekt-Übersetzung über die Konzept-Ebene, Best-Practice-Templates
+- `net-operate` — gestufter Live-Zugriff via SSH (Stufe 0 read-only, Stufe 1 schreibend mit Rollback je Vendor, Remote-Lockout-Checkliste)
+- `net-design` — Architektur-Ebene: Segmentierung (VLANs/Zonen/VRFs), Routing-/Firewall-Design, Resilienz, Migrationspfad-Denken
+
+Standalone nutzbar — kommerzielle Netzwerk-Hardware ist Bertrams Revier; Linux-/Open-Source-VPN und
+-Router gehören zu `christian`.
+
+```bash
+/plugin install bertram@muhackel-plugins --scope user
+```
+
+### christian
+
+Linux-VPN- & Router-Appliance-Spezialist (Persona **Christian Scheele**) — der VPN-Fachmann für **sichere
+WAN-Verbindungen zwischen Netzen**, ebenfalls **Reference-first** (Config-Syntax und Krypto-Parameter aus
+Manpage/Projekt-Doku, nie geraten). OpenVPN als Kern-Expertise, dazu WireGuard, IPsec (strongSwan/
+Libreswan), Mesh-Overlays und L2-Tunnel; voller Linux-Router-Stack (nftables/FRR/BIRD/NAT). Live-Deploy
+gestuft mit Rollback (ein WAN-Link-Change kappt den Standort). Delegiert NixOS-Umsetzung an `nixie` und
+Krypto-Freigaben an `bruce` (`it-grundschutz`/`gs-krypto`, TR-02102).
+
+Slash Command:
+- `/christian` — Christian direkt aufrufen (mit optionalem Auftrag)
+
+Enthaltene Skills:
+- `vpn-reference` — Reference-first-Herzstück: Quellen je Technik (OpenVPN/WireGuard/strongSwan/FRR/nftables/Mesh-Projekte)
+- `openvpn` — Kern-Expertise: PKI (easy-rsa 3), tls-crypt, topology subnet, iroute/push-Routing, Krypto-Härtung, Troubleshooting, Anti-Patterns
+- `vpn-tunnel` — die breite Palette: WireGuard, IPsec/IKEv2, L2-Suite (EtherIP/GRETAP/L2TPv3/VXLAN), Mesh-Overlays, SSL-VPN
+- `router-appliance` — Linux-Router-Stack: nftables (Zonen/NAT), FRR/BIRD, iproute2/systemd-networkd, Policy-Routing; OpenWrt/DD-WRT sekundär
+- `wan-link` — Design-Ebene: Kopplungs-Szenario→Tech-Wahl, L2-vs-L3, Krypto-Härtung (bruce-Konsultation), Failover/BFD, MTU/MSS-Clamping
+
+Standalone nutzbar — für die NixOS-Umsetzung oder eine Krypto-Freigabe schreibt Christian ein Briefing und
+empfiehlt dem Hauptagenten, `nixie` bzw. `bruce` zu spawnen.
+
+```bash
+/plugin install christian@muhackel-plugins --scope user
 ```
 
 ## Lizenz

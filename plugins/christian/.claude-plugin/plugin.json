@@ -1,0 +1,14 @@
+{
+  "name": "christian",
+  "description": "Linux-VPN- und Router-Spezialist (Christian Scheele): OpenVPN/WireGuard/IPsec-Tunnel und sichere WAN-Kopplungen nach dem Reference-first-Prinzip — Config-Syntax, Krypto-Suiten und Manpage-Defaults aus der offiziellen Doku statt aus dem Gedächtnis. Linux-Router-Appliances bauen (OpenWrt/DD-WRT-Herkunft, generisches Linux als Kern, VyOS/NixOS rudimentär), nftables/FRR, opinionierte sichere Krypto-Defaults, Blast-Radius-Respekt bei WAN-/Firewall-/Routing-Changes. Kommerzielle Hardware bleibt bertrams Revier.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["vpn", "openvpn", "wireguard", "ipsec", "strongswan", "wan", "tunnel", "nftables", "frr", "router", "linux", "openwrt"],
+  "skills": "./skills",
+  "agents": "./agents",
+  "commands": "./commands"
+}
