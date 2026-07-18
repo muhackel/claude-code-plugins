@@ -114,9 +114,16 @@ nicht aus dem Gedächtnis freigeben.
 
 - Veralteter `cipher BF-CBC` oder `AES-128-CBC` **ohne AEAD** — kein Integritätsschutz, angreifbar.
 - **Kein** `tls-crypt`/`tls-auth` — Server offen für Scan/DoS und unauthentisierte Handshakes.
+- **Kompression über den Tunnel** (`comp-lzo`, `compress lz4`/`lzo`) — **VORACLE** (CRIME-Klasse):
+  Kompression **vor** Verschlüsselung erlaubt das Ausleiten von Klartext-Anteilen. Ersatzlos raus, auf
+  **beiden** Seiten. OpenVPN hat `--comp-lzo` deprecatet — gegen das VORACLE-Advisory bzw. `openvpn(8)`
+  (`--compress`/`--allow-compression`) der Zielversion verifizieren.
 - `topology net30` bei Neubau — Adressverschwendung, Legacy.
 - Fehlendes `remote-cert-tls server` am Client — jedes von der CA signierte (auch Client-)Zert kann den
   Server spielen → MITM.
+- **`duplicate-cn` bei Site-to-Site** — bricht die CCD/`iroute`-Zuordnung (die braucht einen eindeutigen
+  CN pro Client) und lässt ein geleaktes Zert beliebig oft parallel laufen. Nur für anonyme
+  Road-Warrior-Pools mit gleichem CN je legitim — nie bei fester Standort-Kopplung.
 - CA-Key auf dem VPN-Server liegen lassen.
 
 ## Read-only zuerst
