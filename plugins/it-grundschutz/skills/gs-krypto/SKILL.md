@@ -40,6 +40,22 @@ Wo **BSI und NIST voneinander abweichen** (z.B. brainpool- vs. NIST-Kurven, zul�
 Migrationsfristen): **beide nennen** und den Unterschied **kennzeichnen** — nicht stillschweigend eine
 Seite bevorzugen.
 
+### Beschaffung: PDF ziehen, nicht auf WebFetch-Prosa verlassen
+
+TR-02102 und die NIST-SPs liegen als **PDF** vor. WebFetch liefert diese oft nur als
+unbrauchbaren Binärstream — die Tabellenwerte gehen dabei verloren, und man landet doch beim
+Raten aus dem Gedächtnis. **Zuverlässiger Weg:** das PDF laden und lokal mit `pdftotext` zu Text
+wandeln, dann die Tabellen/Abschnitte auswerten:
+
+    nix-shell -p poppler_utils --run 'pdftotext -layout TR02102-1.pdf - | less'
+
+- **BSI TR-02102:** über bsi.bund.de, Pfad `TechnischeRichtlinien/TR02102`; die Download-Links
+  tragen `?__blob=publicationFile`. Je Teil (-1 bis -4) ein eigenes PDF. Vor dem Zitieren die
+  **Versions-/Stand-Angabe im PDF-Kopf** (z.B. „Version 2026-01") ablesen und mitzitieren.
+- **NIST SP 800-57 Part 1:** nvlpubs.nist.gov (Rev. 5). Ebenfalls PDF → `pdftotext`.
+
+`-layout` erhält die Tabellenstruktur — ohne das Flag verrutschen die Spalten der Schlüssellängen-Tabellen.
+
 ## Was abgedeckt wird
 
 - **Symmetrisch:** AES-128/192/256, Betriebsmodi und **AEAD** (GCM), Abgrenzung zu CBC ohne Integrität.
@@ -69,8 +85,11 @@ Seite bevorzugen.
 
 Konkrete Config-Zeilen gegen TR-02102 bewerten:
 
-- **OpenVPN:** eine `data-ciphers`- / `tls-cipher`-Zeile prüfen (AEAD-Cipher wie `AES-256-GCM`,
-  TLS-Ebene ≥ 1.2).
+- **OpenVPN:** zwei Ebenen, zwei TR-Teile. Der **Control-Channel** ist TLS → gegen **TR-02102-2**
+  (`tls-cipher`/`tls-ciphersuites`, TLS-Version, Kurven). Die **Data-Channel-Primitive**
+  (`data-ciphers`, `auth`) → gegen **TR-02102-1** (AEAD-Cipher wie `AES-256-GCM`, kein SHA1-HMAC).
+  OpenVPN ist weder reines TLS noch IPsec — diese Trennung explizit machen, sonst zitiert man den
+  falschen Teil.
 - **IPsec:** eine Proposal-/`ike`/`esp`-Zeile gegen **TR-02102-3** (IKEv2) prüfen — Kombination aus
   Verschlüsselung, Integrität, DH-Gruppe, PFS.
 - **WireGuard:** feste moderne Primitive (ChaCha20-Poly1305, Curve25519, BLAKE2s) — keine Suite-Wahl,
