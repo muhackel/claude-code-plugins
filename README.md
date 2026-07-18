@@ -59,6 +59,7 @@ git submodule update --init --recursive
 Wissensmanagement-Agent — primäres Interface für den Obsidian Vault.
 Wissen einpflegen (INGEST), abrufen und synthetisieren (SYNTH/SEARCH), destillieren (DESTILL) und Vault-Pflege (SCAN, AUDIT, RECHERCHE).
 State Machine mit atomaren Tasks. Arbeitet mit `obsidian` CLI und Dateisystem.
+Erstellt zudem **Diagramme** (Mermaid/PlantUML) reference-first und empfiehlt die passende Diagrammart.
 
 Slash Commands:
 - `/karin` — Karin direkt aufrufen (routet automatisch zum passenden Agent)
@@ -68,8 +69,20 @@ Agent-Varianten:
 - `bibliothekarin` — Vollständig (alle Skills, voller Startup) für Ingest, Audit, Scan, Destillation
 - `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) für Suche und Synthese (~8.600 Tokens weniger)
 
-Enthaltene Skills (via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills), MIT):
+Skills via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT):
 - obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
+
+Eigene Diagramm-Skills:
+- `mermaid` — native Vault-Diagramme (Obsidian rendert nativ), mit Kollisions-Kernregel (reservierte Wörter nie als `classDef`-Namen)
+- `plantuml` — UML-Typen jenseits von Mermaid, mit ehrlichem Rendering-Vorbehalt
+- `diagramm-auswahl` — empfiehlt Diagrammart + Tool (Zweck → Typ → Mermaid/PlantUML/json-canvas)
+
+Die offizielle Diagramm-Doku wird **offline** vorgehalten (Mermaid-Repo-Klon + PlantUML-Website/Referenz-PDF), **nicht** im Repo getrackt (liegt unter `~/.local/share/bibliothekarin/diagram-docs`) und per Altersgate (14 Tage) aktuell gehalten. Renderer (`mmdc`, `plantuml`) zur lokalen Validierung liefert die Nix-Umgebung — Details in [`build.md`](plugins/bibliothekarin/build.md):
+
+```bash
+nix run ./plugins/bibliothekarin#fetch-docs            # Offline-Doku befüllen/aktualisieren
+nix run ./plugins/bibliothekarin#fetch-docs -- --status # Alter je Quelle anzeigen
+```
 
 ```bash
 /plugin install bibliothekarin@muhackel-plugins --scope user
