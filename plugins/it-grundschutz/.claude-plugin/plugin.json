@@ -1,13 +1,13 @@
 {
   "name": "it-grundschutz",
-  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Sicherheitsdokumente nach der Methodik erstellen/prüfen, IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung) durchführen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine für Szenarien modellieren. Quelle und Logik strikt getrennt für schmerzfreie Editionswechsel.",
-  "version": "0.3.0",
+  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Sicherheitsdokumente nach der Methodik erstellen/prüfen, IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung) durchführen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine für Szenarien modellieren, kryptographische Verfahren/Schlüssellängen nach BSI TR-02102 (+ NIST/FIPS-Gegenprobe) bewerten. Quelle und Logik strikt getrennt für schmerzfreie Editionswechsel.",
+  "version": "0.4.0",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["bsi", "it-grundschutz", "grundschutz++", "oscal", "isms", "compliance", "informationssicherheit"],
+  "keywords": ["bsi", "it-grundschutz", "grundschutz++", "oscal", "isms", "compliance", "informationssicherheit", "kryptographie", "tr-02102"],
   "skills": "./skills",
   "commands": "./commands"
 }
