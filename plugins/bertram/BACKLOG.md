@@ -6,8 +6,6 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ## OFFEN — spätere Erweiterungen
 
-- **`net-design`**: Netzarchitektur — Segmentierung, VLAN-/Subnetting-Plan, Routing-Design,
-  Firewall-Zonen, Zero-Trust-Ansätze.
 - **MikroMCP-Integration**: RouterOS-Geräte via MCP-Server statt reinem SSH inspizieren/operieren
   (typisiert, auditierbar). Als optionaler Zugriffsweg in `net-operate`.
 - **Optionaler lokaler Referenz-Cache** (bruce-`gs-cache`-Stil): häufig gebrauchte Befehlsreferenzen/
@@ -16,6 +14,15 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
   Ubiquiti/UniFi …), sobald Bedarf besteht.
 
 ---
+
+## ✅ UMGESETZT (2026-07-18): `net-design` — Architektur-Ebene
+
+Vorgezogen aus den späteren Erweiterungen. Skill für Netzarchitektur/-bewertung: Segmentierung
+(VLANs/Zonen/VRFs), IP-/Subnetting-Plan, Routing-Design (OSPF-Areas/BGP/Multicast-RP), Firewall-Zonen
+& Zero-Trust, Resilienz (Stacking, LACP über Chassis, deterministisches STP-Root-Design,
+First-Hop-Redundanz). Design-Prinzipien Hierarchie/Fehlerdomänen/Blast-Radius, Migrationspfad-Denken;
+Übergabe an `net-config`/`net-operate` für die Umsetzung. Agent-Frontmatter `skills:` + STARTUP-Achsen
++ Arbeitsweise-Bullet ergänzt.
 
 ## ✅ UMGESETZT (2026-07-18): Phase 2 — `net-config` + `net-operate`
 

@@ -1,6 +1,6 @@
 {
   "name": "bertram",
-  "description": "Netzwerk-Engineer (Bertram Fritz): vendor-agnostische Netzwerk-Diagnose und -Konfiguration nach dem Reference-first-Prinzip — CLI-Syntax und Best Practices aus der Vendor-Referenz statt aus dem Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS/RouterOS/PAN-OS/Aruba), gestufter Live-Zugriff mit Blast-Radius-Respekt.",
+  "description": "Netzwerk-Engineer (Bertram Fritz): vendor-agnostische Netzwerk-Diagnose und -Konfiguration nach dem Reference-first-Prinzip — CLI-Syntax und Best Practices aus der Vendor-Referenz statt aus dem Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS/RouterOS/PAN-OS/Aruba), Architektur-/Segmentierungs-Design, gestufter Live-Zugriff mit Blast-Radius-Respekt.",
   "version": "0.1.0",
   "author": {
     "name": "Sebastian Rädle",

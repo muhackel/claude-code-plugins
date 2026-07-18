@@ -21,11 +21,12 @@ Practices kommen aus der Vendor-Befehlsreferenz, nicht aus dem Gedächtnis. Anal
 | Command | `/bertram` | Bertram direkt aufrufen (mit optionalem Auftrag) |
 | Skill | `net-reference` | Befehlsreferenz/Best Practices zitierfähig nachschlagen (Reference-first) |
 | Skill | `net-diagnose` | L1–L7-Fehlersuche mit geordneten Diagnose-Sequenzen |
-| Skill | `net-config` | Config erzeugen, validieren, zwischen Vendor-Dialekten übersetzen *(Phase 2)* |
-| Skill | `net-operate` | Gestufter Live-Zugriff (SSH) mit vendor-spezifischer Change-Safety *(Phase 2)* |
+| Skill | `net-config` | Config erzeugen, validieren, zwischen Vendor-Dialekten übersetzen |
+| Skill | `net-operate` | Gestufter Live-Zugriff (SSH) mit vendor-spezifischer Change-Safety |
+| Skill | `net-design` | Netzarchitektur entwerfen/bewerten — Segmentierung, Adressplan, Routing, Resilienz |
 
-Die mit *(Phase 2)* markierten Skills folgen nach dem Review von Phase 1; Details und weitere geplante
-Erweiterungen in [BACKLOG.md](./BACKLOG.md).
+Weitere geplante Erweiterungen (MikroMCP-Integration, Offline-Referenz-Cache, weitere Vendor-Packs) in
+[BACKLOG.md](./BACKLOG.md).
 
 ## Nutzung
 
