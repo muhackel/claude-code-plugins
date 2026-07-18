@@ -47,11 +47,19 @@ unbrauchbaren Binärstream — die Tabellenwerte gehen dabei verloren, und man l
 Raten aus dem Gedächtnis. **Zuverlässiger Weg:** das PDF laden und lokal mit `pdftotext` zu Text
 wandeln, dann die Tabellen/Abschnitte auswerten:
 
-    nix-shell -p poppler_utils --run 'pdftotext -layout TR02102-1.pdf - | less'
+    nix-shell -p poppler-utils --run 'pdftotext -layout TR02102-1.pdf - | less'
 
-- **BSI TR-02102:** über bsi.bund.de, Pfad `TechnischeRichtlinien/TR02102`; die Download-Links
-  tragen `?__blob=publicationFile`. Je Teil (-1 bis -4) ein eigenes PDF. Vor dem Zitieren die
-  **Versions-/Stand-Angabe im PDF-Kopf** (z.B. „Version 2026-01") ablesen und mitzitieren.
+- **BSI TR-02102** — Basis-URL `https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR02102/`,
+  je Teil ein PDF (Stand geprüft 2026-07-18), Query `?__blob=publicationFile` anhängen:
+
+  | Teil | Dateiname | Kontext |
+  |------|-----------|---------|
+  | **-1** | `BSI-TR-02102.pdf` **(ohne Suffix!)** | Basis: Algorithmen, Schlüssellängen, Fristen |
+  | **-2** | `BSI-TR-02102-2.pdf` | TLS |
+  | **-3** | `BSI-TR-02102-3.pdf` | IPsec/IKEv2 |
+  | **-4** | `BSI-TR-02102-4.pdf` | SSH |
+
+  Vor dem Zitieren die **Versions-/Stand-Angabe im PDF-Kopf** (z.B. „Version 2026-01") ablesen und mitzitieren.
 - **NIST SP 800-57 Part 1:** nvlpubs.nist.gov (Rev. 5). Ebenfalls PDF → `pdftotext`.
 
 `-layout` erhält die Tabellenstruktur — ohne das Flag verrutschen die Spalten der Schlüssellängen-Tabellen.
