@@ -5,6 +5,42 @@ Skill-Sektion, die sie encodiert.
 
 ---
 
+## ✅ UMGESETZT (2026-07-18): Generischer Offline-Closure-Deploy (USB, TUI)
+
+Die handgeschriebene BFG9000-Blaupause (Single-Host, Toplevel + Archiv hart verdrahtet) zu einem
+generischen, host-übergreifenden Weg verallgemeinert. Neue Assets unter
+`skills/nix-deploy/assets/`, Doku in der Skill-Sektion „Offline-Closure-Deploy (USB, generisch)":
+
+- **`nixos-offline-export.sh`** (Build-Kiste): Toplevel → `<host>-<rev>.nar.zst` + `.sha256` (nach
+  `zstd -t`) + **Sidecar-Manifest** (`host/toplevel/date/rev/version/sha256`), kopiert Deploy-TUI + `gum`.
+- **`nixos-offline-deploy.sh`** (Ziel, root): TUI über die Manifeste — Host-Wahl (Default = aktiver
+  Hostname, Fremd-Host → Hardware-Warnung), Closure-Wahl nach Build-Datum (installiert `[*]`, aktiv
+  `<- AKTIV`), Aktion `switch|boot|test|dry-activate`, dann import → Profil → `switch-to-configuration`.
+
+Verifiziert (Trockenlauf mit fakeroot + Fake-Manifesten): Host-Default case-insensitiv, Fremd-Warnung,
+Datums-Sort, `[*]`/AKTIV-Markierung gegen `/run/current-system`, Plain-Bash-Fallback ohne gum, Export-
+Parsing gegen echten Store-Pfad. Fallstricke in der Skill-Sektion encodiert: Store-mtime=1 (Datum aus
+Version-`YYYYMMDD`), Hash-Präfix im `basename`, `[[..]]&&`-am-Funktionsende unter `set -e`, Profil nicht
+bei `test`, `--long=31` beim Dekomprimieren, gum-Offline-Fallback.
+
+**Härtung nach echtem Export-Lauf (HAL9000, 42,7 GiB Closure):**
+- **zstd-Stufe Default 19 → 12** (`-l <1-19>`). `-19 --long=31` ist CPU-bound und saturiert nur ~17/32
+  Kerne: ~34 min für kaum kleineres Archiv. `-12` → 42,7→12,2 GB in ~2,5 min. Stufe parametrisierbar.
+- **tmp-first statt direkt auf exFAT** (`-w <workdir>`, Default `$TMPDIR`). Ein USB-Disconnect unter
+  Schreiblast erzeugte eine „erfolgreich geschriebene", aber unvollständige Datei (`zstd -t`: „premature
+  end"; Kernel: `I/O error, dev sda` — Hardware/Port, nicht exFAT/zstd). Fix: lokal bauen+`zstd -t`, dann
+  kopieren und **Stick-Kopie** per `sha256sum -c` gegenprüfen (Cache vorher `dd … iflag=nocache` räumen →
+  echter Medium-Read, kein root). Transfer-Verify fängt den Fehler sofort statt beim Deploy.
+- **gum immer + statisch**: Export bezieht gum aktiv (`nix build`, `pkgsStatic.gum` bevorzugt → musl-static,
+  läuft auf nacktem Ziel), nicht mehr nur „falls im PATH". Verifiziert: `ldd → not a dynamic executable`,
+  läuft vom Stick.
+- **Deploy-TUI ohne vorangestelltes sudo**: TUI-Auswahl als User, nur Import/Profil/`switch-to-configuration`
+  via internem `sudo` (`sudo -v`-Warmup). Non-root-Trockenlauf grün.
+
+Verifiziert im echten Lauf: kompletter Export durchgelaufen (tmp-build → `zstd -t` → gum-static → Kopie →
+`sha256sum -c` vom Medium OK), `/tmp`-Cleanup via trap. **Kein** Version-Bump (0.4.0, lokal noch nicht
+aktualisiert). Offen: echter Deploy am Ziel (HAL9000 war aus).
+
 ## ✅ BEHOBEN (2026-07-16): Resource-aware Drosselung — konkrete Heuristik encodiert
 
 **Fix umgesetzt** in `skills/nix-deploy/SKILL.md`, Sektion „Resource-aware Build-Drosselung":
