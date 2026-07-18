@@ -4,20 +4,6 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ---
 
-## OFFEN — Phase 2: `net-config` + `net-operate`
-
-- **`net-config`** (Config erzeugen + validieren + Dialekt-Übersetzung):
-  - Pre-Deployment-Validierung: dangerous-command-Erkennung, Subnet-Overlap, doppelte IPs,
-    ACL-Logikfehler, fehlende `commit`/`write`.
-  - Dialekt-Übersetzung über die **Konzept-Ebene** (dasselbe Ziel in Cisco IOS ↔ RouterOS ↔ PAN-OS ↔
-    Aruba ↔ Junos), nicht als 1:1-Token-Mapping.
-  - Best-Practice-Templates: VLAN-Segmentierung, Trunk/Access, Firewall-Zonen, Management-Hardening.
-- **`net-operate`** (gestufter Live-Zugriff via SSH):
-  - Eskalationsstufen: (0) read-only show-Kommandos, (1) Config-Change mit Rollback-Netz.
-  - Change-Safety je Vendor: Cisco `reload in <min>` / `configure replace`, RouterOS `safe-mode`,
-    PAN-OS `commit`/`revert`, Junos `commit confirmed`.
-  - Remote-Lockout-Vermeidung als harte Checkliste (ACL/Mgmt-Interface/Default-Route zuletzt anfassen).
-
 ## OFFEN — spätere Erweiterungen
 
 - **`net-design`**: Netzarchitektur — Segmentierung, VLAN-/Subnetting-Plan, Routing-Design,
@@ -30,6 +16,18 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
   Ubiquiti/UniFi …), sobald Bedarf besteht.
 
 ---
+
+## ✅ UMGESETZT (2026-07-18): Phase 2 — `net-config` + `net-operate`
+
+Die beiden restlichen Skills ergänzt, Agent-Frontmatter `skills:` auf alle vier erweitert:
+- **`net-config`** — Config erzeugen mit Pre-Deployment-Validierung (dangerous commands,
+  Subnet-Overlap, doppelte IPs/VLAN-IDs, ACL-Logik, Persistenz/Vollständigkeit), Dialekt-Übersetzung
+  über die Konzept-Ebene (IOS ↔ RouterOS ↔ PAN-OS ↔ Aruba ↔ Junos, inkl. Candidate-vs-live-Modell),
+  Best-Practice-Templates (VLAN-Segmentierung, Trunk/Access, Firewall-Zonen, Mgmt-Hardening).
+- **`net-operate`** — gestufter Live-Zugriff via SSH: Stufe 0 read-only, Stufe 1 schreibend mit
+  gesicherter Ist-Config + Bestätigung + Rollback-Netz. Rollback je Vendor (Cisco `reload in`/
+  `configure replace`, RouterOS `safe-mode`, PAN-OS `commit`/`revert`, Junos `commit confirmed`,
+  Aruba `checkpoint`), Remote-Lockout-Checkliste, MikroMCP als späterer Zugriffsweg vermerkt.
 
 ## ✅ UMGESETZT (2026-07-18): Phase 1 — Gerüst + Agent + Reference-first-Kern
 

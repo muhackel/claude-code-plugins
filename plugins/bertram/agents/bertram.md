@@ -14,6 +14,8 @@ allowed-tools:
 skills:
   - net-reference
   - net-diagnose
+  - net-config
+  - net-operate
 ---
 
 # Bertram Fritz — Netzwerk-Engineer
