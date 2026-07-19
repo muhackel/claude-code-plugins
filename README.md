@@ -132,7 +132,8 @@ NixOS-Engineer — baut und pflegt NixOS-Konfigurationen (Flake-first), schreibt
 Overlays, pinnt lang bauende Pakete und deployt auf die Maschinen im Netz.
 Dokumentenorientiert (schlägt vor Annahmen nach), `nix flake check` immer ohne Truncation, Deploy nur auf
 explizite Anweisung. Wählt den Build-Host dynamisch (schnellste erreichbare Kiste) und drosselt
-`--max-jobs`/`--cores` resource-aware gegen OOM bei schweren Builds.
+`--max-jobs`/`--cores` resource-aware gegen OOM bei schweren Builds. Für Maschinen ohne Netz gibt es
+einen generischen Offline-Closure-Deploy (Export auf USB, geführtes TUI am Ziel).
 
 Slash Command:
 - `/nixie` — Nixie direkt aufrufen (mit optionalem Auftrag)
@@ -140,7 +141,7 @@ Slash Command:
 Enthaltene Skills:
 - `nixos-config` — Konventionen der NixOS-Config (mkHost, Feature-Flags, Modul-Layout)
 - `nix-packaging` — Derivations, Overlays, Paket-Pinning
-- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check
+- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check, Offline-Closure-Deploy (USB/TUI)
 - `nix-docs` — Doku-Lookup-Disziplin (search.nixos.org, noogle, nix search, Manpages)
 
 Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein
@@ -171,7 +172,7 @@ Enthaltene Skills:
 - `net-design` — Architektur-Ebene: Segmentierung (VLANs/Zonen/VRFs), Routing-/Firewall-Design, Resilienz, Migrationspfad-Denken
 
 Standalone nutzbar — kommerzielle Netzwerk-Hardware ist Bertrams Revier; Linux-/Open-Source-VPN und
--Router gehören zu `christian`.
+-Router sowie BSD-Firewall-Appliances (pfSense/OPNsense) gehören zu `christian`.
 
 ```bash
 /plugin install bertram@muhackel-plugins --scope user
@@ -182,7 +183,8 @@ Standalone nutzbar — kommerzielle Netzwerk-Hardware ist Bertrams Revier; Linux
 Linux-VPN- & Router-Appliance-Spezialist (Persona **Christian Scheele**) — der VPN-Fachmann für **sichere
 WAN-Verbindungen zwischen Netzen**, ebenfalls **Reference-first** (Config-Syntax und Krypto-Parameter aus
 Manpage/Projekt-Doku, nie geraten). OpenVPN als Kern-Expertise, dazu WireGuard, IPsec (strongSwan/
-Libreswan), Mesh-Overlays und L2-Tunnel; voller Linux-Router-Stack (nftables/FRR/BIRD/NAT). Live-Deploy
+Libreswan), Mesh-Overlays und L2-Tunnel; voller Linux-Router-Stack (nftables/FRR/BIRD/NAT); dazu
+BSD-Firewall-Appliances pfSense/OPNsense (pf, config.xml, VPN über die GUI-Instanzen). Live-Deploy
 gestuft mit Rollback (ein WAN-Link-Change kappt den Standort). Delegiert NixOS-Umsetzung an `nixie` und
 Krypto-Freigaben an `bruce` (`it-grundschutz`/`gs-krypto`, TR-02102).
 
@@ -195,6 +197,7 @@ Enthaltene Skills:
 - `vpn-tunnel` — die breite Palette: WireGuard, IPsec/IKEv2, L2-Suite (EtherIP/GRETAP/L2TPv3/VXLAN), Mesh-Overlays, SSL-VPN
 - `router-appliance` — Linux-Router-Stack: nftables (Zonen/NAT), FRR/BIRD, iproute2/systemd-networkd, Policy-Routing; OpenWrt/DD-WRT sekundär
 - `wan-link` — Design-Ebene: Kopplungs-Szenario→Tech-Wahl, L2-vs-L3, Krypto-Härtung (bruce-Konsultation), Failover/BFD, MTU/MSS-Clamping
+- `bsd-firewall` — pfSense/OPNsense: pf-Semantik, VPN-GUI-Instanzen, Multi-WAN/Gateway-Groups, Plugins, config.xml
 
 Standalone nutzbar — für die NixOS-Umsetzung oder eine Krypto-Freigabe schreibt Christian ein Briefing und
 empfiehlt dem Hauptagenten, `nixie` bzw. `bruce` zu spawnen.
