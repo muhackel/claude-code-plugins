@@ -1,6 +1,6 @@
 ---
 name: vpn-reference
-description: "Reference-first-Disziplin für VPN- und Linux-Router-Stacks: Befehlsreferenz, Config-Syntax und Best Practices der jeweiligen Technik (OpenVPN, WireGuard, strongSwan/Libreswan, FRR/BIRD, nftables, Mesh-Overlays, OpenWrt/UCI) zitierfähig nachschlagen und anwenden, statt Optionen aus dem Gedächtnis zu raten. Nutzen, bevor eine unsichere Option, ein Default-Wert oder ein Feature-Verhalten ausgegeben wird. Quellen erst aufrufen, dann zitieren. Read-only-Default — Live-Deploy läuft über die wan-link/router-appliance-Doktrin."
+description: "Reference-first-Disziplin für VPN- und Linux-Router-Stacks: Befehlsreferenz, Config-Syntax und Best Practices der jeweiligen Technik (OpenVPN, WireGuard, strongSwan/Libreswan, FRR/BIRD, nftables, pf/pfSense/OPNsense, Mesh-Overlays, OpenWrt/UCI) zitierfähig nachschlagen und anwenden, statt Optionen aus dem Gedächtnis zu raten. Nutzen, bevor eine unsichere Option, ein Default-Wert oder ein Feature-Verhalten ausgegeben wird. Quellen erst aufrufen, dann zitieren. Read-only-Default — Live-Deploy läuft über die wan-link/router-appliance-Doktrin."
 ---
 
 # VPN-Reference — Nachschlagen statt raten
@@ -24,6 +24,7 @@ Offizielle Referenz zuerst. Community-Quellen (Wiki, HowTo) nur ergänzend und a
 | FRR | docs.frrouting.org | BGP/OSPF/Static, vtysh-Syntax, Daemon-Layout |
 | BIRD | bird.network.cz/?get_doc (User's Guide) | Protokoll-/Filter-Sprache, Config-Struktur |
 | nftables | wiki.nftables.org; `nft(8)` | Ruleset-Syntax, Chains/Hooks/Prioritäten, NAT/`ct` |
+| pfSense/OPNsense/pf | docs.netgate.com; docs.opnsense.org; `pf.conf(5)` | pf-Regelsyntax, GUI-Pfade, Paket-/Plugin-Namen |
 | Mesh-Overlays | Projekt-Doku: Headscale, NetBird, Netmaker, ZeroTier, Nebula | Control-Plane-Setup, ACL-Modell, Key/CA-Handling |
 | OpenWrt | openwrt.org/docs; UCI-Doku | UCI-Sektionen (`/etc/config/*`), `uci`-CLI, Paket-Optionen |
 
@@ -34,7 +35,8 @@ Zielsystem läuft.
 ## Workflow
 
 1. **Frage präzisieren:** Welche Technik, welches Tool und **welche Version**? Optionen und Defaults
-   ändern sich zwischen Releases (OpenVPN `data-ciphers` ab 2.4/2.5, `--cipher` deprecated in 2.6;
+   ändern sich zwischen Releases (OpenVPN `data-ciphers` ab 2.5 — in 2.4 noch `ncp-ciphers`,
+   `--cipher` deprecated in 2.6;
    strongSwan `swanctl` löst `ipsec.conf` ab). Fehlt die Version, danach fragen oder aus
    `openvpn --version` / `wg --version` / `swanctl --version` / `nft --version` ableiten.
 2. **Quelle holen:** vom User gereichtes Dokument (`Read`) → sonst **Manpage** auf dem System
