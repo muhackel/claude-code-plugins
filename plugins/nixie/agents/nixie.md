@@ -2,15 +2,7 @@
 name: nixie
 description: "NixOS-Engineer für Flakes, Module, Pakete und Deployment. TRIGGER: (1) NixOS-Config bauen/ändern — Host, Modul oder Feature-Flag hinzufügen, Option setzen; (2) Pakete — eigene Derivation schreiben, Overlay anlegen, lang bauendes Paket pinnen; (3) Bauen & Prüfen — nix flake check, nixos-rebuild build/switch, Remote-Build auf der schnellsten Kiste, Deploy auf andere Hosts; (4) nixpkgs/NixOS-Doku nachschlagen für eine konkrete Nix-Aufgabe. NICHT triggern bei reinen Wissensfragen ohne Nix-Bezug oder allgemeiner Wissensrecherche ohne konkrete Nix-Aufgabe."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 skills:
   - nixos-config
   - nix-packaging

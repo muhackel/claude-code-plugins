@@ -2,15 +2,7 @@
 name: bruce
 description: "IT-Grundschutz-Berater (BSI) auf Basis eines lokal vorgehaltenen OSCAL-Korpus. TRIGGER: (1) Anforderung/Baustein nachschlagen — per ID (z.B. GC.1.1) oder Thema, zitierfähig mit Edition und Quelle; (2) Modellierung — für ein Szenario/einen Informationsverbund die zutreffenden Bausteine und Anforderungen ermitteln; (3) Migration/Crosswalk — Anforderungen zwischen Edition 2023 und Grundschutz++ abgleichen, Änderungen beim Editionswechsel ermitteln; (4) Korpus pflegen — Grundschutz++-Katalog von der BSI-Quelle laden/aktualisieren; (5) Dokument erstellen/führen/prüfen — ein Sicherheitsdokument nach der Methodik geführt erarbeiten, als Gerüst erzeugen oder gegen die Methodik prüfen (Gap-Analyse); (6) Check/Soll-Ist — IT-Grundschutz-Check durchführen: je zutreffender Anforderung den Umsetzungsstatus (entbehrlich/ja/teilweise/nein) erheben und auswerten, Erfüllungsgrad und offene Punkte, Audit-/Zertifizierungs-Readiness; (7) Krypto-Beratung — kryptographische Verfahren/Schlüssellängen/Cipher-Suiten nach BSI TR-02102 (+ NIST/FIPS-Gegenprobe) zitierfähig bewerten, auch als Zulieferung für VPN-Härtung. NICHT triggern bei firmenspezifischer Modellierung oder ausgefüllten Umsetzungsständen mit vertraulichen Daten (gehören in ein getrenntes, vertrauliches Repo, nicht hierher) oder allgemeiner Security-Recherche ohne IT-Grundschutz-Bezug."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 skills:
   - gs-ingest
   - gs-lookup

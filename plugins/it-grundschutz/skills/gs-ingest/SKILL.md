@@ -6,21 +6,25 @@ description: "Den BSI-Korpus lokal vorhalten: die Grundschutz++-OSCAL-Dateien (A
 # gs-ingest — Korpus laden und aktuell halten
 
 Der Agent arbeitet **nur** gegen einen lokal vorgehaltenen Korpus. Dieser Skill beschafft und pflegt ihn —
-für Grundschutz++ in drei Ebenen aus dem BSI-Repo, für Edition 2023 über einen DocBook-XML→OSCAL-Adapter.
+für Grundschutz++ in vier Quellen (drei OSCAL-Ebenen + Zielobjekt-Namespace) aus dem BSI-Repo, für
+Edition 2023 über einen DocBook-XML→OSCAL-Adapter.
 Beide Editionen landen strukturgleich als OSCAL-Katalog im lokalen Datenverzeichnis.
 
 ## Quellen (kanonisch)
 
 Repo: `BSI-Bund/Stand-der-Technik-Bibliothek` (GitHub), Format **OSCAL 1.1.x** (JSON), Lizenz **CC BY-SA 4.0**.
 
-| Ebene | Datei im Repo | lokal |
-|-------|---------------|-------|
+| Quelle | Datei im Repo | lokal |
+|--------|---------------|-------|
 | **anwender** | `Anwenderkataloge/Grundschutz++/Grundschutz++-catalog.json` | `catalog.json` |
 | **methodik** | `Quellkataloge/Methodik-Grundschutz++/BSI-Methodik-Grundschutz++-catalog.json` | `methodik-catalog.json` |
 | **profile** | `Quellkataloge/Methodik-Grundschutz++/Grundschutz++-profile.json` | `profile.json` |
+| **zielobjektkategorien** | `Dokumentation/namespaces/target_object_categories.csv` | `target_object_categories.csv` |
 
 `anwender` = konkrete Anforderungen (~651), `methodik` = Vorgehensweise (~61, IDs ⊆ Anwender), `profile`
-verknüpft beide. Die `++` im Pfad müssen URL-encodiert werden (`%2B%2B`).
+verknüpft beide. `zielobjektkategorien` = Zielobjekt-Namespace (CSV) — speist `gs targets` und den Filter
+`list`/`checklist --target <Kategorie> [--inherit]` sowie `gs coverage` (Zielobjekt-Vererbung gemäß STM.5.2),
+nur Grundschutz++. Die `++` im Pfad müssen URL-encodiert werden (`%2B%2B`).
 
 ## Datenort (nie ins Plugin-Git)
 
@@ -32,6 +36,7 @@ $GS_CORPUS_DIR            (default: ~/.local/share/it-grundschutz/corpus)
     catalog.json          # Anwenderkatalog
     methodik-catalog.json # Methodik-Quellkatalog (Vorgehensweise)
     profile.json          # OSCAL-Profile (Methodik <-> Anwender)
+    target_object_categories.csv  # Zielobjekt-Namespace (speist gs targets / --target / coverage)
     manifest.json         # Liste je Datei: quelle, last_modified, sha256, anzahl; + abgerufen_am, lizenz
   edition-2023/           # Edition 2023 (DocBook-XML -> OSCAL via Adapter)
     catalog.json          # normalisierter OSCAL-Katalog (Schichten -> Bausteine -> Anforderungen + G 0.x)
@@ -43,7 +48,7 @@ $GS_CORPUS_DIR            (default: ~/.local/share/it-grundschutz/corpus)
 Skripte brauchen `python3`, `curl`, `jq`, `coreutils` — über das Flake bereitstellen:
 
 ```bash
-nix run .#ingest            # Grundschutz++: alle drei Ebenen laden/aktualisieren
+nix run .#ingest            # Grundschutz++: alle vier Quellen laden/aktualisieren
 nix run .#ingest -- --force # Neuladen erzwingen (sonst sha-basiert übersprungen)
 nix run .#ingest-2023       # Edition 2023: DocBook-XML laden + nach OSCAL normalisieren
 nix develop                 # Shell mit den Tools, dann scripts/ direkt

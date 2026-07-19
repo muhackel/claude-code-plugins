@@ -222,7 +222,7 @@ Default-Route/Gateway-Wechsel, Interface-Umbau, Outbound-NAT-Umstellung — kann
 ## Verweise
 
 - **Design bleibt bei den Design-Skills:** Kopplungs-Szenario/Tech-Wahl `wan-link`; VPN-Technik/Aufbau
-  `vpn-tunnel`; OpenVPN-Tiefe `openvpn`; Linux/nftables-Router-Pendant `router-appliance`. Diese Skill
+  `vpn-tunnel`; OpenVPN-Tiefe `openvpn`; Linux/nftables-Router-Pendant `router-appliance`. Dieser Skill
   ist nur die **BSD-Umsetzung** davon.
 - **Referenz-Lookup-Disziplin:** unsichere Syntax/Defaults/Paketnamen über `vpn-reference` bzw. direkt
   gegen `docs.netgate.com`/`docs.opnsense.org`/`pf.conf(5)` belegen — erst aufrufen, dann behaupten.

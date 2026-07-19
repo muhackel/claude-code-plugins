@@ -8,7 +8,10 @@ Spawne den `it-grundschutz:bruce`-Agenten und übergib den User-Text als Arbeits
 Routing-Hinweis:
 - **Bruce** ist für IT-Grundschutz-Arbeit auf Basis des lokalen OSCAL-Korpus: Anforderung/Baustein
   nachschlagen (per ID wie `GC.1.1` oder Thema), Bausteine für ein Szenario modellieren, Editionen
-  abgleichen (Crosswalk Edition 2023 ↔ Grundschutz++), den Korpus von der BSI-Quelle laden/aktualisieren.
+  abgleichen (Crosswalk Edition 2023 ↔ Grundschutz++), den Korpus von der BSI-Quelle laden/aktualisieren,
+  Sicherheitsdokumente nach der Methodik erstellen/führen/prüfen, den IT-Grundschutz-Check
+  (Soll-Ist-Umsetzungsprüfung) durchführen, einen projekt-lokalen Baustein-Vorrat pflegen sowie
+  kryptographische Verfahren/Schlüssellängen/Cipher-Suiten nach BSI TR-02102 zitierfähig bewerten.
 - Geht es um **firmenspezifische, vertrauliche** Modellierung (konkrete Informationsverbünde,
   Umsetzungsstände) — das gehört **nicht** in dieses teilbare Plugin. Bruce steuert nur die generische
   Grundschutz-Ebene bei; die vertrauliche Ebene gehört in ein getrenntes Repo/Vault.

@@ -1,16 +1,8 @@
 ---
 name: christian
-description: "Linux-VPN- und Router-Spezialist (Christian Scheele) — Reference-first, Linux/Open-Source. TRIGGER: (1) VPN/Tunnel aufbauen — OpenVPN/WireGuard/IPsec-Verbindung entwerfen, Config erzeugen und gegenprüfen, Krypto-Suite wählen, Client/Server bzw. Site-to-Site; (2) Router-/Firewall-Appliance bauen — Linux-Router mit/ohne VPN (OpenWrt/DD-WRT/generisches Linux, nftables-Firewall, FRR-Routing) oder BSD-Firewall-Appliance pfSense/OPNsense (pf, config.xml, Gateway-Groups, elementare Plugins); (3) WAN-Kopplung designen — sichere Verbindung zwischen zwei Netzen/Standorten, Routing-/Firewall-/PMTU-Konzept; (4) Referenz-Lookup — Config-Syntax/Krypto-Suiten/Manpage-Defaults zu OpenVPN/WireGuard/strongSwan/FRR/nftables zitierfähig nachschlagen; (5) Live-Operation — auf explizite Anforderung ein Linux-System per SSH inspizieren oder (mit Bestätigung + Rollback-Netz) konfigurieren. NICHT triggern bei kommerzieller Netzwerk-Hardware (Cisco/MikroTik/Palo Alto → bertram) oder reiner NixOS-Umsetzungs-/Deploy-Aufgabe ohne VPN-/Router-Designanteil (→ nixie)."
+description: "Linux-VPN- und Router-Spezialist (Christian Scheele) — Reference-first, Linux/Open-Source. TRIGGER: (1) VPN/Tunnel aufbauen — OpenVPN/WireGuard/IPsec-Verbindung entwerfen, Config erzeugen und gegenprüfen, Krypto-Suite wählen, Client/Server bzw. Site-to-Site; (2) Router-/Firewall-Appliance bauen — Linux-Router mit/ohne VPN (OpenWrt/DD-WRT/generisches Linux, nftables-Firewall, FRR-Routing) oder BSD-Firewall-Appliance pfSense/OPNsense (pf, config.xml, Gateway-Groups, elementare Plugins); (3) WAN-Kopplung designen — sichere Verbindung zwischen zwei Netzen/Standorten, Routing-/Firewall-/PMTU-Konzept; (4) Referenz-Lookup — Config-Syntax/Krypto-Suiten/Manpage-Defaults zu OpenVPN/WireGuard/strongSwan/FRR/nftables/pf zitierfähig nachschlagen; (5) Live-Operation — auf explizite Anforderung ein Linux-/BSD-System per SSH inspizieren oder (mit Bestätigung + Rollback-Netz) konfigurieren. NICHT triggern bei kommerzieller Netzwerk-Hardware (Cisco/MikroTik/Palo Alto → bertram) oder reiner NixOS-Umsetzungs-/Deploy-Aufgabe ohne VPN-/Router-Designanteil (→ nixie)."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 skills:
   - vpn-reference
   - openvpn

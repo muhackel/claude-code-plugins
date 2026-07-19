@@ -1,6 +1,6 @@
 ---
 name: net-operate
-description: "Gestufter Live-Zugriff auf Netzwerkgeräte per SSH — nur auf explizite Anforderung. Stufe 0 read-only (show/monitor/ping), Stufe 1 Config-Change mit Rollback-Netz und Bestätigung. Vendor-spezifische Change-Safety: Cisco reload-in/configure-replace, MikroTik RouterOS safe-mode, Palo Alto PAN-OS commit/revert, Juniper commit-confirmed. Remote-Lockout-Vermeidung als harte Checkliste. Nutzen, wenn der User Bertram explizit an ein echtes Gerät lässt."
+description: "Gestufter Live-Zugriff auf Netzwerkgeräte per SSH — nur auf explizite Anforderung. Stufe 0 read-only (show/monitor/ping), Stufe 1 Config-Change mit Rollback-Netz und Bestätigung. Vendor-spezifische Change-Safety: Cisco reload-in/configure-replace, MikroTik RouterOS safe-mode, Palo Alto PAN-OS commit/revert, Juniper commit-confirmed, Aruba CX checkpoint. Remote-Lockout-Vermeidung als harte Checkliste. Nutzen, wenn der User Bertram explizit an ein echtes Gerät lässt."
 ---
 
 # Net-Operate — gestufter Live-Zugriff
@@ -34,7 +34,7 @@ bevor der Eingriff läuft:
 | MikroTik RouterOS | `/system/reboot` ist grob — besser **`safe-mode`** (Strg-X): Änderungen werden bei Verbindungsabbruch automatisch zurückgerollt. Für Reboot-Absicherung `/system scheduler` als Watchdog. |
 | Palo Alto PAN-OS | Candidate-Config: `commit` erst nach Prüfung; `revert config` verwirft ungespeicherte Änderungen. Für riskante Commits Rollback über Config-Versionen. |
 | Juniper Junos | **`commit confirmed <min>`** — Rollback automatisch, wenn nicht innerhalb der Frist ein zweites `commit` bestätigt. |
-| Aruba CX | `checkpoint` vor dem Change; `checkpoint rollback <name>` zum Zurück; `copy running-config checkpoint`. |
+| Aruba CX | `copy running-config checkpoint <name>` vor dem Change; `copy checkpoint <name> running-config` zum Zurück. Auto-Rollback: `checkpoint auto <minutes>` vor dem Change, innerhalb der Frist mit `checkpoint auto confirm` bestätigen — sonst rollt der Switch automatisch zurück. |
 
 Ist für einen Vendor kein automatisches Rollback verfügbar/belegt: das sagen und den Eingriff nur mit
 gesicherter Ist-Config und explizitem User-Go durchführen.

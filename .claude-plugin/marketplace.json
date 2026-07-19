@@ -10,7 +10,7 @@
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
       "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults; erstellt Mermaid-/PlantUML-Diagramme reference-first und empfiehlt die passende Diagrammart",
-      "version": "0.6.0"
+      "version": "0.6.1"
     },
     {
       "name": "defuddle",
@@ -22,25 +22,25 @@
       "name": "it-grundschutz",
       "source": "./plugins/it-grundschutz",
       "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Dokumente nach der Methodik erstellen, IT-Grundschutz-Check (Soll-Ist) durchführen, Editionen migrieren, Bausteine modellieren, kryptographische Verfahren nach BSI TR-02102 (+ NIST/FIPS) bewerten",
-      "version": "0.4.0"
+      "version": "0.4.1"
     },
     {
       "name": "nixie",
       "source": "./plugins/nixie",
       "description": "NixOS-Engineer: Flake-first Configs, eigene Derivations & Overlays, Paket-Pinning, resource-aware Remote-Builds auf der schnellsten Kiste, generischer Offline-Closure-Deploy (USB/TUI), dokumentenorientiert",
-      "version": "0.4.0"
+      "version": "0.4.1"
     },
     {
       "name": "bertram",
       "source": "./plugins/bertram",
-      "description": "Netzwerk-Engineer (Bertram Fritz): vendor-agnostische Netzwerk-Diagnose und -Konfiguration nach dem Reference-first-Prinzip — CLI-Syntax und Best Practices aus der Vendor-Referenz statt aus dem Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS/RouterOS/PAN-OS/Aruba), Architektur-/Segmentierungs-Design, gestufter Live-Zugriff mit Blast-Radius-Respekt",
-      "version": "0.1.0"
+      "description": "Netzwerk-Engineer (Bertram Fritz): vendor-agnostische Netzwerk-Diagnose und -Konfiguration nach dem Reference-first-Prinzip — CLI-Syntax und Best Practices aus der Vendor-Referenz statt aus dem Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS/RouterOS/PAN-OS/Aruba/Junos), Architektur-/Segmentierungs-Design, gestufter Live-Zugriff mit Blast-Radius-Respekt",
+      "version": "0.1.1"
     },
     {
       "name": "christian",
       "source": "./plugins/christian",
       "description": "Linux-VPN- & Router-Appliance-Spezialist (Christian Scheele): Reference-first, sichere WAN-Verbindungen zwischen Netzen. OpenVPN (Kern-Expertise), WireGuard, IPsec (strongSwan/Libreswan), Mesh-Overlays, L2-Tunnel; Linux-Router-Stack (nftables/FRR/BIRD/NAT); BSD-Firewall-Appliances pfSense/OPNsense (pf, config.xml, elementare Plugins); WAN-Kopplungs-Design; gestufter Live-Deploy mit Blast-Radius-Respekt. Delegiert NixOS→nixie, Krypto→bruce",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     {
       "name": "grimm",

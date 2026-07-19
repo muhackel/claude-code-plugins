@@ -25,7 +25,7 @@ Struktur des DocBook (verifiziert gegen Edition 2023, v4):
 
 Qualifizierungsstufe steht im Anforderungstitel als (B)/(S)/(H) und ist die
 maßgebliche Quelle für sec_level (Kreuzgeprüft gegen die Quali-Abschnitte:
-0 Abweichungen bei 2124 Anforderungen).
+0 Abweichungen bei 2125 Anforderungen).
 """
 import argparse
 import datetime

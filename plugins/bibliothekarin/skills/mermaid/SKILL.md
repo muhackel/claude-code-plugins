@@ -33,13 +33,13 @@ die **Knoten**, nicht in den `subgraph`-Titel.
 
 Die Mermaid-Syntax steht als Markdown-Klon des `mermaid-js/mermaid`-Repos offline bereit:
 
-    ${XDG_DATA_HOME:-$HOME/.local/share}/bibliothekarin/diagram-docs/mermaid/
+    ${XDG_DATA_HOME:-$HOME/.local/share}/bibliothekarin/diagram-docs/mermaid/repo/
 
 Die eigentliche Diagramm-Syntax liegt unter `packages/mermaid/src/docs/syntax/` (je Diagrammtyp eine
 Markdown-Datei, z.B. `flowchart.md`, `sequenceDiagram.md`, `classDiagram.md`). Vor dem Schreiben eines
 Konstrukts dort per grep nachschlagen statt zu raten:
 
-    grep -rin "linkStyle" "${XDG_DATA_HOME:-$HOME/.local/share}/bibliothekarin/diagram-docs/mermaid/packages/mermaid/src/docs/syntax/"
+    grep -rin "linkStyle" "${XDG_DATA_HOME:-$HOME/.local/share}/bibliothekarin/diagram-docs/mermaid/repo/packages/mermaid/src/docs/syntax/"
 
 Befüllt/aktualisiert wird die Doku durch `nix run .#fetch-docs` (im selben Plugin). Das Doku-Alter zeigt:
 

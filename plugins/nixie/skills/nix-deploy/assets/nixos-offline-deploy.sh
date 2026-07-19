@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Generischer Offline-Closure-Deploy (TUI) fuer NixOS.
+# Generischer Offline-Closure-Deploy (TUI) für NixOS.
 #
-# Auf dem ZIEL-Rechner ausfuehren. Liest im eigenen Verzeichnis nach Closure-Archiven
+# Auf dem ZIEL-Rechner ausführen. Liest im eigenen Verzeichnis nach Closure-Archiven
 # (<name>.nar.zst) samt Sidecar-Manifest (<name>.manifest, s. nixos-offline-export.sh),
-# gruppiert sie nach Hostname und fuehrt durch:
-#   1) Host waehlen        (Default = aktiver Hostname; fremder Host -> Warnung)
-#   2) Closure waehlen      (nach Build-Datum; bereits installierte mit * markiert)
-#   3) Aktion waehlen       (switch | boot | test | dry-activate)
-#   4) Bestaetigen -> sha256 pruefen -> importieren -> Profil setzen -> aktivieren
+# gruppiert sie nach Hostname und führt durch:
+#   1) Host wählen        (Default = aktiver Hostname; fremder Host -> Warnung)
+#   2) Closure wählen      (nach Build-Datum; bereits installierte mit * markiert)
+#   3) Aktion wählen       (switch | boot | test | dry-activate)
+#   4) Bestätigen -> sha256 prüfen -> importieren -> Profil setzen -> aktivieren
 #
-#   ./nixos-offline-deploy.sh          # kein vorangestelltes sudo noetig
+#   ./nixos-offline-deploy.sh          # kein vorangestelltes sudo nötig
 #
-# Die TUI-Auswahl laeuft als normaler User; nur die privilegierten Schritte (Import, Profil,
+# Die TUI-Auswahl läuft als normaler User; nur die privilegierten Schritte (Import, Profil,
 # switch-to-configuration) eskalieren intern via sudo (wie 'nixos-rebuild --sudo'). Als root
-# gestartet laeuft alles direkt. TUI via gum (neben dem Skript oder im PATH und ausfuehrbar),
+# gestartet läuft alles direkt. TUI via gum (neben dem Skript oder im PATH und ausführbar),
 # sonst Plain-Bash-Fallback.
 set -euo pipefail
 
@@ -39,7 +39,7 @@ resolve_gum(){
 }
 resolve_gum
 
-# ui_choose HEADER DEFAULT ITEM...   -> gewaehltes ITEM auf stdout
+# ui_choose HEADER DEFAULT ITEM...   -> gewähltes ITEM auf stdout
 ui_choose(){
   local header="$1" def="$2"; shift 2
   if [[ -n "$GUM" ]]; then
@@ -61,7 +61,7 @@ ui_choose(){
   read -rp "Auswahl [$defnum]: " idx >&2 || true
   idx="${idx:-$defnum}"
   if [[ ! "$idx" =~ ^[0-9]+$ ]] || (( idx<1 || idx>$# )); then
-    log_err "Ungueltige Auswahl."; return 1
+    log_err "Ungültige Auswahl."; return 1
   fi
   printf '%s\n' "${@:$idx:1}"
 }
@@ -91,7 +91,7 @@ done
 if [[ $EUID -eq 0 ]]; then
   SUDO=()
 else
-  command -v sudo >/dev/null 2>&1 || { log_err "Nicht root und kein sudo verfuegbar — als root starten."; exit 1; }
+  command -v sudo >/dev/null 2>&1 || { log_err "Nicht root und kein sudo verfügbar — als root starten."; exit 1; }
   SUDO=(sudo)
 fi
 
@@ -118,9 +118,9 @@ read_manifests(){
         sha256)   sha="$val" ;;
       esac
     done < "$f"
-    [[ -n "$host" && -n "$toplevel" && -n "$archive" ]] || { log_warn "Manifest unvollstaendig, uebersprungen: $(basename "$f")"; continue; }
+    [[ -n "$host" && -n "$toplevel" && -n "$archive" ]] || { log_warn "Manifest unvollständig, übersprungen: $(basename "$f")"; continue; }
     if [[ ! -f "$SCRIPT_DIR/$archive" ]]; then
-      log_warn "Archiv fehlt zu $(basename "$f"): $archive — uebersprungen."; continue
+      log_warn "Archiv fehlt zu $(basename "$f"): $archive — übersprungen."; continue
     fi
     M_HOST+=("$host"); M_TOPLEVEL+=("$toplevel"); M_ARCHIVE+=("$archive")
     M_DATE+=("${date:-0000-00-00}"); M_REV+=("${rev:--}"); M_VERSION+=("${version:--}")
@@ -129,7 +129,7 @@ read_manifests(){
   shopt -u nullglob
 }
 read_manifests
-[[ ${#M_TOPLEVEL[@]} -gt 0 ]] || { log_err "Keine gueltigen Closure-Manifeste in $SCRIPT_DIR gefunden."; exit 1; }
+[[ ${#M_TOPLEVEL[@]} -gt 0 ]] || { log_err "Keine gültigen Closure-Manifeste in $SCRIPT_DIR gefunden."; exit 1; }
 
 # Installierte Toplevels ermitteln (Store-Pfade der System-Generationen + aktuell aktiver)
 mark_installed(){
@@ -147,7 +147,7 @@ mark_installed(){
 mark_installed
 
 # ---------------------------------------------------------------------------
-# 1) Host waehlen
+# 1) Host wählen
 # ---------------------------------------------------------------------------
 declare -a HOSTS=()
 for h in "${M_HOST[@]}"; do
@@ -162,23 +162,23 @@ for h in "${HOSTS[@]}"; do
   [[ "${h,,}" == "${ACTIVE_HOST,,}" ]] && DEFAULT_HOST="$h"
 done
 
-log_info "Aktiver Host: ${ACTIVE_HOST}    Closures fuer: ${HOSTS[*]}"
-CHOSEN_HOST="$(ui_choose "Fuer welchen Host deployen?" "$DEFAULT_HOST" "${HOSTS[@]}")" || exit 1
+log_info "Aktiver Host: ${ACTIVE_HOST}    Closures für: ${HOSTS[*]}"
+CHOSEN_HOST="$(ui_choose "Für welchen Host deployen?" "$DEFAULT_HOST" "${HOSTS[@]}")" || exit 1
 
 if [[ "${CHOSEN_HOST,,}" != "${ACTIVE_HOST,,}" ]]; then
   ui_note "FREMDE HOST-CONFIG: '${CHOSEN_HOST}' != aktiver Host '${ACTIVE_HOST}'.
 Die Hardware-Konfiguration (Disks, Bootloader, Treiber) kann NICHT passen.
 OK bei einer bewussten Neuinstallation auf diese Hardware — sonst bootet das
-System evtl. nicht. Bootloader/Disk-Layout des Ziels muessen zur Config passen."
+System evtl. nicht. Bootloader/Disk-Layout des Ziels müssen zur Config passen."
   ui_confirm "Trotzdem mit Host '${CHOSEN_HOST}' fortfahren?" || { log_warn "Abgebrochen."; exit 0; }
 fi
 
 # ---------------------------------------------------------------------------
-# 2) Closure waehlen (Kandidaten des Hosts, nach Datum absteigend)
+# 2) Closure wählen (Kandidaten des Hosts, nach Datum absteigend)
 # ---------------------------------------------------------------------------
 declare -a IDX=()
 for i in "${!M_HOST[@]}"; do [[ "${M_HOST[$i]}" == "$CHOSEN_HOST" ]] && IDX+=("$i"); done
-# nach Datum absteigend sortieren (Index-Liste ueber die date-Spalte)
+# nach Datum absteigend sortieren (Index-Liste über die date-Spalte)
 mapfile -t IDX < <(for i in "${IDX[@]}"; do printf '%s\t%s\n' "${M_DATE[$i]}" "$i"; done | sort -r | cut -f2)
 
 declare -a LABELS=()
@@ -189,22 +189,22 @@ for i in "${IDX[@]}"; do
   LABELS+=("$(printf '%s %s  %-8s  v%s%s' "$mark" "${M_DATE[$i]}" "${M_REV[$i]}" "${M_VERSION[$i]}" "$note")")
 done
 DEFAULT_LABEL="${LABELS[0]}"   # neueste
-CHOSEN_LABEL="$(ui_choose "Welche Closure fuer '${CHOSEN_HOST}'?  ([*] = bereits installiert)" "$DEFAULT_LABEL" "${LABELS[@]}")" || exit 1
+CHOSEN_LABEL="$(ui_choose "Welche Closure für '${CHOSEN_HOST}'?  ([*] = bereits installiert)" "$DEFAULT_LABEL" "${LABELS[@]}")" || exit 1
 
 SEL=-1
 for k in "${!LABELS[@]}"; do [[ "${LABELS[$k]}" == "$CHOSEN_LABEL" ]] && SEL="${IDX[$k]}"; done
-[[ "$SEL" -ge 0 ]] || { log_err "Auswahl nicht aufloesbar."; exit 1; }
+[[ "$SEL" -ge 0 ]] || { log_err "Auswahl nicht auflösbar."; exit 1; }
 
 ARCHIVE="${M_ARCHIVE[$SEL]}"; TOPLEVEL="${M_TOPLEVEL[$SEL]}"; SHA="${M_SHA[$SEL]}"
 
 # ---------------------------------------------------------------------------
-# 3) Aktion waehlen
+# 3) Aktion wählen
 # ---------------------------------------------------------------------------
 ACTION="$(ui_choose "Wie aktivieren?" "switch" \
   "switch" "boot" "test" "dry-activate")" || exit 1
 
 # ---------------------------------------------------------------------------
-# 4) Bestaetigung + Ausfuehrung
+# 4) Bestätigung + Ausführung
 # ---------------------------------------------------------------------------
 echo
 cat <<EOF
@@ -216,24 +216,24 @@ EOF
 if [[ "${M_ACTIVE[$SEL]}" == 1 ]]; then
   log_warn "Diese Closure ist aktuell aktiv."
 elif [[ "${M_INSTALLED[$SEL]}" == 1 ]]; then
-  log_warn "Diese Closure ist bereits installiert (aeltere Generation)."
+  log_warn "Diese Closure ist bereits installiert (ältere Generation)."
 fi
-ui_confirm "Jetzt ausfuehren?" || { log_warn "Abgebrochen."; exit 0; }
+ui_confirm "Jetzt ausführen?" || { log_warn "Abgebrochen."; exit 0; }
 
-# sudo-Credentials vorab holen, damit kein Passwort-Prompt mitten in der Import-Pipe haengt
+# sudo-Credentials vorab holen, damit kein Passwort-Prompt mitten in der Import-Pipe hängt
 if [[ ${#SUDO[@]} -gt 0 ]]; then log_info "sudo-Rechte anfordern ..."; sudo -v; fi
 
-# 4a) Pruefsumme
+# 4a) Prüfsumme
 if [[ -f "$SCRIPT_DIR/$ARCHIVE.sha256" ]]; then
-  log_info "Pruefsumme verifizieren ..."
+  log_info "Prüfsumme verifizieren ..."
   ( cd "$SCRIPT_DIR" && sha256sum -c "$ARCHIVE.sha256" )
   log_ok "SHA256 ok."
 elif [[ -n "$SHA" ]]; then
-  log_info "Pruefsumme (aus Manifest) verifizieren ..."
+  log_info "Prüfsumme (aus Manifest) verifizieren ..."
   echo "$SHA  $ARCHIVE" | ( cd "$SCRIPT_DIR" && sha256sum -c - )
   log_ok "SHA256 ok."
 else
-  log_warn "Keine Pruefsumme vorhanden — ueberspringe Check."
+  log_warn "Keine Prüfsumme vorhanden — überspringe Check."
 fi
 
 # 4b) Import (idempotent) — zstd liest als User vom Medium, nix-store schreibt via sudo in den Store

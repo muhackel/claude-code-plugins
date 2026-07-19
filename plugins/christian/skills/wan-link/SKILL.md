@@ -125,7 +125,7 @@ zuerst (Ist-Tunnel, Routen, Firewall), dann gestuft mit Rollback-Netz:
 5. **Ziel-System benennen und bestätigen lassen**, bevor irgendetwas Schreibendes läuft.
 
 **Übergabe:** Design steht → `vpn-tunnel`/`openvpn` liefert die konkrete, geprüfte Tunnel-Config,
-`router-appliance` den Firewall-/Routing-/MSS-/Failover-Teil und das gestufte Live-Ausrollen. Dieses Skill
+`router-appliance` den Firewall-/Routing-/MSS-/Failover-Teil und das gestufte Live-Ausrollen. Dieser Skill
 ändert selbst nichts am Gerät.
 
 ## Dokumentenorientiert

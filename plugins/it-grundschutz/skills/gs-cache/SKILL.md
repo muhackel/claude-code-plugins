@@ -11,8 +11,8 @@ Volltexte eines für ein Projekt ausgewählten Baustein-Satzes **einmal** in ein
 Projektdateien. Der Agent liest danach direkt aus dem Vorrat (Read-Tool) statt den Korpus erneut zu
 befragen.
 
-Der Vorrat ist die **Volltext-Ergänzung** zur kuratierten, begründeten Auswahl-Note (Vorbild:
-`IAM-Grundschutz-Bausteine`-artige Notizen). Die Auswahl (welche Bausteine) kommt aus `gs-modellierung`
+Der Vorrat ist die **Volltext-Ergänzung** zu einer kuratierten, begründeten Auswahl-/Modellierungs-Note
+des Projekts. Die Auswahl (welche Bausteine) kommt aus `gs-modellierung`
 oder einer expliziten Liste; dieser Skill liefert die Texte dazu.
 
 ## Zwei Modi

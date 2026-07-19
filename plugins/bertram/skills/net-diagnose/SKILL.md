@@ -51,7 +51,7 @@ die gängige Cisco-IOS-Form als Orientierung; RouterOS/PAN-OS/Junos haben eigene
 - **Pfad:** `traceroute`/`ping` von der **richtigen Quell-Adresse** (`ping <ziel> source <if>`) —
   asymmetrisches Routing und Return-Path-Fehler sind sonst unsichtbar.
 - **BGP:** `show ip bgp summary` — Nachbar-State. `Idle`/`Active` = kein TCP/keine Adjazenz (L3/ACL/AS
-  falsch); `Connect` = TCP-Handshake hängt; hoher `PfxRcd`=0 trotz `Established` = Filter/Route-Map.
+  falsch); `Connect` = TCP-Handshake hängt; `PfxRcd`=0 trotz `Established` = Filter/Route-Map.
   Details: `show ip bgp neighbor <ip>`.
 - **OSPF:** `show ip ospf neighbor` — hängt der State in `ExStart`/`Exchange`? Klassiker: **MTU-Mismatch**
   auf dem Link. `Init` = Hellos kommen nur in eine Richtung (ACL/Unicast-Problem). Area-/Timer-/
