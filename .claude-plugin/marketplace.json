@@ -39,8 +39,8 @@
     {
       "name": "christian",
       "source": "./plugins/christian",
-      "description": "Linux-VPN- & Router-Appliance-Spezialist (Christian Scheele): Reference-first, sichere WAN-Verbindungen zwischen Netzen. OpenVPN (Kern-Expertise), WireGuard, IPsec (strongSwan/Libreswan), Mesh-Overlays, L2-Tunnel; Linux-Router-Stack (nftables/FRR/BIRD/NAT); WAN-Kopplungs-Design; gestufter Live-Deploy mit Blast-Radius-Respekt. Delegiert NixOS→nixie, Krypto→bruce",
-      "version": "0.1.0"
+      "description": "Linux-VPN- & Router-Appliance-Spezialist (Christian Scheele): Reference-first, sichere WAN-Verbindungen zwischen Netzen. OpenVPN (Kern-Expertise), WireGuard, IPsec (strongSwan/Libreswan), Mesh-Overlays, L2-Tunnel; Linux-Router-Stack (nftables/FRR/BIRD/NAT); BSD-Firewall-Appliances pfSense/OPNsense (pf, config.xml, elementare Plugins); WAN-Kopplungs-Design; gestufter Live-Deploy mit Blast-Radius-Respekt. Delegiert NixOS→nixie, Krypto→bruce",
+      "version": "0.2.0"
     },
     {
       "name": "grimm",

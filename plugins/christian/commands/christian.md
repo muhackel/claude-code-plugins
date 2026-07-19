@@ -8,8 +8,11 @@ Spawne den `christian:christian`-Agenten und übergib den User-Text als Arbeitsa
 Routing-Hinweis:
 - **Christian** ist für Linux-VPN- und Router-Arbeit: OpenVPN/WireGuard/IPsec-Tunnel entwerfen und
   gegenprüfen, Linux-Router-Appliances bauen (OpenWrt/DD-WRT/generisches Linux, VyOS/NixOS rudimentär),
+  **BSD-Firewall-Appliances pfSense/OPNsense** (pf, config.xml, Gateway-Groups, elementare Plugins),
   nftables-Firewall und FRR-Routing, sichere WAN-Kopplungen zwischen Netzen, Config-/Krypto-/Manpage-
   Referenz-Lookup und — nur auf explizite Anforderung — Live-Zugriff per SSH.
+- **pfSense/OPNsense gehören zu Christian**, nicht zu bertram — sie sind Open-Source-BSD-Firewalls,
+  keine kommerzielle Hardware.
 - Geht es im User-Text um **kommerzielle Netzwerk-Hardware** (Cisco, MikroTik/RouterOS, Palo Alto/
   PAN-OS, Juniper), ist **bertram** die bessere Wahl — dann ihn spawnen statt Christian.
 - Geht es um eine **reine NixOS-Umsetzung/Deploy** ohne VPN-/Router-Designanteil, ist **nixie** die
