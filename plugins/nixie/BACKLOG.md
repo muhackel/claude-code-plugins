@@ -13,7 +13,7 @@ generischen, host-übergreifenden Weg verallgemeinert. Neue Assets unter
 
 - **`nixos-offline-export.sh`** (Build-Kiste): Toplevel → `<host>-<rev>.nar.zst` + `.sha256` (nach
   `zstd -t`) + **Sidecar-Manifest** (`host/toplevel/date/rev/version/sha256`), kopiert Deploy-TUI + `gum`.
-- **`nixos-offline-deploy.sh`** (Ziel, root): TUI über die Manifeste — Host-Wahl (Default = aktiver
+- **`nixos-offline-deploy.sh`** (Ziel, ohne vorangestelltes sudo — Eskalation intern): TUI über die Manifeste — Host-Wahl (Default = aktiver
   Hostname, Fremd-Host → Hardware-Warnung), Closure-Wahl nach Build-Datum (installiert `[*]`, aktiv
   `<- AKTIV`), Aktion `switch|boot|test|dry-activate`, dann import → Profil → `switch-to-configuration`.
 

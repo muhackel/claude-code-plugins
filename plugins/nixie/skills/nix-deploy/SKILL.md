@@ -156,8 +156,8 @@ gegen `-19` ~34 min. Für ein Langzeit-Archiv `-l` hochsetzen.
   des Mediums. Fängt Disconnect/Transferfehler sofort, statt beim Deploy. (Reales Symptom war Kernel-
   `I/O error, dev sda` — Port/Kabel unter Last; Hardware, nicht exFAT/FUSE/zstd. Reconnect an anderem Port
   → wieder 770 MB/s.)
-- **gum immer + statisch beilegen.** Der Export legt gum **immer** bei (via `nix build`, falls nicht im PATH)
-  und bevorzugt `pkgsStatic.gum` (musl-static → einzelnes Binary ohne Store-Abhängigkeiten, läuft auf einem
+- **gum immer + statisch beilegen.** Der Export legt gum **immer** bei (`nix build` wird immer zuerst
+  versucht; gum aus dem PATH ist nur der Fallback) und bevorzugt `pkgsStatic.gum` (musl-static → einzelnes Binary ohne Store-Abhängigkeiten, läuft auf einem
   nackten Ziel). Erster static-Build zieht den Go-Compiler (Long-Runner, danach gecacht). Das Deploy-TUI
   nutzt gum nur, wenn `--version` läuft, sonst **still Plain-Bash-Fallback**.
 - **Build-Datum ≠ Store-mtime.** Nix normalisiert alle Store-Pfad-mtimes auf `1` (1970) → `stat -c %Y`

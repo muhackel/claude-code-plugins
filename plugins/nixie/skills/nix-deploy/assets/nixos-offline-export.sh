@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 # Export einer NixOS-System-Closure als Offline-Archiv + Sidecar-Manifest.
 #
-# Auf der BUILD-Kiste ausfuehren. Erzeugt im Zielverzeichnis:
+# Auf der BUILD-Kiste ausführen. Erzeugt im Zielverzeichnis:
 #   <host>-<rev>.nar.zst          komprimierte Closure (nix-store --export | zstd)
-#   <host>-<rev>.nar.zst.sha256   Pruefsumme (erst NACH Integritaetscheck geschrieben)
-#   <host>-<rev>.manifest         Metadaten fuer das Deploy-TUI (host/toplevel/date/rev/version/sha256)
+#   <host>-<rev>.nar.zst.sha256   Prüfsumme (erst NACH Integritätscheck geschrieben)
+#   <host>-<rev>.manifest         Metadaten für das Deploy-TUI (host/toplevel/date/rev/version/sha256)
 # und legt einmalig das Deploy-TUI (nixos-offline-deploy.sh) + gum-Binary daneben.
 #
 # Mehrere Hosts teilen sich EIN Zielverzeichnis (Konvention: <medium>/nix-offline-deploy) —
-# der Hostname steckt im Dateinamen/Manifest, das Deploy-TUI waehlt am Ziel aus.
+# der Hostname steckt im Dateinamen/Manifest, das Deploy-TUI wählt am Ziel aus.
 #
 #   ./nixos-offline-export.sh -o /media/STICK/nix-offline-deploy [-t /run/current-system] [-r <rev>] [-l 12]
 #
 #   -o DIR   Zielverzeichnis (Pflicht; USB-Medium; Konvention: <medium>/nix-offline-deploy)
 #   -t PATH  Toplevel (Default: /run/current-system)
-#   -r REV   Kurz-Revision fuers Naming/Manifest (Default: git rev-parse --short HEAD im cwd, sonst store-hash)
+#   -r REV   Kurz-Revision fürs Naming/Manifest (Default: git rev-parse --short HEAD im cwd, sonst store-hash)
 #   -j N     zstd-Threads (Default: nproc)
 #   -l N     zstd-Stufe 1-19 (Default: 12). Store-Closures erreichen mit --long=31 schon bei ~12-15
-#            fast die volle Kompression; ab ~17 kostet jede Stufe viel Zeit fuer kaum kleinere Archive
-#            (und -19 --long=31 saturiert nur ~halb so viele Kerne). Fuer ein Langzeit-Archiv hoeher.
-#   -w DIR   Arbeitsverzeichnis fuer den lokalen Build (Default: $TMPDIR bzw. /tmp). Das Archiv wird
+#            fast die volle Kompression; ab ~17 kostet jede Stufe viel Zeit für kaum kleinere Archive
+#            (und -19 --long=31 saturiert nur ~halb so viele Kerne). Für ein Langzeit-Archiv höher.
+#   -w DIR   Arbeitsverzeichnis für den lokalen Build (Default: $TMPDIR bzw. /tmp). Das Archiv wird
 #            hier gebaut+verifiziert und erst dann auf das (langsame/fragile) USB-Medium kopiert.
-#            Genug Platz noetig (~Closure/2). Bei tmpfs-/tmp ggf. auf eine echte Disk zeigen.
+#            Genug Platz nötig (~Closure/2). Bei tmpfs-/tmp ggf. auf eine echte Disk zeigen.
 set -euo pipefail
 
 C_INFO='\033[1;34m'; C_OK='\033[1;32m'; C_WARN='\033[1;33m'; C_ERR='\033[1;31m'; C_RST='\033[0m'
@@ -58,7 +58,7 @@ TOPLEVEL="$(readlink -f "$TOPLEVEL")"
 [[ -e "$TOPLEVEL" ]] || { log_err "Toplevel existiert nicht: $TOPLEVEL"; exit 1; }
 
 # Host + Version aus dem Toplevel-Basename ableiten. Der Store-Pfad hat die Form
-# /nix/store/<hash>-nixos-system-<HOST>-<VERSION> -> Hash-Praefix bis inkl. "nixos-system-"
+# /nix/store/<hash>-nixos-system-<HOST>-<VERSION> -> Hash-Präfix bis inkl. "nixos-system-"
 # abschneiden, dann am letzten "-<Ziffer...>" in Host und Version trennen.
 BASE="$(basename "$TOPLEVEL")"
 NAME="${BASE#*nixos-system-}"
@@ -69,10 +69,10 @@ else
   HOST="$(hostname)"; VERSION=""
 fi
 
-# Revision: -r, sonst git im cwd, sonst Store-Hash-Praefix
+# Revision: -r, sonst git im cwd, sonst Store-Hash-Präfix
 if [[ -z "$REV" ]]; then
   REV="$(git rev-parse --short HEAD 2>/dev/null || true)"
-  [[ -n "$REV" ]] || REV="$(basename "$TOPLEVEL" | cut -c1-7)"  # fallback: store-hash-praefix
+  [[ -n "$REV" ]] || REV="$(basename "$TOPLEVEL" | cut -c1-7)"  # fallback: store-hash-präfix
 fi
 
 # Build-Datum: Nix normalisiert Store-mtimes auf 1 -> nutzlos. Das nixpkgs-Datum
@@ -86,8 +86,8 @@ fi
 STEM="${HOST,,}-${REV}"
 
 # Erst lokal bauen+verifizieren, dann auf den Stick kopieren. Direkt auf exFAT/USB zu
-# komprimieren ist fragil: ein Disconnect unter Last hinterlaesst eine "erfolgreich
-# geschriebene", aber unvollstaendige Datei (zstd meldet ok, der Rest wurde nie geflusht).
+# komprimieren ist fragil: ein Disconnect unter Last hinterlässt eine "erfolgreich
+# geschriebene", aber unvollständige Datei (zstd meldet ok, der Rest wurde nie geflusht).
 WORKROOT="${WORKDIR:-${TMPDIR:-/tmp}}"
 WORK="$(mktemp -d "$WORKROOT/nixos-offline-export.XXXXXX")" || { log_err "Arbeitsverzeichnis in $WORKROOT nicht anlegbar."; exit 1; }
 trap 'rm -rf "$WORK"' EXIT
@@ -104,22 +104,22 @@ if [[ "$CLOSURE_B" =~ ^[0-9]+$ ]]; then
   NEED=$(( CLOSURE_B / 2 ))
   avail_work="$(df -B1 --output=avail "$WORK" 2>/dev/null | tail -1 | tr -dc 0-9)"
   if [[ -n "$avail_work" && "$avail_work" -lt "$NEED" ]]; then
-    log_warn "Wenig Platz in $WORK ($((avail_work/1073741824)) GiB frei, ~$((NEED/1073741824)) GiB moeglich noetig) — ggf. -w <dir> auf eine groessere Disk."
+    log_warn "Wenig Platz in $WORK ($((avail_work/1073741824)) GiB frei, ~$((NEED/1073741824)) GiB möglich nötig) — ggf. -w <dir> auf eine größere Disk."
   fi
 fi
 
 # 1) Export -> WORK (lokale schnelle Disk). pipefail essenziell: maskiert sonst einen
-#    abgebrochenen --export vor gruenem zstd.
+#    abgebrochenen --export vor grünem zstd.
 log_info "Exportiere Closure (nix-store --export | zstd -$LEVEL --long=31 -T$THREADS, das dauert) ..."
 # nix-store -qR liefert Store-Pfade ohne Whitespace — word-splitting ist hier gewollt.
 # shellcheck disable=SC2046
 nix-store --export $(nix-store -qR "$TOPLEVEL") | zstd -T"$THREADS" --long=31 -"$LEVEL" -o "$W_ARCHIVE" -f
 log_ok "Archiv gebaut."
 
-# 2) Lokal verifizieren (zuverlaessig auf schneller Disk)
-log_info "Integritaet pruefen (zstd -t, lokal) ..."
+# 2) Lokal verifizieren (zuverlässig auf schneller Disk)
+log_info "Integrität prüfen (zstd -t, lokal) ..."
 zstd -t --long=31 "$W_ARCHIVE"
-log_ok "Archiv-Integritaet ok."
+log_ok "Archiv-Integrität ok."
 
 SHA="$(sha256sum "$W_ARCHIVE" | cut -d' ' -f1)"
 echo "$SHA  ${STEM}.nar.zst" > "$W_ARCHIVE.sha256"
@@ -141,10 +141,10 @@ log_ok "Manifest erstellt."
 DEPLOY_SRC="$SCRIPT_DIR/nixos-offline-deploy.sh"
 [[ -f "$DEPLOY_SRC" ]] && cp -f "$DEPLOY_SRC" "$WORK/nixos-offline-deploy.sh"
 
-# 5) gum IMMER beilegen — moeglichst statisch, damit es auf einem nackten Ziel laeuft.
+# 5) gum IMMER beilegen — möglichst statisch, damit es auf einem nackten Ziel läuft.
 #    Reihenfolge: pkgsStatic (musl-static, voll portabel; nach dem 1. Build gecacht) ->
 #    gum im PATH -> dynamisches nixpkgs#gum. Ein statisches gum ist ein einzelnes Binary
-#    ohne Store-Abhaengigkeiten und braucht kein bin/lib-Beiwerk.
+#    ohne Store-Abhängigkeiten und braucht kein bin/lib-Beiwerk.
 log_info "gum beilegen (statisch bevorzugt) ..."
 GUM_BIN=""
 GUM_STORE="$(nix build nixpkgs#pkgsStatic.gum --no-link --print-out-paths 2>/dev/null | head -1 || true)"
@@ -160,7 +160,7 @@ if [[ -n "$GUM_BIN" ]]; then
   if ldd "$WORK/gum" 2>&1 | grep -q 'not a dynamic executable'; then
     log_ok "gum beigelegt (statisch — portabel auf nackte Ziele)."
   else
-    log_warn "gum beigelegt, aber DYNAMISCH gelinkt — auf fremdem System evtl. nicht lauffaehig; Deploy-TUI faellt dann auf Plain-Bash zurueck."
+    log_warn "gum beigelegt, aber DYNAMISCH gelinkt — auf fremdem System evtl. nicht lauffähig; Deploy-TUI fällt dann auf Plain-Bash zurück."
   fi
 else
   log_warn "gum konnte nicht beschafft werden — Deploy-TUI nutzt am Ziel den Plain-Bash-Fallback."
@@ -175,10 +175,10 @@ if [[ -f "$WORK/gum" ]]; then cp -f "$WORK/gum" "$OUT/"; chmod +x "$OUT/gum" 2>/
 sync
 log_ok "Kopiert."
 
-# 7) Stick-Kopie gegenpruefen — faengt Transferfehler / Disconnect unter Last (premature end etc.)
+# 7) Stick-Kopie gegenprüfen — fängt Transferfehler / Disconnect unter Last (premature end etc.)
 log_info "Verifiziere Stick-Kopie (sha256 vom Medium) ..."
 sync
-# Page-Cache fuer das Archiv gezielt raeumen (fadvise DONTNEED, kein root), damit sha256sum
+# Page-Cache für das Archiv gezielt räumen (fadvise DONTNEED, kein root), damit sha256sum
 # den echten Medium-Inhalt liest statt der eben geschriebenen Cache-Kopie.
 dd if="$OUT/${STEM}.nar.zst" of=/dev/null bs=4M iflag=nocache 2>/dev/null || true
 if ( cd "$OUT" && sha256sum -c "${STEM}.nar.zst.sha256" ); then
