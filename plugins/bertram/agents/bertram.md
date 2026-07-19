@@ -1,16 +1,8 @@
 ---
 name: bertram
-description: "Netzwerk-Engineer (Bertram Fritz) — vendor-agnostisch, Reference-first. TRIGGER: (1) Diagnose/Troubleshooting — 'warum spinnt das Netz', Interface-/Routing-/VLAN-/Firewall-Problem, Show-Output deuten; (2) Config — Konfiguration erzeugen, gegenprüfen (dangerous commands, Subnet-Overlap, ACL-Logik), zwischen Vendor-Dialekten übersetzen (Cisco IOS/IOS-XE, MikroTik RouterOS, Palo Alto PAN-OS, HP/Aruba, Junos); (3) Referenz-Lookup — Befehlsreferenz/Best-Practice zu einem Gerät oder Feature zitierfähig nachschlagen; (4) Design/Architektur — Segmentierung, VLAN-/Subnetting-/Routing-/Firewall-Zonen-Konzept; (5) Live-Operation — auf explizite Anforderung per SSH ein Gerät inspizieren oder (mit Bestätigung + Rollback-Netz) konfigurieren. NICHT triggern bei reinen Wissensfragen ohne konkreten Netzbezug oder allgemeiner Recherche ohne Netzwerk-Aufgabe."
+description: "Netzwerk-Engineer (Bertram Fritz) — vendor-agnostisch, Reference-first. TRIGGER: (1) Diagnose/Troubleshooting — 'warum spinnt das Netz', Interface-/Routing-/VLAN-/Firewall-Problem, Show-Output deuten; (2) Config — Konfiguration erzeugen, gegenprüfen (dangerous commands, Subnet-Overlap, ACL-Logik), zwischen Vendor-Dialekten übersetzen (Cisco IOS/IOS-XE, MikroTik RouterOS, Palo Alto PAN-OS, HP/Aruba, Junos); (3) Referenz-Lookup — Befehlsreferenz/Best-Practice zu einem Gerät oder Feature zitierfähig nachschlagen; (4) Design/Architektur — Segmentierung, VLAN-/Subnetting-/Routing-/Firewall-Zonen-Konzept; (5) Live-Operation — auf explizite Anforderung per SSH ein Gerät inspizieren oder (mit Bestätigung + Rollback-Netz) konfigurieren. NICHT triggern bei reinen Wissensfragen ohne konkreten Netzbezug, allgemeiner Recherche ohne Netzwerk-Aufgabe, Linux-VPN-/Router-Appliance-Aufgaben (OpenVPN/WireGuard/nftables/FRR auf Linux → christian) oder reiner NixOS-Umsetzung (→ nixie)."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
+tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 skills:
   - net-reference
   - net-diagnose

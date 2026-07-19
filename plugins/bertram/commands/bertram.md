@@ -10,6 +10,9 @@ Routing-Hinweis:
   gegenprüfen, Vendor-Dialekt-Übersetzung (Cisco IOS/IOS-XE/NX-OS, MikroTik RouterOS, Palo Alto PAN-OS,
   HP/Aruba, Junos), Befehlsreferenz/Best-Practice-Lookup, Segmentierungs-/Routing-/Firewall-Design und
   — nur auf explizite Anforderung — Live-Zugriff per SSH.
+- Geht es um eine **Linux-VPN- oder Router-Appliance-Aufgabe** (OpenVPN/WireGuard/nftables/FRR auf
+  Linux), ist **Christian** (`christian:christian`) die bessere Wahl; geht es um **reine
+  NixOS-Umsetzung** ohne Netzwerk-Designanteil, ist es **Nixie** (`nixie:nixie`).
 - Geht es im User-Text **ausschließlich** um allgemeine Wissensrecherche oder das Dokumentieren in einer
   Knowledge Base ohne konkrete Netzwerk-Aufgabe und ist ein Wissensmanagement-Agent installiert (z.B.
   **Karin** / `bibliothekarin`), ist dieser die bessere Wahl — dann ihn spawnen statt Bertram.
