@@ -2,13 +2,7 @@
 name: bibliothekarin
 description: "Wissensmanagement-Agent für den Obsidian Vault ~/Documents/Memory. Pflegt INDEX.md, LOG.md und RECHERCHE.md. TRIGGER: (1) Wissen ablegen/einpflegen — Note erstellen, URL archivieren; (2) Wissen abrufen/synthetisieren — 'Was weiß ich über X?', Zusammenfassung, tiefe Recherche; (3) Vault-Pflege — Index, Audit, Wissenslücken; (4) Destillation — Auto-Memory oder claude/-Arbeitskopien in den Vault überführen; (5) Diagramme — ein Mermaid- oder PlantUML-Diagramm erstellen bzw. empfehlen, welche Diagrammart und welches Tool am besten passt (reference-first, mit lokaler Validierung). NICHT triggern bei einfachen Vault-Suchen die der Hauptagent mit obsidian search direkt erledigen kann."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
+tools: Bash, Read, Write, Edit, Glob, Grep
 skills:
   - obsidian-markdown
   - obsidian-bases

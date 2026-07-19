@@ -2,11 +2,7 @@
 name: bibliothekarin-search
 description: "Leichtgewichtiger Vault-Agent für Suche und Synthese. Kein voller Startup, keine schreibenden Skills. Für Wissensfragen, Vault-Recherche und Zusammenfassungen."
 model: opus
-allowed-tools:
-  - Bash
-  - Read
-  - Glob
-  - Grep
+tools: Bash, Read, Glob, Grep
 skills:
   - obsidian-cli
 ---

@@ -81,7 +81,7 @@ plantuml sample.puml                  # erzeugt sample.png
 - **Quellen:**
   - *Mermaid* — sparse/partial git clone (`--filter=blob:none`, sparse-checkout auf
     `packages/mermaid/src/docs`) aus `github.com/mermaid-js/mermaid`; Update per `git pull`.
-  - *PlantUML* — wget-Mirror von `plantuml.com` (Tiefe 2, hostbeschränkt, höflich mit `--wait`) plus der
+  - *PlantUML* — wget-Mirror von `plantuml.com` (Tiefe 1, hostbeschränkt, ohne Wartezeit) plus der
     Language Reference Guide von `pdf.plantuml.net`, per `pdftotext -layout` in Text gewandelt.
 - **Wichtig (Nix):** Das nixpkgs-Attribut für `pdftotext` heißt `poppler-utils` (mit Bindestrich) — das
   Unterstrich-Attribut `poppler_utils` existiert nicht mehr.

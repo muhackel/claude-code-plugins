@@ -16,7 +16,7 @@
         pkgs.graphviz
         pkgs.git
         pkgs.wget
-        pkgs.poppler-utils   # liefert pdftotext (Attribut heisst poppler-utils, NICHT poppler_utils)
+        pkgs.poppler-utils   # liefert pdftotext (Attribut heißt poppler-utils, NICHT poppler_utils)
         pkgs.jq
         pkgs.coreutils
       ];
