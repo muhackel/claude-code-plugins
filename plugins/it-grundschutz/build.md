@@ -24,7 +24,7 @@ Die „Erzeugnisse" sind drei Apps:
 
 ```bash
 nix run .#ingest                  # Grundschutz++-Korpus laden/aktualisieren
-nix run .#ingest -- --force       # erzwingt Neuladen unabhängig von last-modified
+nix run .#ingest -- --force       # erzwingt Übernahme auch bei unverändertem sha256
 nix run .#ingest-2023             # Edition 2023 (DocBook-XML) laden + nach OSCAL normalisieren
 nix run .#ingest-2023 -- --file kompendium.xml  # offline: lokale XML statt Download
 
@@ -66,7 +66,7 @@ nix run .#ingest && nix run .#gs -- status
   Git-Repos — der Korpus steht unter CC BY-SA 4.0 und wird nie eingecheckt. Je Edition ein Unterordner:
   `grundschutz-pp/` und `edition-2023/`.
 - **Manifest:** je Edition ein `manifest.json` (Quelle, `sha256`, Abrufdatum, Lizenz, Anzahl). `ingest`
-  (Grundschutz++) aktualisiert nur bei geändertem `last-modified` (oder `--force`).
+  (Grundschutz++) übernimmt eine Datei nur, wenn ihr `sha256` vom Manifest-Eintrag abweicht (oder `--force`).
 - **Zielobjekt-Namespace:** `ingest` cacht zusätzlich `target_object_categories.csv` (BSI-Namespace,
   CC BY-SA 4.0). Sie speist `gs targets` und den Filter `list`/`checklist --target <Kategorie> [--inherit]`
   (Zielobjekt-Vererbung gemäß STM.5.2). Nur Grundschutz++.
