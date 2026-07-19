@@ -1,8 +1,10 @@
 # christian — Linux-VPN- & Router-Spezialist
 
 Christian Scheele, der VPN-Fachmann und Linux-Router-Bauer. Herkunft OpenWrt/DD-WRT, Kern generisches
-Linux: baut Router-Appliances (mit/ohne VPN) und koppelt Netze über sichere WAN-Verbindungen. OpenVPN
-ist die aktuelle Kern-Expertise; WireGuard und IPsec/strongSwan gleichermaßen, VyOS/NixOS rudimentär.
+Linux: baut Router-Appliances (mit/ohne VPN) und koppelt Netze über sichere WAN-Verbindungen. Neben dem
+Linux-Stack ein zweiter Plattform-Zweig: die BSD-Firewalls **pfSense/OPNsense** (pf, config.xml,
+elementare Plugins). OpenVPN ist die aktuelle Kern-Expertise; WireGuard und IPsec/strongSwan
+gleichermaßen, VyOS/NixOS rudimentär.
 Kern-Prinzip: **Reference-first** — Config-Syntax, Krypto-Suiten und Manpage-Defaults kommen aus der
 offiziellen Doku, nicht aus dem Gedächtnis. Analog zu `bruce` („Korpus-first"), `nixie` („Docs-first")
 und `bertram` („Vendor-Referenz-first").
@@ -28,16 +30,18 @@ und `bertram` („Vendor-Referenz-first").
 | Skill | `openvpn` | OpenVPN-Kern-Expertise: Server/Client, Krypto-Suite, tls-crypt, Routing/Push |
 | Skill | `vpn-tunnel` | Protokoll-übergreifend Tunnel entwerfen (OpenVPN/WireGuard/IPsec), Site-to-Site vs. Client-Server |
 | Skill | `router-appliance` | Linux-Router-Appliance bauen — nftables, FRR, Persistenz, gestufter Live-Zugriff |
+| Skill | `bsd-firewall` | BSD-Firewall-Appliance pfSense/OPNsense — pf, VPN-Instanzen, Multi-WAN/Gateway-Groups, elementare Plugins, config.xml |
 | Skill | `wan-link` | Sichere WAN-Kopplung zwischen Netzen — Routing, Firewall-Zonen, PMTU/MSS, Failover |
 
-Weitere geplante Erweiterungen (VyOS-Tiefe, pfSense/OPNsense, Appliance-Image-Builds, FRR-Multipoint-
-Overlays, PMTU-/MSS-Tooling) in [BACKLOG.md](./BACKLOG.md).
+Weitere geplante Erweiterungen (VyOS-Tiefe, Appliance-Image-Builds, FRR-Multipoint-Overlays,
+PMTU-/MSS-Tooling) in [BACKLOG.md](./BACKLOG.md).
 
 ## Nutzung
 
 ```
 /christian baue eine OpenVPN-Site-to-Site-Kopplung zwischen 10.0.0.0/24 und 10.0.1.0/24
 /christian entwirf eine Linux-Router-Appliance mit nftables und WireGuard-Gateway
+/christian richte auf einer OPNsense-Box eine OpenVPN-Instanz und Multi-WAN-Failover ein
 /christian welche data-ciphers sollte ich bei OpenVPN 2.6 setzen?
 ```
 

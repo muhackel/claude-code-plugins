@@ -8,14 +8,27 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 - **VyOS-Tiefe**: Über das rudimentäre Niveau hinaus — VyOS-Config-Modell (set-Syntax, commit/compare/
   rollback), VPN- und Routing-Stanzas als eigenständiger Plattform-Pfad.
-- **pfSense/OPNsense**: BSD-basierte Firewall-/Router-Appliances als weiterer Plattform-Zweig
-  (pf statt nftables, Web-/Config-XML-Modell).
 - **Konkrete Appliance-Image-Builds**: reproduzierbare Router-Images bauen (OpenWrt ImageBuilder,
   NixOS-Image via nixie), nicht nur Config-Entwurf.
 - **DMVPN-artige FRR-Multipoint-Overlays**: dynamische Multipoint-VPN-Topologien (Hub-and-Spoke mit
   automatischem Spoke-to-Spoke) über FRR/WireGuard/GRE statt statischer Punkt-zu-Punkt-Tunnel.
 - **PMTU-/MSS-Tooling**: Diagnose und automatisiertes Clamping für Path-MTU-Probleme über Tunnel
   (MSS-Clamping-Regeln, PMTU-Discovery-Blackhole-Erkennung).
+
+---
+
+## ✅ UMGESETZT (2026-07-19): pfSense/OPNsense-Plattform-Zweig (Skill `bsd-firewall`)
+
+Neuer Skill `bsd-firewall` als zweite Plattform-Achse neben `router-appliance`: die BSD-Firewall-
+Appliances **pfSense (Netgate)** und **OPNsense (Deciso)** in einem gemeinsamen Skill, Unterschiede
+tabellarisch. Deckt die ganze Appliance ab — **pf**-Packet-Filter (Regel-/NAT-/State-Modell, Aliase,
+`quick`, Interface=Zone, Anti-Lockout), **VPN-Instanzen** über die GUI (Design/Krypto bleibt bei
+`openvpn`/`vpn-tunnel`/`wan-link`), **Routing & Multi-WAN** (Gateway-Groups, FRR-Paket), die
+**elementaren Plugins/Pakete** (pfBlockerNG, Suricata/IDS, HAProxy, FRR, ACME, Monitoring) und
+**config.xml**-Backup/Reproduzierbarkeit — reference-first aus docs.netgate.com/docs.opnsense.org/
+pf.conf(5). Integriert in Persona (skills-Liste, STARTUP-Achse, Eiserne Regel 4: pfSense/OPNsense sind
+Open-Source-BSD und gehören zu Christian, nicht zu bertram), Command-Routing, README und Manifeste
+(Version 0.2.0).
 
 ---
 
