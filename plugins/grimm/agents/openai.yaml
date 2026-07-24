@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grimm"
+  short_description: "Behörden-Schreibstilist: überführt Sachverhalte in nüchternes Verwaltungs- und Anordnungsdeutsch"
+  default_prompt: "Grimmifiziere diesen Sachverhalt zu einer innerdienstlichen Anordnung nach dem Führungsschema."

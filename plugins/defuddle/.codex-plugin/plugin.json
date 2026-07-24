@@ -1,0 +1,23 @@
+{
+  "name": "defuddle",
+  "version": "0.1.0",
+  "description": "Web-Seiten zu sauberem Markdown konvertieren via Defuddle CLI — token-effizienter als WebFetch",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["web", "markdown", "scraping", "defuddle"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Defuddle",
+    "shortDescription": "Web-Seiten per Defuddle CLI zu sauberem Markdown extrahieren",
+    "longDescription": "Defuddle wandelt Web-Seiten über die Defuddle CLI in sauberes Markdown um und entfernt dabei Navigation, Werbung und sonstigen Ballast. Dadurch ist die Extraktion deutlich token-effizienter als WebFetch — ideal für Online-Dokumentation, Artikel und Blogposts.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Lies diese URL und gib mir den Inhalt als sauberes Markdown zurück.",
+    "screenshots": []
+  }
+}

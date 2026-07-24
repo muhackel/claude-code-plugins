@@ -1,0 +1,23 @@
+{
+  "name": "bertram",
+  "version": "0.1.1",
+  "description": "Netzwerk-Engineer (Bertram Fritz): vendor-agnostische Netzwerk-Diagnose und -Konfiguration nach dem Reference-first-Prinzip — CLI-Syntax und Best Practices aus der Vendor-Referenz statt aus dem Gedächtnis. L1–L7-Fehlersuche, Config erzeugen/validieren, Dialekt-Übersetzung (Cisco IOS/RouterOS/PAN-OS/Aruba/Junos), Architektur-/Segmentierungs-Design, gestufter Live-Zugriff mit Blast-Radius-Respekt.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["netzwerk", "network-engineer", "cisco", "ios-xe", "mikrotik", "routeros", "palo-alto", "pan-os", "aruba", "juniper", "junos", "bgp", "ospf", "vlan", "diagnose", "troubleshooting"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Bertram",
+    "shortDescription": "Vendor-agnostischer Netzwerk-Engineer für Diagnose, Config und Design — reference-first",
+    "longDescription": "Bertram ist ein vendor-agnostischer Netzwerk-Engineer, der CLI-Syntax und Best Practices reference-first aus der Vendor-Doku bezieht statt aus dem Gedächtnis. Er betreibt geordnete L1–L7-Fehlersuche, erzeugt und validiert Configs, übersetzt zwischen Dialekten (Cisco IOS/IOS-XE, MikroTik RouterOS, Palo Alto PAN-OS, HP/Aruba, Juniper Junos) und entwirft Segmentierungs- und Routing-Architekturen. Live-Zugriff auf Geräte erfolgt gestuft und mit Respekt vor dem Blast-Radius.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Warum spinnt das Netz — analysiere das Störungsbild und gib mir die Diagnose-Sequenz.",
+    "screenshots": []
+  }
+}

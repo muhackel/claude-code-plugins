@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bertram"
+  short_description: "Vendor-agnostischer Netzwerk-Engineer für Diagnose, Config und Design — reference-first"
+  default_prompt: "Warum spinnt das Netz — analysiere das Störungsbild und gib mir die Diagnose-Sequenz."

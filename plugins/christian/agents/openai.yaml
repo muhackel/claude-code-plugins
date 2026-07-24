@@ -1,0 +1,4 @@
+interface:
+  display_name: "Christian"
+  short_description: "Linux-VPN- und Router-Spezialist für Tunnel, WAN-Kopplung und Firewall-Appliances — reference-first"
+  default_prompt: "Entwirf und härte mir einen WireGuard-Site-to-Site-Tunnel zwischen zwei Standorten."

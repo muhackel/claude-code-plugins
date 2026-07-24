@@ -1,6 +1,6 @@
 # claude-code-plugins
 
-Persönliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und Hooks.
+Persönliche Sammlung von Plugins — Skills, Agents, Commands und Hooks. Lauffähig sowohl in **Claude Code** als auch in **OpenAI Codex** (geteilter Content, getrennte Manifeste).
 
 ## Nutzung
 
@@ -8,7 +8,7 @@ Persönliche Sammlung von Claude Code Plugins — Skills, Agents, Commands und H
 
 ```bash
 git clone --recurse-submodules https://github.com/muhackel/claude-code-plugins
-# Oder nachtraeglich:
+# Oder nachträglich:
 git submodule update --init --recursive
 ```
 
@@ -21,6 +21,8 @@ git submodule update --init --recursive
 # Oder lokal:
 /plugin marketplace add /pfad/zum/repo
 ```
+
+> **Codex:** Dieselben Plugins sind auch für OpenAI Codex nutzbar — der Codex-Marketplace liegt unter `.agents/plugins/marketplace.json`, die Plugin-Manifeste unter `plugins/<name>/.codex-plugin/`. Den exakten Install-Befehl gegen die aktuelle [Codex-Doku](https://developers.openai.com/codex) prüfen.
 
 ### Plugin installieren
 
@@ -39,18 +41,22 @@ git submodule update --init --recursive
 
 | Verzeichnis | Inhalt |
 |---|---|
-| `.claude-plugin/marketplace.json` | Marketplace-Index |
-| `plugins/<name>/` | Einzelne Plugins mit eigenem Manifest |
-| `plugins/_template/` | Vorlage für neue Plugins |
+| `.claude-plugin/marketplace.json` | Marketplace-Index (Claude Code) |
+| `.agents/plugins/marketplace.json` | Marketplace-Index (Codex) |
+| `plugins/<name>/` | Einzelne Plugins — Manifest je System (`.claude-plugin/` + `.codex-plugin/`), Content geteilt |
+| `plugins/_template/` | Vorlage für neue Plugins (beide Manifeste) |
 | `vendors/obsidian-skills/` | Git Submodule: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT) |
 
 ## Neues Plugin erstellen
 
 1. `plugins/_template/` nach `plugins/<mein-plugin>/` kopieren
-2. `plugin.json` anpassen (Name, Beschreibung, Version, Keywords)
-3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen
-4. Plugin in `.claude-plugin/marketplace.json` eintragen
-5. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
+2. **Beide** Manifeste anpassen: `.claude-plugin/plugin.json` und `.codex-plugin/plugin.json` (Name, Beschreibung, Version, Keywords)
+3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen (geteilt zwischen beiden Systemen)
+4. Bei echtem Agenten: `agents/openai.yaml.template` → `openai.yaml` umbenennen und ausfüllen (Codex-Agent-Registry)
+5. Plugin in **beide** Marketplaces eintragen: `.claude-plugin/marketplace.json` und `.agents/plugins/marketplace.json`
+6. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
+
+> Details zum Dual-Manifest-Schema (Claude Code + Codex): siehe [`CLAUDE.md`](CLAUDE.md).
 
 ## Verfügbare Plugins
 

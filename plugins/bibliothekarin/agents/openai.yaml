@@ -1,0 +1,4 @@
+interface:
+  display_name: "BibliotheKarin"
+  short_description: "Wissensmanagerin für Obsidian Vaults — einpflegen, abrufen, synthetisieren und pflegen"
+  default_prompt: "Pflege diese Notiz in meinen Vault ein und verknüpfe sie mit verwandten Notes."
