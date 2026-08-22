@@ -47,6 +47,12 @@
       "source": "./plugins/grimm",
       "description": "Behörden-Schreibstilist (Grimm): 'grimmifiziert' Sachverhalte ins nüchterne Verwaltungs- und Anordnungsdeutsch — Nominalstil, Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), exakte Datums-/Aktenbezüge, hoheitlicher Ton. Baut ganze Dokumente nach dem behördlichen Führungsschema (Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Form, nicht Fakten: setzt Platzhalter statt zu raten, bewertet nicht die fachliche Sache",
       "version": "0.1.0"
+    },
+    {
+      "name": "unslop",
+      "source": "./plugins/unslop",
+      "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 52 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln",
+      "version": "0.1.0"
     }
   ]
 }

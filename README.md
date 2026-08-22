@@ -236,6 +236,20 @@ dessen Ergebnis anschließend „grimmifiziert" wird.
 /plugin install grimm@muhackel-plugins --scope user
 ```
 
+### unslop
+
+Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme. Der Skill arbeitet in
+zwei Richtungen: 52 Erkennungsmerkmale in acht Kategorien beseitigen (Werbesprache, KI-Wortschatz,
+Struktur- und Rhetorik-Schablonen, Gesprächsartefakte, Fülltext, Jargon, unklare Sprache) und dem Text
+anschließend Charakter geben (Position beziehen, Rhythmus variieren, konkret werden).
+
+Enthaltener Skill:
+- `unslop` — Erkennungsmerkmale samt Anleitung zum Umschreiben
+
+```bash
+/plugin install unslop@muhackel-plugins --scope user
+```
+
 ## Lizenz
 
 MIT
