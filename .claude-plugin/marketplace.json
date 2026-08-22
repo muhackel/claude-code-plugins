@@ -51,8 +51,8 @@
     {
       "name": "unslop",
       "source": "./plugins/unslop",
-      "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 52 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln",
-      "version": "0.1.0"
+      "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln",
+      "version": "0.2.0"
     }
   ]
 }
