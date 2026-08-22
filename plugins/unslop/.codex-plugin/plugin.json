@@ -1,0 +1,23 @@
+{
+  "name": "unslop",
+  "version": "0.1.0",
+  "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 52 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["schreiben", "stil", "redigieren", "ki-muster", "unslop"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Unslop",
+    "shortDescription": "Typische KI-Muster aus Texten entfernen",
+    "longDescription": "Unslop überarbeitet Texte so, dass typische KI-Muster verschwinden und eine menschliche Stimme erkennbar wird. 52 Erkennungsmerkmale in acht Kategorien: von Werbesprache und KI-Wortschatz über Struktur- und Rhetorik-Schablonen bis zu Chatbot-Floskeln und Fülltext.",
+    "developerName": "Sebastian Rädle",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Überarbeite diesen Text und entferne alle typischen KI-Muster.",
+    "screenshots": []
+  }
+}
