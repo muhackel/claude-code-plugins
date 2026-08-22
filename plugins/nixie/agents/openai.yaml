@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nixie"
+  short_description: "NixOS-Engineer für Flakes, Module, Pakete und Deployment"
+  default_prompt: "Baue oder ändere eine NixOS-Config, schreibe eine Derivation oder deploye eine Closure auf einen Host."

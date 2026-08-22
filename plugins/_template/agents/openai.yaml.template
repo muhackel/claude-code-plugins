@@ -1,0 +1,6 @@
+# Codex-Agent-Registry — nur anlegen, wenn das Plugin einen echten Agenten hat.
+# Datei nach `openai.yaml` umbenennen und Platzhalter ersetzen.
+interface:
+  display_name: "PLUGIN_DISPLAY_NAME"
+  short_description: "PLUGIN_SHORT_DESCRIPTION"
+  default_prompt: "PLUGIN_DEFAULT_PROMPT"

@@ -1,0 +1,23 @@
+{
+  "name": "nixie",
+  "version": "0.4.1",
+  "description": "NixOS-Engineer: Flake-first Configs, eigene Derivations & Overlays, Paket-Pinning, resource-aware Remote-Builds auf der schnellsten Kiste, generischer Offline-Closure-Deploy (USB/TUI), dokumentenorientiert",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["nixos", "nix", "flake", "deployment", "packaging", "overlays", "remote-build"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Nixie",
+    "shortDescription": "NixOS-Engineer für Flakes, Module, Pakete und Deployment",
+    "longDescription": "Nixie baut und ändert NixOS-Configs (Hosts, Module, Feature-Flags), schreibt eigene Derivations und Overlays, pinnt lang bauende Pakete, führt resource-aware Remote-Builds auf der schnellsten erreichbaren Kiste aus und deployt generische Offline-Closures per USB/TUI — reference-first aus nixpkgs- und NixOS-Doku statt aus dem Gedächtnis.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Baue oder ändere eine NixOS-Config, schreibe eine Derivation oder deploye eine Closure auf einen Host.",
+    "screenshots": []
+  }
+}

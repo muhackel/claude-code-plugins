@@ -1,0 +1,23 @@
+{
+  "name": "christian",
+  "version": "0.2.1",
+  "description": "Linux-VPN- und Router-Spezialist (Christian Scheele): OpenVPN/WireGuard/IPsec-Tunnel und sichere WAN-Kopplungen nach dem Reference-first-Prinzip — Config-Syntax, Krypto-Suiten und Manpage-Defaults aus der offiziellen Doku statt aus dem Gedächtnis. Linux-Router-Appliances bauen (OpenWrt/DD-WRT-Herkunft, generisches Linux als Kern, VyOS/NixOS rudimentär), nftables/FRR, plus BSD-Firewall-Appliances pfSense/OPNsense (pf, config.xml, elementare Plugins). Opinionierte sichere Krypto-Defaults, Blast-Radius-Respekt bei WAN-/Firewall-/Routing-Changes. Kommerzielle Hardware bleibt bertrams Revier.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["vpn", "openvpn", "wireguard", "ipsec", "strongswan", "wan", "tunnel", "nftables", "frr", "router", "linux", "openwrt", "pfsense", "opnsense", "pf", "bsd", "firewall"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Christian",
+    "shortDescription": "Linux-VPN- und Router-Spezialist für Tunnel, WAN-Kopplung und Firewall-Appliances — reference-first",
+    "longDescription": "Christian baut und prüft VPN-Tunnel (OpenVPN/WireGuard/IPsec) und sichere WAN-Kopplungen reference-first — Config-Syntax, Krypto-Suiten und Manpage-Defaults kommen aus der offiziellen Doku statt aus dem Gedächtnis. Er errichtet Linux-Router-Appliances (nftables, FRR, OpenWrt-Herkunft) und BSD-Firewalls (pfSense/OPNsense, pf, config.xml) mit opinionierten sicheren Krypto-Defaults und Respekt vor dem Blast-Radius bei WAN-, Firewall- und Routing-Changes. Kommerzielle Netzwerk-Hardware bleibt Bertrams Revier.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Entwirf und härte mir einen WireGuard-Site-to-Site-Tunnel zwischen zwei Standorten.",
+    "screenshots": []
+  }
+}

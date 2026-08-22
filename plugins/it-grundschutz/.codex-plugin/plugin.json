@@ -1,0 +1,23 @@
+{
+  "name": "it-grundschutz",
+  "version": "0.4.1",
+  "description": "IT-Grundschutz-Berater (BSI): OSCAL-Korpus von Grundschutz++ (Anwenderkatalog + Methodik) lokal vorhalten, Anforderungen zitierfähig nachschlagen, Sicherheitsdokumente nach der Methodik erstellen/prüfen, IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung) durchführen, Editionen migrieren (Crosswalk Edition 2023 <-> Grundschutz++), Bausteine für Szenarien modellieren, kryptographische Verfahren/Schlüssellängen nach BSI TR-02102 (+ NIST/FIPS-Gegenprobe) bewerten. Quelle und Logik strikt getrennt für schmerzfreie Editionswechsel.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["bsi", "it-grundschutz", "grundschutz++", "oscal", "isms", "compliance", "informationssicherheit", "kryptographie", "tr-02102"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "IT-Grundschutz",
+    "shortDescription": "BSI-IT-Grundschutz-Berater: Anforderungen nachschlagen, modellieren, prüfen und dokumentieren",
+    "longDescription": "IT-Grundschutz (Bruce) hält den BSI-OSCAL-Korpus von Grundschutz++ lokal vor und schlägt Anforderungen und Bausteine zitierfähig nach. Er modelliert Bausteine für Szenarien, erstellt und prüft Sicherheitsdokumente nach der Methodik, führt den IT-Grundschutz-Check (Soll-Ist) durch und begleitet Editionswechsel per Crosswalk. Kryptographische Verfahren und Schlüssellängen bewertet er nach BSI TR-02102 mit NIST/FIPS-Gegenprobe — Quelle und Logik strikt getrennt.",
+    "developerName": "Sebastian Rädle",
+    "category": "Security",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Schlage die Anforderung GC.1.1 zitierfähig nach und erkläre das Vorgehen dahinter.",
+    "screenshots": []
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "IT-Grundschutz"
+  short_description: "BSI-IT-Grundschutz-Berater: Anforderungen nachschlagen, modellieren, prüfen und dokumentieren"
+  default_prompt: "Schlage die Anforderung GC.1.1 zitierfähig nach und erkläre das Vorgehen dahinter."

@@ -1,0 +1,23 @@
+{
+  "name": "bibliothekarin",
+  "version": "0.6.1",
+  "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults via CLI und Dateisystem. Erstellt Mermaid- und PlantUML-Diagramme reference-first (offline gespiegelte Doku, lokale Validierung) und empfiehlt die passende Diagrammart.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["obsidian", "vault", "index", "audit", "knowledge-management", "retrieval", "ingestion", "synthesis", "diagram", "mermaid", "plantuml", "visualization"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "BibliotheKarin",
+    "shortDescription": "Wissensmanagerin für Obsidian Vaults — einpflegen, abrufen, synthetisieren und pflegen",
+    "longDescription": "BibliotheKarin verwaltet Obsidian Vaults über CLI und Dateisystem: Wissen wird eingepflegt, abgerufen, über mehrere Notes hinweg synthetisiert und aus dem Kurzzeitgedächtnis in den Vault destilliert. Sie hält Index und Audit sauber, verknüpft Notes per Wikilink und pflegt Frontmatter. Zusätzlich erstellt sie Mermaid- und PlantUML-Diagramme reference-first mit lokaler Validierung und empfiehlt die passende Diagrammart und das passende Tool.",
+    "developerName": "Sebastian Rädle",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Pflege diese Notiz in meinen Vault ein und verknüpfe sie mit verwandten Notes.",
+    "screenshots": []
+  }
+}

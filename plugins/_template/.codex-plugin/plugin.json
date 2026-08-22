@@ -1,0 +1,23 @@
+{
+  "name": "PLUGIN_NAME",
+  "version": "0.1.0",
+  "description": "PLUGIN_DESCRIPTION",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": [],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PLUGIN_DISPLAY_NAME",
+    "shortDescription": "PLUGIN_SHORT_DESCRIPTION",
+    "longDescription": "PLUGIN_LONG_DESCRIPTION",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "PLUGIN_DEFAULT_PROMPT",
+    "screenshots": []
+  }
+}
