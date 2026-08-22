@@ -239,9 +239,14 @@ dessen Ergebnis anschließend „grimmifiziert" wird.
 ### unslop
 
 Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme. Der Skill arbeitet in
-zwei Richtungen: 52 Erkennungsmerkmale in acht Kategorien beseitigen (Werbesprache, KI-Wortschatz,
+zwei Richtungen: 62 Erkennungsmerkmale in acht Kategorien beseitigen (Werbesprache, KI-Wortschatz,
 Struktur- und Rhetorik-Schablonen, Gesprächsartefakte, Fülltext, Jargon, unklare Sprache) und dem Text
 anschließend Charakter geben (Position beziehen, Rhythmus variieren, konkret werden).
+
+Der Skill gilt nur für selbst verfassten Text. Übernommener Wortlaut bleibt unverändert: Zitate,
+Normtexte, wörtliche Übersetzungen, fremde Beiträge, Code und Ausgaben. Die Ausnahme greift pro
+Passage, nicht pro Dokument. Eine Schnellprüfung mit den sieben häufigsten Mustern steht vor der
+vollständigen Liste.
 
 Enthaltener Skill:
 - `unslop` — Erkennungsmerkmale samt Anleitung zum Umschreiben
