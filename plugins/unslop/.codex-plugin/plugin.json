@@ -1,7 +1,7 @@
 {
   "name": "unslop",
-  "version": "0.2.0",
-  "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln",
+  "version": "0.3.0",
+  "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "Unslop",
     "shortDescription": "Typische KI-Muster aus Texten entfernen",
-    "longDescription": "Unslop überarbeitet Texte so, dass typische KI-Muster verschwinden und eine menschliche Stimme erkennbar wird. 62 Erkennungsmerkmale in acht Kategorien: von Werbesprache und KI-Wortschatz über Struktur- und Rhetorik-Schablonen bis zu Chatbot-Floskeln und Fülltext.",
+    "longDescription": "Unslop überarbeitet Texte so, dass typische KI-Muster verschwinden und eine menschliche Stimme erkennbar wird. 62 Erkennungsmerkmale in acht Kategorien: von Werbesprache und KI-Wortschatz über Struktur- und Rhetorik-Schablonen bis zu Chatbot-Floskeln und Fülltext. Gilt für jede selbst formulierte Textausgabe, auch Chat- und Konsolenantworten; Zitate, Normtexte sowie Code und Konfiguration bleiben unverändert, Kommentare darin nicht.",
     "developerName": "Sebastian Rädle",
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],
