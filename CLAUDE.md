@@ -15,6 +15,7 @@ Ein **Marketplace-Repository** — eine persönliche Sammlung von Plugins (Skill
 ```
 .claude-plugin/marketplace.json   # Claude-Marketplace-Index — listet alle Plugins
 .agents/plugins/marketplace.json  # Codex-Marketplace-Index (anderes Schema, siehe unten)
+docs/                             # Evaluierungen fremder Skill-Sammlungen, Entscheidungsnotizen
 vendors/
   obsidian-skills/                # Git Submodule: kepano/obsidian-skills
 plugins/
