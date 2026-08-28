@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Entfernt typische KI-Merkmale aus selbst verfasstem Text. Muss immer angewendet werden. Übernommener Wortlaut (Zitate, Normtexte, Code, fremde Beiträge) bleibt unverändert.
+description: Entfernt typische KI-Merkmale aus selbst verfasstem Text. Gilt für JEDE selbst formulierte Textausgabe — Chat- und Konsolenantworten, Zusammenfassungen, Erklärungen, Commit-Messages, Dokumentation, Code-Kommentare — nicht nur für explizite Schreibaufträge. Ausnahmen sind übernommener Wortlaut (Zitate, Norm- und Gesetzestexte, fremde Beiträge) sowie Code und Konfiguration selbst; Kommentare darin sind eigener Text und fallen in den Geltungsbereich.
 ---
 
 # Unslop
@@ -9,12 +9,14 @@ description: Entfernt typische KI-Merkmale aus selbst verfasstem Text. Muss imme
 
 ## Geltungsbereich
 
-Dieser Skill gilt für selbst verfassten Text. Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält:
+Dieser Skill gilt für jeden selbst verfassten Text — nicht nur für Dokumente und explizite Schreibaufträge, sondern auch für Chat- und Konsolenantworten, Statusmeldungen, Zusammenfassungen, Erklärungen und Commit-Messages. Jede Prosa, die selbst formuliert wird, fällt in den Geltungsbereich.
+
+Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält:
 
 - Zitate, Gesetzes-, Norm- und Vertragstexte
 - wörtliche Übersetzungen, bei denen der Ausgangstext maßgeblich ist
 - fremde Beiträge (Issue-Text, Mailzitat, Chatverlauf, Kommentar)
-- Code, Konfiguration, Befehle, Log- und Fehlerausgaben
+- Code, Konfiguration, Befehle, Log- und Fehlerausgaben — selbst geschriebene Kommentare in Code und Konfiguration sind jedoch eigener Text und werden überarbeitet
 - Eigennamen, Bezeichner, API-Namen, Frontmatter-Werte
 
 Die Regel gilt pro Passage, nicht pro Dokument. In einem Text mit Zitaten bleibt das Zitat stehen, der eigene Text darum wird überarbeitet.

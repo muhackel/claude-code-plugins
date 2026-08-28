@@ -243,10 +243,12 @@ zwei Richtungen: 62 Erkennungsmerkmale in acht Kategorien beseitigen (Werbesprac
 Struktur- und Rhetorik-Schablonen, Gesprächsartefakte, Fülltext, Jargon, unklare Sprache) und dem Text
 anschließend Charakter geben (Position beziehen, Rhythmus variieren, konkret werden).
 
-Der Skill gilt nur für selbst verfassten Text. Übernommener Wortlaut bleibt unverändert: Zitate,
-Normtexte, wörtliche Übersetzungen, fremde Beiträge, Code und Ausgaben. Die Ausnahme greift pro
-Passage, nicht pro Dokument. Eine Schnellprüfung mit den sieben häufigsten Mustern steht vor der
-vollständigen Liste.
+Der Skill gilt für jede selbst formulierte Textausgabe — auch Chat- und Konsolenantworten,
+Zusammenfassungen und Commit-Messages, nicht nur explizite Schreibaufträge. Übernommener Wortlaut
+bleibt unverändert: Zitate, Normtexte, wörtliche Übersetzungen, fremde Beiträge, Code und Ausgaben.
+Selbst geschriebene Kommentare in Code und Konfiguration werden dagegen überarbeitet. Die Ausnahme
+greift pro Passage, nicht pro Dokument. Eine Schnellprüfung mit den sieben häufigsten Mustern steht
+vor der vollständigen Liste.
 
 Enthaltener Skill:
 - `unslop` — Erkennungsmerkmale samt Anleitung zum Umschreiben
