@@ -250,6 +250,11 @@ Selbst geschriebene Kommentare in Code und Konfiguration werden dagegen überarb
 greift pro Passage, nicht pro Dokument. Eine Schnellprüfung mit den sieben häufigsten Mustern steht
 vor der vollständigen Liste.
 
+Wartungsnotiz: Ob der Skill geladen wird, entscheidet das Modell anhand der Skill-Description.
+Greift das in der Praxis zu selten, ist der nächste Hebel ein UserPromptSubmit-Hook im Plugin,
+der bei jedem Prompt eine kompakte Regelzeile als Kontext injiziert. Das übersteht auch die
+Kontext-Kompaktierung langer Sitzungen, kostet dafür ein paar Token pro Turn.
+
 Enthaltener Skill:
 - `unslop` — Erkennungsmerkmale samt Anleitung zum Umschreiben
 
