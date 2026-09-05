@@ -51,6 +51,12 @@ plugins/
 | Agent-Registry | Frontmatter in `agents/*.md` | zusätzlich `agents/openai.yaml` |
 | Hooks | `hooks/hooks.json` | `hooks.json` im Plugin-Root (Symlink → `hooks/hooks.json`) |
 
+**Commands unter Codex:** Codex migriert `commands/<name>.md` beim Install automatisch zu einem Skill
+`<plugin>:source-command-<name>` (Frontmatter `name`/`description` wird übernommen). `${CLAUDE_PLUGIN_ROOT}`
+wird dort **nicht** ersetzt — Commands, die Skripte aufrufen, leiten den Root aus dem eigenen Skill-Pfad ab
+(Verzeichnis, das `.codex-plugin/` enthält). Ein Skill darf nicht so heißen wie ein Command desselben
+Plugins (`skills/ask/` würde `/ask` verdecken).
+
 **Checkliste bei jeder Plugin-Änderung** (Version-Bump, neue Skills/Commands, Beschreibung):
 1. `.claude-plugin/plugin.json` **und** `.codex-plugin/plugin.json` angleichen (mind. `version`, `description`, `keywords`).
 2. Beide Marketplace-Indizes prüfen (neuer Eintrag / geänderte Beschreibung).

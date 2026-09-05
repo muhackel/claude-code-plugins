@@ -49,6 +49,12 @@
       "version": "0.1.0"
     },
     {
+      "name": "ask",
+      "source": "./plugins/ask",
+      "description": "Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace",
+      "version": "0.1.0"
+    },
+    {
       "name": "unslop",
       "source": "./plugins/unslop",
       "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
