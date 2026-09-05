@@ -1,0 +1,23 @@
+{
+  "name": "ask",
+  "version": "0.1.0",
+  "description": "Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace. Der Host schreibt ein Handover, die andere CLI antwortet.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["codex", "claude", "review", "second-opinion", "zweitmeinung", "handover", "cross-cli"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Ask",
+    "shortDescription": "Die jeweils andere CLI (Claude/Codex) non-interaktiv um eine Zweitmeinung oder ein Review bitten",
+    "longDescription": "Ask ruft aus einer laufenden Sitzung heraus die jeweils andere CLI auf: aus Codex wird Claude Code gefragt, aus Claude Code Codex. Dabei kommt immer das Flaggschiffmodell der installierten CLI-Version zum Einsatz, zur Laufzeit ermittelt. Ohne Auftrag liefert ask ein Review des aktuellen Projektstands, mit Auftrag schreibt der Host ein Handover. ask bleibt read-only, execute darf im Workspace schreiben.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Hol ein Review des aktuellen Projektstands von der anderen CLI.",
+    "screenshots": []
+  }
+}

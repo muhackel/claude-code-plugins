@@ -236,6 +236,31 @@ dessen Ergebnis anschließend „grimmifiziert" wird.
 /plugin install grimm@muhackel-plugins --scope user
 ```
 
+### ask
+
+Cross-CLI-Zweitmeinung: fragt aus einer laufenden Sitzung heraus non-interaktiv die **jeweils andere CLI**
+(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem **Flaggschiffmodell der installierten
+CLI-Version**, zur Laufzeit ermittelt (Codex: `codex debug models`, Claude: Alias `fable`), Effort `high`.
+Der Host schreibt ein Handover (Kontext, Ziel, Frage, Grenzen), die andere CLI startet mit leerem Kontext
+und antwortet; der Host gibt die Antwort unverändert wieder und ordnet sie ein.
+
+Slash Commands:
+- `/ask` — read-only; ohne Argument ein Standard-Review des aktuellen Projekts, mit Argument eine eigene Frage
+- `/execute` — workspace-write; die andere CLI führt einen Auftrag im Workspace aus (kein Commit/Push)
+
+In Codex heißen die migrierten Commands `$ask:source-command-ask` bzw. `$ask:source-command-execute`.
+
+Enthaltener Skill:
+- `handover` — Handover-Format, Ablauf, Rechte-Matrix je Ziel-CLI, Standard-Review
+
+Die Ziel-CLIs kommen bewusst vom Host-PATH, nicht aus nixpkgs (sonst wäre es nicht „die installierte Version").
+Hilfswerkzeuge und Checks via Nix (`flake.nix`, Details in [`build.md`](plugins/ask/build.md)):
+`nix run ./plugins/ask#ask`, `nix flake check`.
+
+```bash
+/plugin install ask@muhackel-plugins --scope user
+```
+
 ### unslop
 
 Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme. Der Skill arbeitet in
