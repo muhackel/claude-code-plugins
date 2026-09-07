@@ -1,0 +1,11 @@
+{
+  "criteria": [
+    {
+      "id": "ac-01",
+      "description": "README.md nennt den beauftragten Startbefehl.",
+      "verification": "README.md vollständig lesen und den Startbefehl gegen den Projektauftrag prüfen."
+    }
+  ],
+  "allowed_paths": ["README.md"],
+  "checks": []
+}
