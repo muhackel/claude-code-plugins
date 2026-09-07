@@ -261,6 +261,27 @@ Hilfswerkzeuge und Checks via Nix (`flake.nix`, Details in [`build.md`](plugins/
 /plugin install ask@muhackel-plugins --scope user
 ```
 
+### philharmonie
+
+Projektaufträge mit versionierter Spec, getrenntem Generator und Evaluator sowie dauerhaftem
+Missionszustand. Verbindet die Cross-CLI-Aufträge aus ask mit unabhängiger Prüfung und belegter
+Abnahme. Die Linux-Laufzeit verwendet Nix und Bubblewrap; Änderungen entstehen in Snapshots und
+werden nur für freigegebene Pfade übernommen.
+
+Planer und Generator delegieren unabhängige Teilaufgaben an eigene Agents mit aufgabenbezogener
+Modellwahl. Vor der Freigabe bewertet die andere CLI die Spec mit einem begründeten Score und
+weist Blocker separat aus.
+
+Nach jedem Aufruf zeigt eine Modellübersicht, wer welche Aufgabe umgesetzt oder geprüft hat und
+mit welchem Ergebnis; fehlende oder nur konfigurierte Modellnachweise werden gekennzeichnet.
+
+Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
+Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.
+Das bestehende ask-Plugin bleibt separat nutzbar.
+
+Details und Betriebsgrenzen in [README](plugins/philharmonie/README.md) und
+[build.md](plugins/philharmonie/build.md); Entwurf in [design-ask-tandem.md](docs/design-ask-tandem.md).
+
 ### unslop
 
 Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme. Der Skill arbeitet in

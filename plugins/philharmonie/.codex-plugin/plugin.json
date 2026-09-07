@@ -1,0 +1,23 @@
+{
+  "name": "philharmonie",
+  "version": "0.1.0",
+  "description": "Projektaufträge mit Spec, getrenntem Generator und Evaluator sowie dauerhaftem Zustand bearbeiten; Cross-CLI-Fragen und begrenzte Schreibaufträge auch einzeln ausführen.",
+  "author": {
+    "name": "Sebastian Rädle",
+    "email": "muhackel@gmail.com"
+  },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["claude", "codex", "orchestration", "review", "state-machine", "cross-cli"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Philharmonie",
+    "shortDescription": "Projektaufträge planen, getrennt umsetzen und unabhängig prüfen",
+    "longDescription": "Philharmonie verbindet Cross-CLI-Aufträge mit einer versionierten Spec und getrennten Arbeitsrollen. Ein lokaler Runner verwaltet Übergaben, Prüfbelege, Pause und Wiederaufnahme. Die Linux-Laufzeit nutzt Nix und Bubblewrap.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Plane diesen Projektauftrag mit Philharmonie und setze die freigegebene Spec mit unabhängiger Prüfung um.",
+    "screenshots": []
+  }
+}

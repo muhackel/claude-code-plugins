@@ -1,0 +1,5 @@
+# Lokale Python- und Nix-Artefakte
+__pycache__/
+*.pyc
+result
+.direnv/

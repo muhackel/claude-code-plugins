@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["role", "run_id", "spec_hash", "summary", "changed_files", "unconfirmed"],
+  "properties": {
+    "role": {"type": "string", "enum": ["generator"]},
+    "run_id": {"type": "string"},
+    "spec_hash": {"type": "string"},
+    "summary": {"type": "string", "minLength": 1},
+    "changed_files": {"type": "array", "items": {"type": "string"}},
+    "unconfirmed": {"type": "array", "items": {"type": "string"}}
+  }
+}

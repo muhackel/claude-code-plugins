@@ -59,6 +59,12 @@
       "source": "./plugins/unslop",
       "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
       "version": "0.3.0"
+    },
+    {
+      "name": "philharmonie",
+      "source": "./plugins/philharmonie",
+      "description": "Cross-CLI-Aufträge mit Spec, getrennten Generator- und Evaluator-Rollen sowie persistentem Missionszustand",
+      "version": "0.1.0"
     }
   ]
 }

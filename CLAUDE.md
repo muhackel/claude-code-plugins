@@ -150,6 +150,23 @@ interface:
 - Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) liegen als Git Submodule unter `vendors/obsidian-skills/`. Plugins referenzieren diese per Symlink (`plugins/<name>/skills/<skill> → ../../../vendors/obsidian-skills/skills/<skill>`).
 - Update: `git submodule update --remote vendors/obsidian-skills`
 
+## Philharmonie
+
+`plugins/philharmonie/` enthält Skills und Commands sowie eine Linux-Laufzeit in Python. Zustandsänderungen
+laufen ausschließlich über `scripts/philharmonie.py` mit einer erwarteten Revision. Spec und Ergebnisse
+werden gegen JSON-Schemata geprüft. CLI-Adapter arbeiten in Bubblewrap-Snapshots; die Übernahme kontrolliert
+Ausgangsstand und erlaubte Pfade. Keine direkten Edits an Missionszuständen als Workflow-Abkürzung.
+
+Planer und Generator delegieren nach `references/delegation.md` an native Agents der eigenen CLI.
+Vor `approve` ist `review-spec` durch die andere CLI erforderlich. Der begründete Spec-Score ist an
+Spec, Vertrag und Projektstand gebunden; offene Blocker verhindern die Freigabe unabhängig vom Score.
+
+Die Laufzeit berichtet Modellarbeit je Aufruf auf stderr und als `invocation_models` in Zustandsausgaben.
+Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Historie ist kein neuer Aufruf.
+
+Tests im Plugin über `nix flake check path:. -L`. Die zusätzlichen Sandbox- und echten CLI-Integrationstests
+sind bewusst separat; Aufrufe und Betriebsgrenzen stehen in `plugins/philharmonie/build.md`.
+
 ## Git-Workflow
 
 - `main` — stabile Releases

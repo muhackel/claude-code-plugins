@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["role", "run_id", "spec_revision", "spec_hash", "contract_hash", "fingerprint", "summary", "scores", "blockers", "questions"],
+  "properties": {
+    "role": {"type": "string", "enum": ["spec_reviewer"]},
+    "run_id": {"type": "string", "minLength": 1},
+    "spec_revision": {"type": "integer", "minimum": 1},
+    "spec_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "contract_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "summary": {"type": "string", "minLength": 1},
+    "scores": {
+      "type": "object", "additionalProperties": false,
+      "required": ["coverage", "verification", "scope", "evidence", "risks"],
+      "properties": {
+        "coverage": {"type": "object", "additionalProperties": false, "required": ["points", "reason", "evidence"], "properties": {"points": {"type": "integer", "minimum": 0, "maximum": 25}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}},
+        "verification": {"type": "object", "additionalProperties": false, "required": ["points", "reason", "evidence"], "properties": {"points": {"type": "integer", "minimum": 0, "maximum": 25}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}},
+        "scope": {"type": "object", "additionalProperties": false, "required": ["points", "reason", "evidence"], "properties": {"points": {"type": "integer", "minimum": 0, "maximum": 20}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}},
+        "evidence": {"type": "object", "additionalProperties": false, "required": ["points", "reason", "evidence"], "properties": {"points": {"type": "integer", "minimum": 0, "maximum": 15}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}},
+        "risks": {"type": "object", "additionalProperties": false, "required": ["points", "reason", "evidence"], "properties": {"points": {"type": "integer", "minimum": 0, "maximum": 15}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}}
+      }
+    },
+    "blockers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "reason", "evidence"], "properties": {"id": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}}},
+    "questions": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}
