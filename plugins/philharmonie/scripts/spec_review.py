@@ -45,7 +45,8 @@ def review_spec(store, expected, planner=None):
             directory.mkdir(parents=True, mode=0o700)
             config = store.config()
             transport.check_sandbox()
-            adapter = transport.resolve(source["reviewer_cli"], None, config["effort"])
+            adapter = transport.resolve(source["reviewer_cli"], None, config["effort"],
+                                        transport.ROLE_TIERS["spec_reviewer"])
             if adapter["target"] != source["reviewer_cli"]:
                 raise Error("Spec-Gegenprüfung muss die andere CLI verwenden.")
             write_json(directory / "adapter.json", adapter)

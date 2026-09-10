@@ -20,7 +20,7 @@ class SingleCase(FixtureMixin, unittest.TestCase):
         argv = ["-C", str(self.root), mode, "--target", target,
                 "--handover", str(request), "--allow", "app.txt"]
         args = parser().parse_args(argv)
-        adapter = {"target": target, "model": "fixture", "effort": "high"}
+        adapter = {"target": target, "model": "fixture", "effort": "high", "tier": "standard"}
         def command(actual, workspace, schema, output, profile, **kwargs):
             self.assertEqual(actual["target"], target)
             script = "import json, pathlib, sys; request=sys.stdin.read(); "
@@ -79,13 +79,14 @@ class SingleCase(FixtureMixin, unittest.TestCase):
         self.assertEqual((self.artifacts / "stdout.log").read_text(), "kein JSON\n")
 
     def test_standard_review_and_mandatory_execute_handover(self):
-        adapter = {"target": "codex", "model": "fixture", "effort": "high"}
+        adapter = {"target": "codex", "model": "fixture", "effort": "high", "tier": "advanced"}
         args = parser().parse_args(["-C", str(self.root), "ask", "--dry-run", "--target", "codex"])
         output = io.StringIO()
         with patch("sys.stdin", io.StringIO("")), patch("transport.resolve", return_value=adapter) as resolve, \
              contextlib.redirect_stdout(output):
             self.assertEqual(single(args), 0)
-        resolve.assert_called_once_with("codex", None, "high")
+        # Das Standard-Review bekommt ohne --tier eine Stufe mehr als ein gezielter Auftrag.
+        resolve.assert_called_once_with("codex", None, None, "advanced")
         self.assertEqual(json.loads(output.getvalue())["handover"], DEFAULT_REVIEW)
         args.command = "execute"
         with patch("sys.stdin", io.StringIO("")), self.assertRaisesRegex(Error, "Handover"):

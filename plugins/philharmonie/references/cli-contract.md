@@ -16,7 +16,7 @@ Die Ergebnis-Schemata verwenden Draft 7. Codex lehnt `uniqueItems` im Ausgabever
 
 ### Native Delegationsrollen
 
-Generator und schreibender Einzelauftrag erzeugen `philharmonie-light`, `philharmonie-standard`, `philharmonie-advanced` und `philharmonie-strong`. Für Codex verwenden sie Luna mit `medium`, Terra mit `high`, Sol mit `high` und das sichtbare stärkste Katalogmodell mit `high`. Der Adapter prüft Namen und Effort gegen `codex debug models --bundled`. Die aufgabenabhängige Auswahl beschreibt [Delegation](delegation.md); der Planer verwendet dieselben Regeln in seiner Hauptsitzung.
+Generator und schreibender Einzelauftrag erzeugen `philharmonie-light`, `philharmonie-standard`, `philharmonie-advanced` und `philharmonie-strong`. Für Codex verwenden sie Luna mit `medium`, Terra mit `high`, Sol mit `high` und das sichtbare stärkste Katalogmodell mit `high`. Der Adapter prüft Namen und Effort gegen `codex debug models --bundled`. Die aufgabenabhängige Auswahl beschreibt [Delegation](delegation.md); der Planer verwendet dieselben Regeln in seiner Hauptsitzung. Dieselbe Staffelung gilt eine Ebene höher für den Hauptaufruf: Generator und Evaluator arbeiten in `advanced`, die Spec-Gegenprüfung in `strong`, Einzelaufträge nach `--tier` mit `advanced` beim Standard-Review und sonst `standard`. `--model` und `--effort` überschreiben die Klasse.
 
 Der Codex-Aufruf ergänzt folgende Einstellungen; die Rollenpfade zeigen auf die für diesen Run erzeugten TOML-Dateien:
 

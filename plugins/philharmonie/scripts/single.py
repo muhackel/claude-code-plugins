@@ -27,23 +27,27 @@ def single(args):
     handover = Path(args.handover).read_text() if args.handover else (
         "" if sys.stdin.isatty() else sys.stdin.read())
     edit = args.command == "execute"
+    default_review = False
     if not handover.strip():
         if edit:
             raise Error("execute benötigt ein Handover.")
         handover = DEFAULT_REVIEW
+        default_review = True
     if args.timeout < 1:
         raise Error("Timeout muss positiv sein.")
     if edit:
         write_preflight(root, args.allow, args.include_dirty)
-    adapter = transport.resolve(args.target, args.model, args.effort)
+    # Das Standard-Review sichtet das ganze Projekt und bekommt darum eine Stufe mehr.
+    tier = args.tier or ("advanced" if default_review else "standard")
+    adapter = transport.resolve(args.target, args.model, args.effort, tier)
     if args.dry_run:
         print(json.dumps({"adapter": adapter, "profile": "edit" if edit else "inspect",
                           "workspace": str(root), "allowed_paths": args.allow,
                           "handover": handover}, ensure_ascii=False, indent=2))
         return 0
     transport.check_sandbox()
-    print(f'Philharmonie: {adapter["target"]}, Modell {adapter["model"]}, '
-          f'Effort {adapter["effort"]}', file=sys.stderr)
+    print(f'Philharmonie: {adapter["target"]}, Klasse {tier}, '
+          f'Modell {adapter["model"]}, Effort {adapter["effort"]}', file=sys.stderr)
     guard = lock(root / ".philharmonie/local/locks/checkout.edit") if edit else contextlib.nullcontext()
     if edit:
         atomic(root / ".philharmonie/local/.gitignore", "*\n!.gitignore\n")
@@ -66,7 +70,8 @@ def single(args):
         write_json(base / "schema.json", schema)
         output = scratch / "result.json"
         team = delegation.prepare(adapter, base / "agents", "edit") if edit else None
-        label = "Philharmonie Einzelumsetzung" if edit else "Philharmonie Einzelprüfung"
+        label = (f'Philharmonie Einzelumsetzung {tier}' if edit
+                 else f'Philharmonie Einzelprüfung {tier}')
         argv = transport.command(adapter, work, base / "schema.json", output,
                                  "edit" if edit else "inspect", label=label,
                                  **({"delegation": team} if team else {}))
