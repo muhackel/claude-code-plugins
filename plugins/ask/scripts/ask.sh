@@ -33,6 +33,7 @@ EOF
 
 MODE="ask"; TARGET=""; HANDOVER_SRC=""; DRY_RUN=0; WORKDIR="$PWD"
 TIER=""; DEFAULT_REVIEW=0; EFFORT=""; CLAUDE_MODEL=""
+CODEX_FALLBACK="gpt-5.6-sol"   # Klasse advanced, Rückfall wenn ein Klassenmodell fehlt
 
 parse_args() {
   while [[ $# -gt 0 ]]; do
@@ -142,26 +143,39 @@ resolve_tier() {
   esac
 }
 
+# Ist das Modell im Katalog sichtbar und kann es den Effort?
+codex_usable() {
+  local visible="$1" model="$2" effort="$3"
+  [[ -n "$model" ]] || return 1
+  jq -e --arg m "$model" --arg e "$effort" \
+     '.[] | select(.slug == $m) | .supported_reasoning_levels[] | select(.effort == $e)' <<<"$visible" >/dev/null
+}
+
 CODEX_MODEL=""; CODEX_EFFORT=""
 codex_model() {
-  local catalog visible
-  catalog="$(codex debug models 2>/dev/null)" || die "codex debug models fehlgeschlagen; Klasse nicht auflösbar."
+  local catalog visible wish
+  # Ohne lesbaren Katalog keine Klassenwahl. Statt abzubrechen entscheidet die CLI selbst.
+  catalog="$(codex debug models 2>/dev/null)" || {
+    log_warn "codex debug models fehlgeschlagen -> Aufruf ohne Modellwahl"; return; }
   visible="$(jq -c '[.models[] | select(.visibility == "list")]' <<<"$catalog")"
   case "$TIER" in
-    light)    CODEX_MODEL="gpt-5.6-luna" ;;
-    standard) CODEX_MODEL="gpt-5.6-terra" ;;
-    advanced) CODEX_MODEL="gpt-5.6-sol" ;;
+    light)    wish="gpt-5.6-luna" ;;
+    standard) wish="gpt-5.6-terra" ;;
+    advanced) wish="gpt-5.6-sol" ;;
     # Die Spitze wird nicht festgeschrieben, sondern aus dem Katalog der installierten Version genommen.
-    strong)   CODEX_MODEL="$(jq -r 'sort_by(.priority) | .[0].slug // empty' <<<"$visible")" ;;
+    strong)   wish="$(jq -r 'sort_by(.priority) | .[0].slug // empty' <<<"$visible")" ;;
   esac
-  [[ -n "$CODEX_MODEL" ]] || die "Kein sichtbares Modell im Katalog für Klasse '$TIER'."
-  jq -e --arg m "$CODEX_MODEL" '.[] | select(.slug == $m)' <<<"$visible" >/dev/null \
-    || die "Modell '$CODEX_MODEL' für Klasse '$TIER' ist im Katalog dieser CLI-Version nicht sichtbar."
-  jq -e --arg m "$CODEX_MODEL" --arg e "$EFFORT" \
-       '.[] | select(.slug == $m) | .supported_reasoning_levels[] | select(.effort == $e)' <<<"$visible" >/dev/null \
-    || die "Modell '$CODEX_MODEL' kennt Effort '$EFFORT' nicht."
-  CODEX_EFFORT="$EFFORT"
-  log_info "Klasse $TIER -> $CODEX_MODEL (effort $CODEX_EFFORT)"
+  # Fällt ein Slug aus dem Katalog, erst auf advanced zurück, dann der CLI überlassen.
+  # Ein Aufruf ohne -m landet bei Codex auf dem Flaggschiff, deshalb ist advanced die Zwischenstufe.
+  if codex_usable "$visible" "$wish" "$EFFORT"; then
+    CODEX_MODEL="$wish"; CODEX_EFFORT="$EFFORT"
+    log_info "Klasse $TIER -> $CODEX_MODEL (effort $CODEX_EFFORT)"
+  elif codex_usable "$visible" "$CODEX_FALLBACK" "$EFFORT"; then
+    CODEX_MODEL="$CODEX_FALLBACK"; CODEX_EFFORT="$EFFORT"
+    log_warn "Klasse $TIER: '$wish' fehlt im Katalog dieser CLI-Version -> $CODEX_MODEL"
+  else
+    log_warn "Klasse $TIER: weder '$wish' noch '$CODEX_FALLBACK' im Katalog -> Aufruf ohne Modellwahl"
+  fi
 }
 
 # Kennzeichnet den Aufruf im Resume-Picker beider CLIs.
@@ -232,7 +246,6 @@ main() {
   if [[ "$DRY_RUN" == "0" ]]; then require_cli; fi
   if [[ "$TARGET" == "codex" ]]; then
     if command -v codex >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then codex_model; fi
-    [[ -n "$CODEX_MODEL" ]] || log_warn "Codex-Katalog nicht lesbar -> Kommando ohne Modellwahl"
     build_cmd_codex
   else
     build_cmd_claude

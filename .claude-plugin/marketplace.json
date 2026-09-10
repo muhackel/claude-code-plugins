@@ -52,7 +52,7 @@
       "name": "ask",
       "source": "./plugins/ask",
       "description": "Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace",
-      "version": "0.3.0"
+      "version": "0.3.1"
     },
     {
       "name": "unslop",
@@ -64,7 +64,7 @@
       "name": "philharmonie",
       "source": "./plugins/philharmonie",
       "description": "Cross-CLI-Aufträge mit Spec, getrennten Generator- und Evaluator-Rollen sowie persistentem Missionszustand",
-      "version": "0.3.0"
+      "version": "0.3.1"
     }
   ]
 }

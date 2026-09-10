@@ -87,6 +87,15 @@ Im Zweifel die kleinere Klasse: eine zu schwache Antwort erkennst du am Ergebnis
 Für wirklich harte Aufgaben lohnt `strong` eher als Planer — den Plan holen, ihn dann in `standard`
 ausführen lassen — als für die Umsetzung selbst.
 
+Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf
+die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
+direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Der Rückfall steht als
+Warnung auf stderr.
+
+Der Rückfall passiert im Skript. Bei einer solchen Warnung nicht denselben Aufruf mit einer höheren Klasse
+wiederholen — das wäre teurer als der Rückfall, den das Skript schon gewählt hat. Stattdessen melden, dass
+die Klassentabelle gegen den Katalog veraltet ist.
+
 ## Rechte der anderen CLI
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |

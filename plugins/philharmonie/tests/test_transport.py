@@ -7,7 +7,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from common import Error
-from transport import command, decode
+from transport import TIERS, codex_fallback, command, decode
 
 
 class TransportCase(unittest.TestCase):
@@ -31,6 +31,33 @@ class TransportCase(unittest.TestCase):
                     allowed = argv[argv.index("--allowedTools") + 1]
                     self.assertIn("Bash(git diff:*)", allowed)
                     self.assertNotIn("Bash", allowed.split(","))
+
+    def test_missing_class_model_steps_down_instead_of_up(self):
+        levels = [{"effort": "medium"}, {"effort": "high"}]
+        spare = TIERS["advanced"]["codex"][0]
+        catalog = {"gpt-5.6-luna": {"supported_reasoning_levels": levels},
+                   spare: {"supported_reasoning_levels": levels}}
+        # Vorhandenes Klassenmodell bleibt unangetastet.
+        self.assertEqual(codex_fallback(catalog, "gpt-5.6-luna", "medium", "light"),
+                         ("gpt-5.6-luna", "medium"))
+        # Fehlt es, greift advanced und nicht das Flaggschiff.
+        self.assertEqual(codex_fallback(catalog, "gpt-weg", "high", "light"), (spare, "high"))
+        # Kennt das Modell den Effort nicht, zählt es als unbrauchbar.
+        self.assertEqual(codex_fallback(catalog, "gpt-5.6-luna", "ultra", "light"), (None, None))
+        # Ohne Katalog entscheidet die CLI; kein Modell und kein Effort im Kommando.
+        self.assertEqual(codex_fallback({}, "gpt-5.6-luna", "high", "light"), (None, None))
+
+    def test_command_omits_model_when_the_cli_decides(self):
+        with tempfile.TemporaryDirectory() as directory:
+            schema = Path(directory) / "schema.json"
+            schema.write_text('{"type":"object"}')
+            for target in ("claude", "codex"):
+                adapter = {"target": target, "executable": target, "model": None, "effort": None}
+                argv = command(adapter, directory, schema, Path(directory) / "out.json", "inspect")
+                self.assertNotIn("-m", argv)
+                self.assertNotIn("--model", argv)
+                self.assertNotIn("--effort", argv)
+                self.assertFalse([a for a in argv if "model_reasoning_effort" in str(a)])
 
     def test_no_text_fallback_for_claude(self):
         for payload in ({"result": "PASS"}, {"is_error": True, "structured_output": {}}, {}, [], None):

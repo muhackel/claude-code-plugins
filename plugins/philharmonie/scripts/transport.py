@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from pathlib import Path
 import shutil
 import subprocess
@@ -18,6 +19,28 @@ TIERS = {"light": {"claude": ("haiku", "medium"), "codex": ("gpt-5.6-luna", "med
          "advanced": {"claude": ("opus", "high"), "codex": ("gpt-5.6-sol", "high")},
          "strong": {"claude": ("fable", "high"), "codex": (None, "high")}}
 ROLE_TIERS = {"generator": "advanced", "evaluator": "advanced", "spec_reviewer": "strong"}
+
+
+def codex_fallback(visible, model, effort, tier):
+    """Fällt ein Slug aus dem Katalog, erst auf advanced zurück, dann der CLI überlassen.
+
+    Ein Aufruf ohne Modellangabe landet bei Codex auf dem Flaggschiff, deshalb ist advanced
+    die Zwischenstufe und nicht der direkte Sprung zum CLI-Default.
+    """
+    def usable(slug):
+        return bool(slug) and slug in visible and effort in {
+            item["effort"] for item in visible[slug]["supported_reasoning_levels"]}
+
+    if usable(model):
+        return model, effort
+    spare = TIERS["advanced"]["codex"][0]
+    if usable(spare):
+        print(f"Philharmonie: Klasse {tier}: {model} fehlt im Katalog dieser Version -> {spare}",
+              file=sys.stderr)
+        return spare, effort
+    print(f"Philharmonie: Klasse {tier}: weder {model} noch {spare} im Katalog -> "
+          "Aufruf ohne Modellwahl", file=sys.stderr)
+    return None, None
 
 
 def resolve(target="auto", model=None, effort=None, tier="standard"):
@@ -47,18 +70,14 @@ def resolve(target="auto", model=None, effort=None, tier="standard"):
     if target == "codex":
         process = subprocess.run([executable, "debug", "models", "--bundled"],
                                  capture_output=True, text=True, timeout=15)
-        if process.returncode:
-            raise Error("Modellkatalog nicht verfügbar; Modell ausdrücklich konfigurieren.")
-        catalog = json.loads(process.stdout)
-        visible = {m["slug"]: m for m in catalog["models"] if m.get("visibility") == "list"}
-        if not visible:
-            raise Error("Kein sichtbares Modell im installierten Katalog.")
-        if model is None:
+        # Ohne lesbaren Katalog keine Klassenwahl. Statt abzubrechen entscheidet die CLI selbst.
+        visible = {}
+        if not process.returncode:
+            catalog = json.loads(process.stdout)
+            visible = {m["slug"]: m for m in catalog["models"] if m.get("visibility") == "list"}
+        if visible and model is None:
             model = min(visible.values(), key=lambda m: m["priority"])["slug"]
-        if model not in visible:
-            raise Error(f"Modell {model} für Klasse {tier} ist im Katalog dieser Version nicht sichtbar.")
-        if effort not in {e["effort"] for e in visible[model]["supported_reasoning_levels"]}:
-            raise Error(f"Gewähltes Modell unterstützt Effort {effort} nicht.")
+        model, effort = codex_fallback(visible, model, effort, tier)
     return {"target": target, "executable": executable, "version": version,
             "model": model, "effort": effort, "tier": tier}
 
@@ -74,8 +93,10 @@ def command(adapter, workspace, schema, output, profile, delegation=None, label=
     if adapter["target"] == "codex":
         argv = [adapter["executable"], "exec", "--color", "never",
                 "--ignore-user-config", "--ignore-rules", "-C", str(workspace),
-                "-c", 'approval_policy="never"', "-m", adapter["model"],
-                "-c", f'model_reasoning_effort={json.dumps(adapter["effort"])}',
+                "-c", 'approval_policy="never"',
+                *(["-m", adapter["model"]] if adapter["model"] else []),
+                *(["-c", f'model_reasoning_effort={json.dumps(adapter["effort"])}']
+                  if adapter["effort"] else []),
                 "-s", "workspace-write" if profile == "edit" else "read-only",
                 "--json", "--output-schema", str(schema),
                 "--output-last-message", str(output), "-"]
@@ -99,7 +120,8 @@ def command(adapter, workspace, schema, output, profile, delegation=None, label=
             allowed += "," + ",".join(f"Agent({name})" for name in delegation["roles"])
         argv = [adapter["executable"], "-p", "--safe-mode",
                 "--permission-prompts", "none", "--permission-mode", "dontAsk",
-                "--model", adapter["model"], "--effort", adapter["effort"],
+                *(["--model", adapter["model"]] if adapter["model"] else []),
+                *(["--effort", adapter["effort"]] if adapter["effort"] else []),
                 *(["--name", label] if label else []),
                 "--output-format", "json", "--json-schema", Path(schema).read_text(),
                 "--tools", tools, "--allowedTools", allowed,
