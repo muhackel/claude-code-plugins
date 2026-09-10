@@ -73,7 +73,7 @@ Weitere Flags: `--target claude|codex` (Override der Host-Erkennung), `--handove
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |
 |---|---|---|
-| ask | `-s read-only`, `--ephemeral` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
+| ask | `-s read-only` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
 | execute | `-s workspace-write` | `acceptEdits`, Edit/Write/Bash, `git push` und Web verboten |
 
 Codex sandboxt das Dateisystem, Claude nicht: bei `execute` mit Ziel Claude sichert nur die Anweisung im

@@ -253,6 +253,9 @@ In Codex heißen die migrierten Commands `$ask:source-command-ask` bzw. `$ask:so
 Enthaltener Skill:
 - `handover` — Handover-Format, Ablauf, Rechte-Matrix je Ziel-CLI, Standard-Review
 
+Jeder Aufruf schreibt eine Sitzungsdatei der Ziel-CLI und erscheint damit in `ccusage`. Die Kennung
+`/<modus> <projekt>` unterscheidet ihn im Resume-Picker von einer eigenen Sitzung.
+
 Die Ziel-CLIs kommen bewusst vom Host-PATH, nicht aus nixpkgs (sonst wäre es nicht „die installierte Version").
 Hilfswerkzeuge und Checks via Nix (`flake.nix`, Details in [`build.md`](plugins/ask/build.md)):
 `nix run ./plugins/ask#ask`, `nix flake check`.
@@ -274,6 +277,8 @@ weist Blocker separat aus.
 
 Nach jedem Aufruf zeigt eine Modellübersicht, wer welche Aufgabe umgesetzt oder geprüft hat und
 mit welchem Ergebnis; fehlende oder nur konfigurierte Modellnachweise werden gekennzeichnet.
+Die Sitzungsverzeichnisse der Ziel-CLIs sind in die Sandbox eingebunden, sodass jeder Auftrag in
+`ccusage` erscheint und im Resume-Picker die Kennung `[Philharmonie …]` trägt.
 
 Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
 Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.

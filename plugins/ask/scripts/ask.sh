@@ -133,23 +133,26 @@ codex_model() {
   log_info "Codex-Flaggschiff: $CODEX_MODEL${CODEX_EFFORT:+ (effort $CODEX_EFFORT)}"
 }
 
+# Kennzeichnet den Aufruf im Resume-Picker beider CLIs.
+session_label() { printf '/%s %s' "$MODE" "$(basename "$WORKDIR")"; }
+
 CMD=()
 build_cmd_codex() {
   CMD=(codex exec --color never -C "$WORKDIR" -c 'approval_policy="never"')
   [[ -n "$CODEX_MODEL" ]] && CMD+=(-m "$CODEX_MODEL")
   [[ -n "$CODEX_EFFORT" ]] && CMD+=(-c "model_reasoning_effort=\"$CODEX_EFFORT\"")
   if [[ "$MODE" == "ask" ]]; then
-    CMD+=(--ephemeral -s read-only
-      "Bearbeite den Auftrag im <stdin>-Block. Nur lesen, keine Dateien ändern. Antworte auf Deutsch.")
+    CMD+=(-s read-only
+      "[$(session_label)] Bearbeite den Auftrag im <stdin>-Block. Nur lesen, keine Dateien ändern. Antworte auf Deutsch.")
   else
     CMD+=(-s workspace-write
-      "Bearbeite den Auftrag im <stdin>-Block. Änderungen nur im Workspace, kein Commit, kein Push. Antworte auf Deutsch und liste am Ende alle geänderten Dateien.")
+      "[$(session_label)] Bearbeite den Auftrag im <stdin>-Block. Änderungen nur im Workspace, kein Commit, kein Push. Antworte auf Deutsch und liste am Ende alle geänderten Dateien.")
   fi
 }
 
 build_cmd_claude() {
   CMD=(claude -p --model fable --effort "$EFFORT" --permission-prompts none
-       --no-session-persistence --output-format text)
+       --name "$(session_label)" --output-format text)
   if [[ "$MODE" == "ask" ]]; then
     CMD+=(--permission-mode dontAsk
       --tools Read Glob Grep Bash

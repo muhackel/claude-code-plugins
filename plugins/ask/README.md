@@ -43,11 +43,17 @@ In Codex werden die Commands beim Install zu Skills: `$ask:source-command-ask` u
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |
 |---|---|---|
-| ask | `-s read-only`, `--ephemeral`, `approval_policy=never` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
+| ask | `-s read-only`, `approval_policy=never` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
 | execute | `-s workspace-write`, `approval_policy=never` | `acceptEdits`, Edit/Write/Bash, `git push` und Web verboten |
 
 Codex sandboxt das Dateisystem, Claude nicht. `execute` deshalb nur auf einem Feature-Branch starten;
 Commit und Push bleiben beim User.
+
+## Sitzungen und Abrechnung
+
+Beide Aufrufe schreiben eine Sitzungsdatei in das übliche Verzeichnis der Ziel-CLI. Damit erscheinen sie
+in der Auswertung mit `ccusage` und im Resume-Picker. Als Kennung trägt der Aufruf `/<modus> <projekt>`:
+Claude bekommt sie über `--name`, Codex kennt kein solches Flag und erhält sie als Präfix des Auftrags.
 
 ## Unter Codex
 

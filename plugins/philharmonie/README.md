@@ -53,7 +53,7 @@ Agenten sehen einen separaten Snapshot. Der Evaluator liest Quellen, der Generat
 
 Der Nix-Daemon bleibt für Agenten verborgen. Für ausdrücklich genehmigte Prüfkommandos kann `check_nix_daemon` aktiviert werden; damit erhält der Test Zugriff auf einen Host-Dienst. Ohne passende Umgebung bleiben nicht ausführbare Prüfungen als Hindernis sichtbar. Das API-Netz ist verfügbar und nicht auf einzelne Endpunkte beschränkt.
 
-Host-Anmeldedateien werden gezielt lesend eingebunden. Abgelaufene Anmeldungen, die eine Aktualisierung der Datei verlangen, müssen am Host erneuert werden. Mehrere Hosts und gemeinsam genutzte Netzdateisysteme werden nicht koordiniert. Git-Submodule benötigen derzeit einen eigenen Auftrag im jeweiligen Checkout.
+Host-Anmeldedateien werden gezielt lesend eingebunden. Die Sitzungsverzeichnisse der Ziel-CLIs werden beschreibbar eingebunden, damit jeder Auftrag in deren Auswertung und Resume-Picker erscheint. Abgelaufene Anmeldungen, die eine Aktualisierung der Datei verlangen, müssen am Host erneuert werden. Mehrere Hosts und gemeinsam genutzte Netzdateisysteme werden nicht koordiniert. Git-Submodule benötigen derzeit einen eigenen Auftrag im jeweiligen Checkout.
 
 Details stehen in [build.md](build.md), den [Laufzeitverträgen](references/contracts.md) und den [geprüften CLI-Verträgen](references/cli-contract.md). Ursprung und Entwurfsentscheidungen sind im [Designdokument](../../docs/design-ask-tandem.md) dokumentiert; dieser Link gilt im Marketplace-Repository.
 

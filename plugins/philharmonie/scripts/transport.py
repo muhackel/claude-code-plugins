@@ -21,9 +21,9 @@ def resolve(target="auto", model=None, effort="high"):
     help_args = [executable, "exec", "--help"] if target == "codex" else [executable, "--help"]
     help_text = subprocess.run(help_args, capture_output=True, text=True,
                                timeout=15, check=True).stdout
-    required = (["--ignore-user-config", "--ignore-rules", "--output-schema", "--ephemeral"]
+    required = (["--ignore-user-config", "--ignore-rules", "--output-schema", "--output-last-message"]
                 if target == "codex" else
-                ["--safe-mode", "--json-schema", "--permission-prompts", "--no-session-persistence"])
+                ["--safe-mode", "--json-schema", "--permission-prompts", "--permission-mode"])
     if any(flag not in help_text for flag in required):
         raise Error(f"CLI-Version unterstützt den geprüften Vertrag nicht: {version}")
     if model is None and target == "codex":
@@ -46,11 +46,16 @@ def resolve(target="auto", model=None, effort="high"):
             "model": model, "effort": effort}
 
 
-def command(adapter, workspace, schema, output, profile, delegation=None):
+def label_prompt(label, prompt):
+    """Kennzeichnet den ersten Turn, damit Philharmonie-Aufrufe im Resume-Picker erkennbar sind."""
+    return f"[{label}]\n\n{prompt}"
+
+
+def command(adapter, workspace, schema, output, profile, delegation=None, label=None):
     if profile not in ("inspect", "verify", "edit"):
         raise Error("Unbekanntes Rechteprofil.")
     if adapter["target"] == "codex":
-        argv = [adapter["executable"], "exec", "--color", "never", "--ephemeral",
+        argv = [adapter["executable"], "exec", "--color", "never",
                 "--ignore-user-config", "--ignore-rules", "-C", str(workspace),
                 "-c", 'approval_policy="never"', "-m", adapter["model"],
                 "-c", f'model_reasoning_effort={json.dumps(adapter["effort"])}',
@@ -58,7 +63,6 @@ def command(adapter, workspace, schema, output, profile, delegation=None):
                 "--json", "--output-schema", str(schema),
                 "--output-last-message", str(output), "-"]
         if delegation:
-            argv.remove("--ephemeral")
             extra = ["--enable", "multi_agent", "--disable", "multi_agent_v2",
                      "-c", "agents.enabled=true", "-c", "agents.max_concurrent_threads_per_session=3",
                      "-c", "agents.max_depth=1"]
@@ -76,9 +80,10 @@ def command(adapter, workspace, schema, output, profile, delegation=None):
         if delegation:
             tools += ",Agent"
             allowed += "," + ",".join(f"Agent({name})" for name in delegation["roles"])
-        argv = [adapter["executable"], "-p", "--safe-mode", "--no-session-persistence",
+        argv = [adapter["executable"], "-p", "--safe-mode",
                 "--permission-prompts", "none", "--permission-mode", "dontAsk",
                 "--model", adapter["model"], "--effort", adapter["effort"],
+                *(["--name", label] if label else []),
                 "--output-format", "json", "--json-schema", Path(schema).read_text(),
                 "--tools", tools, "--allowedTools", allowed,
                 "Bearbeite das Handover aus stdin. Gib das angeforderte strukturierte Ergebnis zurück."]
@@ -118,6 +123,14 @@ def environment():
     return result
 
 
+def session_paths():
+    """Sitzungsverzeichnisse der Host-CLIs, damit Aufrufe in der Usage-Auswertung auftauchen."""
+    return [(Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "sessions",
+             Path(".codex/sessions")),
+            (Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")) / "projects",
+             Path(".claude/projects"))]
+
+
 def sandbox(workspace, scratch, argv, profile, auth=True, nix_daemon=False, runtime_home=False):
     executable = shutil.which("bwrap")
     if not executable:
@@ -155,6 +168,9 @@ def sandbox(workspace, scratch, argv, profile, auth=True, nix_daemon=False, runt
         for source, destination in auth_paths:
             if source.is_file():
                 args += ["--dir", str(destination.parent), "--ro-bind", str(source), str(destination)]
+        for source, destination in session_paths():
+            source.mkdir(parents=True, exist_ok=True)
+            args += ["--dir", str(home / destination.parent), "--bind", str(source), str(home / destination)]
     args += ["--ro-bind", str(scratch.parent), str(scratch.parent),
              "--bind" if profile == "edit" else "--ro-bind", str(workspace), str(workspace),
              "--bind", str(scratch), str(scratch)]

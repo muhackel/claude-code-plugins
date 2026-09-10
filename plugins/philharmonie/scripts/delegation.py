@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import subprocess
 
+import transport
 from common import Error, atomic, write_json
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -82,16 +83,47 @@ def events(stdout):
     return result
 
 
-def observed_models(scratch, stdout):
+def _own_rollout(path, workspace, since):
+    """Erkennt einen Rollout dieses Aufrufs am Arbeitsverzeichnis seines Sitzungskopfs."""
+    if since is not None and path.stat().st_mtime < since:
+        return False
+    with path.open(errors="replace") as handle:
+        first = handle.readline()
+    try:
+        head = json.loads(first)
+    except ValueError:
+        return False
+    return (isinstance(head, dict) and head.get("type") == "session_meta"
+            and head.get("payload", {}).get("cwd") == str(workspace))
+
+
+def _rollouts(scratch, workspace, since):
+    """Rollout-Dateien des Laufs: lokales Runtime-Home und das gebundene Host-Sitzungsverzeichnis.
+
+    Das Host-Verzeichnis enthält auch fremde Sitzungen. Ohne Arbeitsverzeichnis bleibt es außen vor,
+    weil ein Fund sonst nicht diesem Aufruf zugerechnet werden kann.
+    """
+    local = Path(scratch) / "runtime/.codex/sessions"
+    for path in local.rglob("*.jsonl"):
+        yield path, str(path.relative_to(scratch))
+    host = transport.session_paths()[0][0]
+    if workspace is None or not host.is_dir():
+        return
+    for path in host.rglob("*.jsonl"):
+        if _own_rollout(path, workspace, since):
+            yield path, str(path)
+
+
+def observed_models(scratch, stdout, workspace=None, since=None):
     result = []
-    for path in (Path(scratch) / "runtime/.codex/sessions").rglob("*.jsonl"):
+    for path, source in _rollouts(scratch, workspace, since):
         for line in path.read_text(errors="replace").splitlines():
             try:
                 item = json.loads(line)
             except ValueError:
                 continue
             if isinstance(item, dict) and item.get("type") == "turn_context" and item.get("payload", {}).get("model"):
-                result.append({"source": str(path.relative_to(scratch)),
+                result.append({"source": source,
                                "model": item["payload"]["model"], "timestamp": item.get("timestamp")})
     for line in stdout.splitlines():
         try:

@@ -72,7 +72,10 @@ def review_spec(store, expected, planner=None):
                         + "\n\n# Spec\n\n" + (store.doc / "Spec.md").read_text()
                         + "\n\n## Maschinenvertrag\n" + json.dumps(context, ensure_ascii=False))
             output = scratch / "result.json"
-            argv = transport.command(adapter, workspace, schema_path, output, "inspect")
+            session_label = "Philharmonie Spec-Gegenprüfung"
+            handover = transport.label_prompt(session_label, handover)
+            argv = transport.command(adapter, workspace, schema_path, output, "inspect",
+                                     label=session_label)
             command = transport.sandbox(workspace, scratch, argv, "inspect")
             with activity.Call(adapter, directory, state["goal"], "spec_reviewer",
                                "Spec-Gegenprüfung", store, run_id) as trace:

@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import jsonschema
@@ -65,8 +66,10 @@ def single(args):
         write_json(base / "schema.json", schema)
         output = scratch / "result.json"
         team = delegation.prepare(adapter, base / "agents", "edit") if edit else None
+        label = "Philharmonie Einzelumsetzung" if edit else "Philharmonie Einzelprüfung"
         argv = transport.command(adapter, work, base / "schema.json", output,
-                                 "edit" if edit else "inspect", **({"delegation": team} if team else {}))
+                                 "edit" if edit else "inspect", label=label,
+                                 **({"delegation": team} if team else {}))
         argv = transport.sandbox(work, scratch, argv, "edit" if edit else "inspect",
                                  **({"runtime_home": True} if team else {}))
         instructions = (handover + "\n\nAntworte im JSON-Feld answer auf Deutsch. "
@@ -76,9 +79,11 @@ def single(args):
             instructions += ("\n\n" + (delegation.PACKAGE / "references/delegation.md").read_text()
                              + "\n\nVerfügbare Agents:\n" + json.dumps(team, ensure_ascii=False)
                              + "\nNenne Teilaufgaben, Modellwahl, Gründe und Ergebnisse im Feld answer.")
+        instructions = transport.label_prompt(label, instructions)
         atomic(base / "Handover.md", instructions)
         with activity.Call(adapter, base, handover, args.command,
                            "Einzelumsetzung" if edit else "Einzelprüfung") as trace:
+            started = time.time()
             process = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, text=True, env=transport.environment(),
                                        start_new_session=True)
@@ -95,7 +100,7 @@ def single(args):
                 atomic(base / "stderr.log", stderr)
                 if team:
                     write_json(base / "delegation-events.json", {
-                        "events": delegation.events(stdout), "models": delegation.observed_models(scratch, stdout)})
+                        "events": delegation.events(stdout), "models": delegation.observed_models(scratch, stdout, work, started)})
                 if expired:
                     raise Error(f"Zeitlimit erreicht; Einzelauftrag beendet. Protokoll: {base}")
                 if stderr:
