@@ -27,10 +27,10 @@ class AuditCase(FixtureMixin, unittest.TestCase):
         runner = Runner(self.store)
         calls = []
 
-        def resolve(target, model=None, effort="high"):
+        def resolve(target, model=None, effort=None, tier="standard"):
             return {"target": target, "executable": f"fixture-{target}",
                     "version": "fixture-1", "model": model or f"fixture-{target}",
-                    "effort": effort}
+                    "effort": effort or "high", "tier": tier}
 
         def execute(run, argv, handover, output_dir, config, env=None):
             context, _ = json.JSONDecoder().raw_decode(

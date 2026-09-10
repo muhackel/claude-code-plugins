@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 import tomllib
 import unittest
 from unittest.mock import patch
@@ -119,6 +120,7 @@ class LiveDelegationCase(FixtureMixin, unittest.TestCase):
                   "Keine weiteren Agents, kein Git-Commit. Dieser Test verlangt die tatsächlichen Agent-Aufrufe. "
                   "Liefere danach das JSON mit Feld answer. Aufträge:\n" + json.dumps(assignments)
                   + "\nVerfügbare Definitionen:\n" + json.dumps(team))
+        started = time.time()
         process = subprocess.run(argv, input=prompt, capture_output=True, text=True,
                                  env=transport.environment(), timeout=240)
         (base / "stdout.log").write_text(process.stdout)
@@ -126,7 +128,7 @@ class LiveDelegationCase(FixtureMixin, unittest.TestCase):
         self.assertEqual(process.returncode, 0, process.stderr[-4000:] + process.stdout[-4000:])
         transport.decode(adapter, process.stdout, output)
         native = delegation.events(process.stdout)
-        models = delegation.observed_models(scratch, process.stdout)
+        models = delegation.observed_models(scratch, process.stdout, work, started)
         write_json(base / "observed.json", {"events": native, "models": models})
         self.assertTrue(native, process.stdout[-6000:])
         for model in expected:

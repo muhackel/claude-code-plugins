@@ -1,6 +1,6 @@
 {
   "name": "philharmonie",
-  "version": "0.1.0",
+  "version": "0.3.1",
   "description": "Projektaufträge mit Spec, getrenntem Generator und Evaluator sowie dauerhaftem Zustand bearbeiten; Cross-CLI-Fragen und begrenzte Schreibaufträge auch einzeln ausführen.",
   "author": {"name": "Sebastian Rädle", "email": "muhackel@gmail.com"},
   "license": "MIT",

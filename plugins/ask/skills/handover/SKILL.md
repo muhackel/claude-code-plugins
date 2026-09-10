@@ -57,23 +57,50 @@ Befunde nach Schwere priorisiert, Deutsch.
 ## Skript-Aufrufe
 
 ```bash
-bash "<root>/scripts/ask.sh" --mode ask </dev/null        # Standard-Review
-bash "<root>/scripts/ask.sh" --mode ask <<'HANDOVER'       # eigene Frage
+bash "<root>/scripts/ask.sh" --mode ask --tier advanced </dev/null   # Standard-Review
+bash "<root>/scripts/ask.sh" --mode ask --tier standard <<'HANDOVER'  # eigene Frage
 …
 HANDOVER
-bash "<root>/scripts/ask.sh" --mode execute <<'HANDOVER'   # Auftrag mit Schreibrechten
+bash "<root>/scripts/ask.sh" --mode execute --tier light <<'HANDOVER' # Auftrag mit Schreibrechten
 …
 HANDOVER
-bash "<root>/scripts/ask.sh" --dry-run …                   # nur Kommando + Handover zeigen
+bash "<root>/scripts/ask.sh" --dry-run …                              # nur Kommando + Handover zeigen
 ```
 
 Weitere Flags: `--target claude|codex` (Override der Host-Erkennung), `--handover FILE`, `-C DIR`.
+
+## Aufgabenklasse
+
+`--tier` bestimmt das Modell. Ohne Angabe gilt `advanced` beim Standard-Review und sonst `standard`.
+
+| Klasse | Wofür | Claude | Codex |
+|---|---|---|---|
+| `light` | eindeutige Kleinarbeit: String fixen, Datei finden, Formatierung | haiku, medium | luna, medium |
+| `standard` | einzelnes Modul, Test schreiben, lokale Fehleranalyse | sonnet, high | terra, high |
+| `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Projekt-Review | opus, high | sol, high |
+| `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable, high | astra, high |
+
+Die Staffelung entspricht der, mit der philharmonie seine Subagenten besetzt. Bei Codex steht die Spitze
+nicht fest, sie kommt aus dem Katalog der installierten Version.
+
+Im Zweifel die kleinere Klasse: eine zu schwache Antwort erkennst du am Ergebnis, verbranntes Budget nicht.
+Für wirklich harte Aufgaben lohnt `strong` eher als Planer — den Plan holen, ihn dann in `standard`
+ausführen lassen — als für die Umsetzung selbst.
+
+Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf
+die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
+direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Der Rückfall steht als
+Warnung auf stderr.
+
+Der Rückfall passiert im Skript. Bei einer solchen Warnung nicht denselben Aufruf mit einer höheren Klasse
+wiederholen — das wäre teurer als der Rückfall, den das Skript schon gewählt hat. Stattdessen melden, dass
+die Klassentabelle gegen den Katalog veraltet ist.
 
 ## Rechte der anderen CLI
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |
 |---|---|---|
-| ask | `-s read-only`, `--ephemeral` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
+| ask | `-s read-only` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
 | execute | `-s workspace-write` | `acceptEdits`, Edit/Write/Bash, `git push` und Web verboten |
 
 Codex sandboxt das Dateisystem, Claude nicht: bei `execute` mit Ziel Claude sichert nur die Anweisung im
