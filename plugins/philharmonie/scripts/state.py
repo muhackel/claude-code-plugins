@@ -14,7 +14,7 @@ PHASES = {"planning", "awaiting_spec", "implementing", "evaluating", "awaiting_a
 TERMINAL = {"completed", "cancelled"}
 DEFAULTS = {"schema_version": 1, "max_rounds": 3, "max_discussions": 3,
             "timeout_seconds": 1800, "generator": "auto", "evaluator": "auto",
-            "second_opinion": False, "model": None, "effort": "high", "check_nix_daemon": False}
+            "second_opinion": False, "model": None, "effort": None, "check_nix_daemon": False}
 SCHEMAS = Path(__file__).resolve().parents[1] / "schemas"
 STATE_VALIDATOR = jsonschema.Draft7Validator(read_json(SCHEMAS / "state.json"))
 CONTRACT_VALIDATOR = jsonschema.Draft7Validator(read_json(SCHEMAS / "contract.json"))
@@ -153,8 +153,8 @@ class Store:
                 raise Error(f"{option} muss boolean sein.")
         if config["model"] is not None and (not isinstance(config["model"], str) or not config["model"].strip()):
             raise Error("model muss ein nicht leerer Name oder null sein.")
-        if not isinstance(config["effort"], str) or not config["effort"].strip():
-            raise Error("effort muss ein nicht leerer Name sein.")
+        if config["effort"] is not None and (not isinstance(config["effort"], str) or not config["effort"].strip()):
+            raise Error("effort muss ein nicht leerer Name oder null sein.")
         return config
 
     def create(self, goal, previous=None, planner=None):

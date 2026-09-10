@@ -11,26 +11,41 @@ Handover-Format stehen im Skill `handover` dieses Plugins — erst lesen, dann h
    Verzeichnis, das `.codex-plugin/` enthält (bei
    `…/.codex-plugin/migrated-command-skills/source-command-ask/SKILL.md` drei Ebenen über der Datei).
 
-2. **Ohne Argument:** Skript ohne Handover starten, es liefert das Standard-Review des Projekts:
+2. **Aufgabenklasse wählen.** Das Skript wählt das Modell nach Aufgabenklasse, nicht
+   pauschal das Flaggschiff. Schätze die Aufgabe ein und übergib sie mit `--tier`:
+
+   | Klasse | Wofür | Claude | Codex |
+   |---|---|---|---|
+   | `light` | eindeutige Kleinarbeit: String fixen, Datei finden, Formatierung | haiku | luna |
+   | `standard` | einzelnes Modul, Test schreiben, lokale Fehleranalyse | sonnet | terra |
+   | `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Projekt-Review | opus | sol |
+   | `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable | astra |
+
+   Ohne `--tier` gilt `advanced` beim Standard-Review und sonst `standard`. Im Zweifel die kleinere Klasse:
+   eine zu schwache Antwort erkennst du am Ergebnis, verbranntes Budget nicht. Bei wirklich harten Aufgaben
+   lohnt sich `strong` eher für einen Plan, den du anschließend in `standard` ausführen lässt, als für die
+   Umsetzung selbst.
+
+3. **Ohne Argument:** Skript ohne Handover starten, es liefert das Standard-Review des Projekts:
 
    ```bash
-   bash "<root>/scripts/ask.sh" --mode ask </dev/null
+   bash "<root>/scripts/ask.sh" --mode ask --tier advanced </dev/null
    ```
 
    **Mit Argument** (`$ARGUMENTS`): Handover nach dem Skill-Format schreiben und per Heredoc auf stdin geben:
 
    ```bash
-   bash "<root>/scripts/ask.sh" --mode ask <<'HANDOVER'
+   bash "<root>/scripts/ask.sh" --mode ask --tier <klasse> <<'HANDOVER'
    # Handover
    …
    HANDOVER
    ```
 
-3. **Unter Codex** den Aufruf mit `require_escalated` starten: `claude -p` braucht Netz, das die
+4. **Unter Codex** den Aufruf mit `require_escalated` starten: `claude -p` braucht Netz, das die
    Codex-Sandbox standardmäßig sperrt. Unter Claude Code läuft der Aufruf normal per Bash.
-   Das Skript ermittelt Ziel-CLI und Flaggschiffmodell selbst; der Aufruf dauert je nach Umfang mehrere Minuten,
+   Das Skript ermittelt die Ziel-CLI selbst und wählt das Modell nach der Klasse; der Aufruf dauert je nach Umfang mehrere Minuten,
    Timeout großzügig setzen.
 
-4. **Ergebnis wiedergeben:** stdout ist die Antwort der anderen CLI, stderr der Fortschritt. Die Antwort
+5. **Ergebnis wiedergeben:** stdout ist die Antwort der anderen CLI, stderr der Fortschritt. Die Antwort
    **unverändert** ausgeben, danach in wenigen Sätzen einordnen: wo du zustimmst, wo du widersprichst,
    was du übernimmst. Nicht umschreiben, nicht kürzen.

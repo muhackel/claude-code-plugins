@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from pathlib import Path
 import shutil
 import subprocess
@@ -7,7 +8,42 @@ import subprocess
 from common import Error, read_json
 
 
-def resolve(target="auto", model=None, effort="high"):
+# Aufgabenklassen. Dieselbe Staffelung wie bei den Subagenten in delegation.py, eine Ebene höher.
+#   light    eindeutige Kleinarbeit mit klarem Kriterium
+#   standard einzelnes Modul, Test, lokale Fehleranalyse
+#   advanced mehrere Module, Refactoring, schwere Fehlersuche, Prüfung
+#   strong   Architektur, widersprüchliche Anforderungen, Planung
+# Bei Codex bleibt die Spitze offen und kommt aus dem Katalog der installierten Version.
+TIERS = {"light": {"claude": ("haiku", "medium"), "codex": ("gpt-5.6-luna", "medium")},
+         "standard": {"claude": ("sonnet", "high"), "codex": ("gpt-5.6-terra", "high")},
+         "advanced": {"claude": ("opus", "high"), "codex": ("gpt-5.6-sol", "high")},
+         "strong": {"claude": ("fable", "high"), "codex": (None, "high")}}
+ROLE_TIERS = {"generator": "advanced", "evaluator": "advanced", "spec_reviewer": "strong"}
+
+
+def codex_fallback(visible, model, effort, tier):
+    """Fällt ein Slug aus dem Katalog, erst auf advanced zurück, dann der CLI überlassen.
+
+    Ein Aufruf ohne Modellangabe landet bei Codex auf dem Flaggschiff, deshalb ist advanced
+    die Zwischenstufe und nicht der direkte Sprung zum CLI-Default.
+    """
+    def usable(slug):
+        return bool(slug) and slug in visible and effort in {
+            item["effort"] for item in visible[slug]["supported_reasoning_levels"]}
+
+    if usable(model):
+        return model, effort
+    spare = TIERS["advanced"]["codex"][0]
+    if usable(spare):
+        print(f"Philharmonie: Klasse {tier}: {model} fehlt im Katalog dieser Version -> {spare}",
+              file=sys.stderr)
+        return spare, effort
+    print(f"Philharmonie: Klasse {tier}: weder {model} noch {spare} im Katalog -> "
+          "Aufruf ohne Modellwahl", file=sys.stderr)
+    return None, None
+
+
+def resolve(target="auto", model=None, effort=None, tier="standard"):
     if target == "auto":
         target = "codex" if os.environ.get("CLAUDECODE") else "claude"
     if target not in ("claude", "codex"):
@@ -21,44 +57,50 @@ def resolve(target="auto", model=None, effort="high"):
     help_args = [executable, "exec", "--help"] if target == "codex" else [executable, "--help"]
     help_text = subprocess.run(help_args, capture_output=True, text=True,
                                timeout=15, check=True).stdout
-    required = (["--ignore-user-config", "--ignore-rules", "--output-schema", "--ephemeral"]
+    required = (["--ignore-user-config", "--ignore-rules", "--output-schema", "--output-last-message"]
                 if target == "codex" else
-                ["--safe-mode", "--json-schema", "--permission-prompts", "--no-session-persistence"])
+                ["--safe-mode", "--json-schema", "--permission-prompts", "--permission-mode"])
     if any(flag not in help_text for flag in required):
         raise Error(f"CLI-Version unterstützt den geprüften Vertrag nicht: {version}")
-    if model is None and target == "codex":
+    if tier not in TIERS:
+        raise Error(f"Unbekannte Aufgabenklasse: {tier}")
+    tier_model, tier_effort = TIERS[tier][target]
+    effort = effort or tier_effort
+    model = model or tier_model
+    if target == "codex":
         process = subprocess.run([executable, "debug", "models", "--bundled"],
                                  capture_output=True, text=True, timeout=15)
-        if process.returncode:
-            raise Error("Modellkatalog nicht verfügbar; Modell ausdrücklich konfigurieren.")
-        catalog = json.loads(process.stdout)
-        visible = sorted((m for m in catalog["models"] if m.get("visibility") == "list"),
-                         key=lambda m: m["priority"])
-        if not visible:
-            raise Error("Kein sichtbares Modell im installierten Katalog.")
-        model = visible[0]["slug"]
-        supported = {e["effort"] for e in visible[0]["supported_reasoning_levels"]}
-        if effort not in supported:
-            raise Error(f"Gewähltes Modell unterstützt Effort {effort} nicht.")
-    if model is None:
-        model = "fable"
+        # Ohne lesbaren Katalog keine Klassenwahl. Statt abzubrechen entscheidet die CLI selbst.
+        visible = {}
+        if not process.returncode:
+            catalog = json.loads(process.stdout)
+            visible = {m["slug"]: m for m in catalog["models"] if m.get("visibility") == "list"}
+        if visible and model is None:
+            model = min(visible.values(), key=lambda m: m["priority"])["slug"]
+        model, effort = codex_fallback(visible, model, effort, tier)
     return {"target": target, "executable": executable, "version": version,
-            "model": model, "effort": effort}
+            "model": model, "effort": effort, "tier": tier}
 
 
-def command(adapter, workspace, schema, output, profile, delegation=None):
+def label_prompt(label, prompt):
+    """Kennzeichnet den ersten Turn, damit Philharmonie-Aufrufe im Resume-Picker erkennbar sind."""
+    return f"[{label}]\n\n{prompt}"
+
+
+def command(adapter, workspace, schema, output, profile, delegation=None, label=None):
     if profile not in ("inspect", "verify", "edit"):
         raise Error("Unbekanntes Rechteprofil.")
     if adapter["target"] == "codex":
-        argv = [adapter["executable"], "exec", "--color", "never", "--ephemeral",
+        argv = [adapter["executable"], "exec", "--color", "never",
                 "--ignore-user-config", "--ignore-rules", "-C", str(workspace),
-                "-c", 'approval_policy="never"', "-m", adapter["model"],
-                "-c", f'model_reasoning_effort={json.dumps(adapter["effort"])}',
+                "-c", 'approval_policy="never"',
+                *(["-m", adapter["model"]] if adapter["model"] else []),
+                *(["-c", f'model_reasoning_effort={json.dumps(adapter["effort"])}']
+                  if adapter["effort"] else []),
                 "-s", "workspace-write" if profile == "edit" else "read-only",
                 "--json", "--output-schema", str(schema),
                 "--output-last-message", str(output), "-"]
         if delegation:
-            argv.remove("--ephemeral")
             extra = ["--enable", "multi_agent", "--disable", "multi_agent_v2",
                      "-c", "agents.enabled=true", "-c", "agents.max_concurrent_threads_per_session=3",
                      "-c", "agents.max_depth=1"]
@@ -76,9 +118,11 @@ def command(adapter, workspace, schema, output, profile, delegation=None):
         if delegation:
             tools += ",Agent"
             allowed += "," + ",".join(f"Agent({name})" for name in delegation["roles"])
-        argv = [adapter["executable"], "-p", "--safe-mode", "--no-session-persistence",
+        argv = [adapter["executable"], "-p", "--safe-mode",
                 "--permission-prompts", "none", "--permission-mode", "dontAsk",
-                "--model", adapter["model"], "--effort", adapter["effort"],
+                *(["--model", adapter["model"]] if adapter["model"] else []),
+                *(["--effort", adapter["effort"]] if adapter["effort"] else []),
+                *(["--name", label] if label else []),
                 "--output-format", "json", "--json-schema", Path(schema).read_text(),
                 "--tools", tools, "--allowedTools", allowed,
                 "Bearbeite das Handover aus stdin. Gib das angeforderte strukturierte Ergebnis zurück."]
@@ -118,6 +162,14 @@ def environment():
     return result
 
 
+def session_paths():
+    """Sitzungsverzeichnisse der Host-CLIs, damit Aufrufe in der Usage-Auswertung auftauchen."""
+    return [(Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "sessions",
+             Path(".codex/sessions")),
+            (Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude")) / "projects",
+             Path(".claude/projects"))]
+
+
 def sandbox(workspace, scratch, argv, profile, auth=True, nix_daemon=False, runtime_home=False):
     executable = shutil.which("bwrap")
     if not executable:
@@ -155,6 +207,9 @@ def sandbox(workspace, scratch, argv, profile, auth=True, nix_daemon=False, runt
         for source, destination in auth_paths:
             if source.is_file():
                 args += ["--dir", str(destination.parent), "--ro-bind", str(source), str(destination)]
+        for source, destination in session_paths():
+            source.mkdir(parents=True, exist_ok=True)
+            args += ["--dir", str(home / destination.parent), "--bind", str(source), str(home / destination)]
     args += ["--ro-bind", str(scratch.parent), str(scratch.parent),
              "--bind" if profile == "edit" else "--ro-bind", str(workspace), str(workspace),
              "--bind", str(scratch), str(scratch)]

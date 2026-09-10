@@ -239,8 +239,8 @@ dessen Ergebnis anschließend „grimmifiziert" wird.
 ### ask
 
 Cross-CLI-Zweitmeinung: fragt aus einer laufenden Sitzung heraus non-interaktiv die **jeweils andere CLI**
-(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem **Flaggschiffmodell der installierten
-CLI-Version**, zur Laufzeit ermittelt (Codex: `codex debug models`, Claude: Alias `fable`), Effort `high`.
+(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem Modell zur **Aufgabenklasse**:
+`light` haiku/luna, `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra.
 Der Host schreibt ein Handover (Kontext, Ziel, Frage, Grenzen), die andere CLI startet mit leerem Kontext
 und antwortet; der Host gibt die Antwort unverändert wieder und ordnet sie ein.
 
@@ -252,6 +252,9 @@ In Codex heißen die migrierten Commands `$ask:source-command-ask` bzw. `$ask:so
 
 Enthaltener Skill:
 - `handover` — Handover-Format, Ablauf, Rechte-Matrix je Ziel-CLI, Standard-Review
+
+Jeder Aufruf schreibt eine Sitzungsdatei der Ziel-CLI und erscheint damit in `ccusage`. Die Kennung
+`/<modus> <projekt>` unterscheidet ihn im Resume-Picker von einer eigenen Sitzung.
 
 Die Ziel-CLIs kommen bewusst vom Host-PATH, nicht aus nixpkgs (sonst wäre es nicht „die installierte Version").
 Hilfswerkzeuge und Checks via Nix (`flake.nix`, Details in [`build.md`](plugins/ask/build.md)):
@@ -274,6 +277,8 @@ weist Blocker separat aus.
 
 Nach jedem Aufruf zeigt eine Modellübersicht, wer welche Aufgabe umgesetzt oder geprüft hat und
 mit welchem Ergebnis; fehlende oder nur konfigurierte Modellnachweise werden gekennzeichnet.
+Die Sitzungsverzeichnisse der Ziel-CLIs sind in die Sandbox eingebunden, sodass jeder Auftrag in
+`ccusage` erscheint und im Resume-Picker die Kennung `[Philharmonie …]` trägt.
 
 Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
 Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.

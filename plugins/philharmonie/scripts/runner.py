@@ -47,7 +47,8 @@ class Runner:
         binding = self.store.load().get("adapters", {}).get(role)
         adapter = transport.resolve(binding["target"] if binding else target,
                                     binding.get("model") if binding else config["model"],
-                                    binding.get("effort", config["effort"]) if binding else config["effort"])
+                                    binding.get("effort") if binding else config["effort"],
+                                    transport.ROLE_TIERS.get(role, "advanced"))
         if binding and adapter != binding:
             raise Error("CLI-Vertrag seit der Rollenbindung verändert; neue Planung mit geprüftem Adapter erforderlich.")
         def bind(state):
@@ -186,20 +187,25 @@ class Runner:
         team = delegation.prepare(adapter, directory / "agents", "edit") if role == "generator" else None
         if team:
             run["delegation"] = team
-        argv = transport.command(adapter, workspace, schema_path, output,
-                                 "edit" if role == "generator" else "verify", **({"delegation": team} if team else {}))
-        full = transport.sandbox(workspace, scratch, argv,
-                                 "edit" if role == "generator" else "verify", **({"runtime_home": True} if team else {}))
         label = "Umsetzung" if role == "generator" else "Abgleich" if discussion else "Unabhängige Prüfung"
         label = f'Runde {state["round"]}: {label}'
+        session_label = f'Philharmonie {label}'
+        argv = transport.command(adapter, workspace, schema_path, output,
+                                 "edit" if role == "generator" else "verify", label=session_label,
+                                 **({"delegation": team} if team else {}))
+        full = transport.sandbox(workspace, scratch, argv,
+                                 "edit" if role == "generator" else "verify", **({"runtime_home": True} if team else {}))
         with activity.Call(adapter, directory, state["goal"], role, label, self.store, run["id"]) as trace:
-            execution = self.execute_child(run, full, self.prompt(role, state, run, checks, discussion),
-                                           directory, config)
+            started = time.time()
+            execution = self.execute_child(
+                run, full,
+                transport.label_prompt(session_label, self.prompt(role, state, run, checks, discussion)),
+                directory, config)
             trace.stdout = execution["stdout"]
             write_json(directory / "execution.json", {k: v for k, v in execution.items() if k != "stdout"})
             if team:
                 observed = {"events": delegation.events(execution["stdout"]),
-                            "models": delegation.observed_models(scratch, execution["stdout"])}
+                            "models": delegation.observed_models(scratch, execution["stdout"], workspace, started)}
                 write_json(directory / "delegation-events.json", observed)
                 run["delegation_observed"] = observed
             if execution["exit_code"]:

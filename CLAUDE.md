@@ -164,6 +164,26 @@ Spec, Vertrag und Projektstand gebunden; offene Blocker verhindern die Freigabe 
 Die Laufzeit berichtet Modellarbeit je Aufruf auf stderr und als `invocation_models` in Zustandsausgaben.
 Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Historie ist kein neuer Aufruf.
 
+Modelle werden nach Aufgabenklasse gewählt, nicht pauschal als Flaggschiff: `light` haiku/luna,
+`standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra (Codex-Spitze aus dem Katalog der
+installierten Version). Bei ask entscheidet `--tier`, ohne Angabe `advanced` beim Standard-Review und
+sonst `standard`. Bei Philharmonie entscheidet die Rolle: Generator und Evaluator `advanced`,
+Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei
+Änderungen beide Ebenen zusammen halten.
+
+Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
+der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,
+auch wenn `model` in `~/.codex/config.toml` etwas anderes sagt (bei `exec` nachgemessen, greift dort
+nicht). Bei Claude ist der Fall nicht vorab prüfbar, weil die CLI keinen Modellkatalog ausgibt; ohne
+`--model` läuft dort Opus 5.
+
+Aufträge beider Plugins schreiben Sitzungsdateien der Ziel-CLI und sind darum in `ccusage` sichtbar.
+Bei Philharmonie sind dafür die Sitzungsverzeichnisse des Hosts in die Sandbox gebunden — die einzige
+Stelle, an der ein Auftrag außerhalb seines Snapshots schreibt. Jeder Auftrag trägt eine Kennung im
+Resume-Picker: bei Claude über `--name`, bei Codex als Präfix des Auftrags, weil Codex kein solches
+Flag kennt. Ein Codex-Rollout gehört zu einem Auftrag, wenn sein Sitzungskopf dessen Snapshot als
+Arbeitsverzeichnis nennt; der Zeitstempel allein reicht nicht, weil Codex fremde Rollouts anfasst.
+
 Tests im Plugin über `nix flake check path:. -L`. Die zusätzlichen Sandbox- und echten CLI-Integrationstests
 sind bewusst separat; Aufrufe und Betriebsgrenzen stehen in `plugins/philharmonie/build.md`.
 

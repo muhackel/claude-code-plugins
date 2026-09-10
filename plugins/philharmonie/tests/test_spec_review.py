@@ -160,10 +160,11 @@ class SpecReviewCase(FixtureMixin, unittest.TestCase):
         received = []
         expected_target = "codex" if state["planner_cli"] == "claude" else "claude"
 
-        def resolve(target, model, effort):
+        def resolve(target, model, effort, tier="standard"):
             self.assertEqual(target, expected_target)
+            self.assertEqual(tier, "strong")
             return {"target": target, "executable": f"fixture-{target}", "version": "fixture",
-                    "model": "fixture", "effort": effort}
+                    "model": "fixture", "effort": effort or "high", "tier": tier}
 
         def execute(runner, run, argv, handover, output_dir, config, env=None):
             context = json.loads(handover.split("## Maschinenvertrag\n", 1)[1])

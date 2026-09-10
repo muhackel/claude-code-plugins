@@ -45,7 +45,8 @@ def review_spec(store, expected, planner=None):
             directory.mkdir(parents=True, mode=0o700)
             config = store.config()
             transport.check_sandbox()
-            adapter = transport.resolve(source["reviewer_cli"], None, config["effort"])
+            adapter = transport.resolve(source["reviewer_cli"], None, config["effort"],
+                                        transport.ROLE_TIERS["spec_reviewer"])
             if adapter["target"] != source["reviewer_cli"]:
                 raise Error("Spec-Gegenprüfung muss die andere CLI verwenden.")
             write_json(directory / "adapter.json", adapter)
@@ -72,7 +73,10 @@ def review_spec(store, expected, planner=None):
                         + "\n\n# Spec\n\n" + (store.doc / "Spec.md").read_text()
                         + "\n\n## Maschinenvertrag\n" + json.dumps(context, ensure_ascii=False))
             output = scratch / "result.json"
-            argv = transport.command(adapter, workspace, schema_path, output, "inspect")
+            session_label = "Philharmonie Spec-Gegenprüfung"
+            handover = transport.label_prompt(session_label, handover)
+            argv = transport.command(adapter, workspace, schema_path, output, "inspect",
+                                     label=session_label)
             command = transport.sandbox(workspace, scratch, argv, "inspect")
             with activity.Call(adapter, directory, state["goal"], "spec_reviewer",
                                "Spec-Gegenprüfung", store, run_id) as trace:
