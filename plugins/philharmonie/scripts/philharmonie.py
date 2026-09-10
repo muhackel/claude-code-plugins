@@ -52,7 +52,9 @@ def parser():
         command.add_argument("--handover", help="Handover-Datei; sonst stdin")
         command.add_argument("--target", choices=["auto", "claude", "codex"], default="auto")
         command.add_argument("--model")
-        command.add_argument("--effort", default="high")
+        command.add_argument("--effort")
+        command.add_argument("--tier", choices=["light", "standard", "advanced", "strong"],
+                             help="Aufgabenklasse; ohne Angabe advanced beim Standard-Review, sonst standard")
         command.add_argument("--timeout", type=int, default=1800)
         command.add_argument("--dry-run", action="store_true")
         command.add_argument("--allow", action="append", default=[])

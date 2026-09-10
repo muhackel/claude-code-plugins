@@ -239,8 +239,8 @@ dessen Ergebnis anschließend „grimmifiziert" wird.
 ### ask
 
 Cross-CLI-Zweitmeinung: fragt aus einer laufenden Sitzung heraus non-interaktiv die **jeweils andere CLI**
-(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem **Flaggschiffmodell der installierten
-CLI-Version**, zur Laufzeit ermittelt (Codex: `codex debug models`, Claude: Alias `fable`), Effort `high`.
+(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem Modell zur **Aufgabenklasse**:
+`light` haiku/luna, `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra.
 Der Host schreibt ein Handover (Kontext, Ziel, Frage, Grenzen), die andere CLI startet mit leerem Kontext
 und antwortet; der Host gibt die Antwort unverändert wieder und ordnet sie ein.
 

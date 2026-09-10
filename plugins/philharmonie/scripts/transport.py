@@ -7,7 +7,20 @@ import subprocess
 from common import Error, read_json
 
 
-def resolve(target="auto", model=None, effort="high"):
+# Aufgabenklassen. Dieselbe Staffelung wie bei den Subagenten in delegation.py, eine Ebene höher.
+#   light    eindeutige Kleinarbeit mit klarem Kriterium
+#   standard einzelnes Modul, Test, lokale Fehleranalyse
+#   advanced mehrere Module, Refactoring, schwere Fehlersuche, Prüfung
+#   strong   Architektur, widersprüchliche Anforderungen, Planung
+# Bei Codex bleibt die Spitze offen und kommt aus dem Katalog der installierten Version.
+TIERS = {"light": {"claude": ("haiku", "medium"), "codex": ("gpt-5.6-luna", "medium")},
+         "standard": {"claude": ("sonnet", "high"), "codex": ("gpt-5.6-terra", "high")},
+         "advanced": {"claude": ("opus", "high"), "codex": ("gpt-5.6-sol", "high")},
+         "strong": {"claude": ("fable", "high"), "codex": (None, "high")}}
+ROLE_TIERS = {"generator": "advanced", "evaluator": "advanced", "spec_reviewer": "strong"}
+
+
+def resolve(target="auto", model=None, effort=None, tier="standard"):
     if target == "auto":
         target = "codex" if os.environ.get("CLAUDECODE") else "claude"
     if target not in ("claude", "codex"):
@@ -26,24 +39,28 @@ def resolve(target="auto", model=None, effort="high"):
                 ["--safe-mode", "--json-schema", "--permission-prompts", "--permission-mode"])
     if any(flag not in help_text for flag in required):
         raise Error(f"CLI-Version unterstützt den geprüften Vertrag nicht: {version}")
-    if model is None and target == "codex":
+    if tier not in TIERS:
+        raise Error(f"Unbekannte Aufgabenklasse: {tier}")
+    tier_model, tier_effort = TIERS[tier][target]
+    effort = effort or tier_effort
+    model = model or tier_model
+    if target == "codex":
         process = subprocess.run([executable, "debug", "models", "--bundled"],
                                  capture_output=True, text=True, timeout=15)
         if process.returncode:
             raise Error("Modellkatalog nicht verfügbar; Modell ausdrücklich konfigurieren.")
         catalog = json.loads(process.stdout)
-        visible = sorted((m for m in catalog["models"] if m.get("visibility") == "list"),
-                         key=lambda m: m["priority"])
+        visible = {m["slug"]: m for m in catalog["models"] if m.get("visibility") == "list"}
         if not visible:
             raise Error("Kein sichtbares Modell im installierten Katalog.")
-        model = visible[0]["slug"]
-        supported = {e["effort"] for e in visible[0]["supported_reasoning_levels"]}
-        if effort not in supported:
+        if model is None:
+            model = min(visible.values(), key=lambda m: m["priority"])["slug"]
+        if model not in visible:
+            raise Error(f"Modell {model} für Klasse {tier} ist im Katalog dieser Version nicht sichtbar.")
+        if effort not in {e["effort"] for e in visible[model]["supported_reasoning_levels"]}:
             raise Error(f"Gewähltes Modell unterstützt Effort {effort} nicht.")
-    if model is None:
-        model = "fable"
     return {"target": target, "executable": executable, "version": version,
-            "model": model, "effort": effort}
+            "model": model, "effort": effort, "tier": tier}
 
 
 def label_prompt(label, prompt):

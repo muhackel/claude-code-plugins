@@ -75,6 +75,17 @@ Ein Beobachtungs-Timeout beweist keinen Prozessabbruch. Lebt der alte Prozess, b
 
 `ask` und `execute` legen keine Mission an. Schreibe ein [Handover](../../templates/Handover.md) mit dem relevanten Diskussionsstand. Übergib es über `--handover <datei>` oder stdin. Ohne Handover führt `ask` ein lesendes Standard-Review aus. `execute` benötigt einen Auftrag und `--allow <pfad>` für jeden Schreibbereich. Modellantwort unverändert wiedergeben, danach knapp einordnen; bei Ausführung zusätzlich die tatsächlich geänderten Dateien prüfen.
 
+Die Klasse des Auftrags bestimmt das Modell. Ohne `--tier` gilt `advanced` beim Standard-Review und sonst `standard`.
+
+| Klasse | Wofür | Claude | Codex |
+|---|---|---|---|
+| `light` | eindeutige Kleinarbeit: String fixen, Datei finden, Formatierung | haiku, medium | luna, medium |
+| `standard` | einzelnes Modul, Test schreiben, lokale Fehleranalyse | sonnet, high | terra, high |
+| `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Prüfung | opus, high | sol, high |
+| `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable, high | astra, high |
+
+Im Zweifel die kleinere Klasse. Für harte Aufgaben lohnt `strong` eher als Planer, dessen Plan anschließend eine kleinere Klasse umsetzt. Missionsrollen wählen ihre Klasse selbst: Generator und Evaluator arbeiten in `advanced`, die Spec-Gegenprüfung in `strong`. `--model` und `--effort` überschreiben die Klasse, wenn eine Vorgabe nötig ist.
+
 Die Modellübersicht auf stderr gemäß [Modelle und Aufgaben berichten](#modelle-und-aufgaben-berichten) anschließend sichtbar wiedergeben und die eigene koordinierende Hauptsitzung ergänzen. stdout bleibt die unveränderte fachliche Antwort.
 
 Weiterführend: [Laufzeitverträge](../../references/contracts.md), [CLI-Quellen und Rechte](../../references/cli-contract.md), [Build und Tests](../../build.md).

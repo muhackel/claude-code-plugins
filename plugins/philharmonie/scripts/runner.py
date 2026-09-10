@@ -47,7 +47,8 @@ class Runner:
         binding = self.store.load().get("adapters", {}).get(role)
         adapter = transport.resolve(binding["target"] if binding else target,
                                     binding.get("model") if binding else config["model"],
-                                    binding.get("effort", config["effort"]) if binding else config["effort"])
+                                    binding.get("effort") if binding else config["effort"],
+                                    transport.ROLE_TIERS.get(role, "advanced"))
         if binding and adapter != binding:
             raise Error("CLI-Vertrag seit der Rollenbindung verändert; neue Planung mit geprüftem Adapter erforderlich.")
         def bind(state):
