@@ -171,6 +171,12 @@ sonst `standard`. Bei Philharmonie entscheidet die Rolle: Generator und Evaluato
 Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei
 Änderungen beide Ebenen zusammen halten.
 
+Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
+der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,
+auch wenn `model` in `~/.codex/config.toml` etwas anderes sagt (bei `exec` nachgemessen, greift dort
+nicht). Bei Claude ist der Fall nicht vorab prüfbar, weil die CLI keinen Modellkatalog ausgibt; ohne
+`--model` läuft dort Opus 5.
+
 Aufträge beider Plugins schreiben Sitzungsdateien der Ziel-CLI und sind darum in `ccusage` sichtbar.
 Bei Philharmonie sind dafür die Sitzungsverzeichnisse des Hosts in die Sandbox gebunden — die einzige
 Stelle, an der ein Auftrag außerhalb seines Snapshots schreibt. Jeder Auftrag trägt eine Kennung im

@@ -84,7 +84,7 @@ Die Klasse des Auftrags bestimmt das Modell. Ohne `--tier` gilt `advanced` beim 
 | `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Prüfung | opus, high | sol, high |
 | `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable, high | astra, high |
 
-Im Zweifel die kleinere Klasse. Für harte Aufgaben lohnt `strong` eher als Planer, dessen Plan anschließend eine kleinere Klasse umsetzt. Missionsrollen wählen ihre Klasse selbst: Generator und Evaluator arbeiten in `advanced`, die Spec-Gegenprüfung in `strong`. `--model` und `--effort` überschreiben die Klasse, wenn eine Vorgabe nötig ist.
+Im Zweifel die kleinere Klasse. Für harte Aufgaben lohnt `strong` eher als Planer, dessen Plan anschließend eine kleinere Klasse umsetzt. Missionsrollen wählen ihre Klasse selbst: Generator und Evaluator arbeiten in `advanced`, die Spec-Gegenprüfung in `strong`. `--model` und `--effort` überschreiben die Klasse, wenn eine Vorgabe nötig ist. Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf die Wahl der CLI; ein Aufruf ohne Modellangabe landet dort sonst auf dem Flaggschiff. Bei einer solchen Warnung den Auftrag nicht mit höherer Klasse wiederholen, sondern die veraltete Klassentabelle melden.
 
 Die Modellübersicht auf stderr gemäß [Modelle und Aufgaben berichten](#modelle-und-aufgaben-berichten) anschließend sichtbar wiedergeben und die eigene koordinierende Hauptsitzung ergänzen. stdout bleibt die unveränderte fachliche Antwort.
 

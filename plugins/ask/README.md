@@ -55,6 +55,12 @@ Die Staffelung entspricht der, mit der philharmonie seine Subagenten besetzt. Be
 nicht fest, sie kommt aus dem Katalog der installierten Version. Für harte Aufgaben lohnt `strong` eher
 als Planer, dessen Plan anschließend eine kleinere Klasse umsetzt.
 
+Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf
+die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
+direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Der Rückfall steht als
+Warnung auf stderr.
+
+
 ## Rechte-Matrix
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |
