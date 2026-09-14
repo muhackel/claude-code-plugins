@@ -1,5 +1,5 @@
 {
-  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv mit dem Flaggschiffmodell fragen";
+  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv fragen, Modell nach Aufgabenklasse";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -35,7 +35,12 @@
 
       checks = forAll (system: pkgs: {
         shellcheck = pkgs.runCommand "ask-shellcheck" { nativeBuildInputs = [ pkgs.shellcheck ]; } ''
-          shellcheck ${./scripts/ask.sh}
+          shellcheck ${./scripts/ask.sh} ${./tests/ask-test.sh}
+          touch $out
+        '';
+        # Offline: Stub-codex/claude im PATH, keine echten CLI-Aufrufe.
+        ask-stubs = pkgs.runCommand "ask-stubs" { nativeBuildInputs = runtime pkgs ++ [ pkgs.bash ]; } ''
+          bash ${./tests/ask-test.sh} ${./scripts/ask.sh}
           touch $out
         '';
       });

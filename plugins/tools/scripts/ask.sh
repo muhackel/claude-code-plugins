@@ -25,7 +25,8 @@ Usage: ask.sh [--mode ask|execute] [--tier KLASSE] [--target claude|codex] [--ha
   --tier KLASSE     Aufgabenklasse: light, standard, advanced, strong.
                     Ohne Angabe: advanced beim Standard-Review, sonst standard.
   --target CLI      Override der Host-Erkennung (Default: CLAUDECODE gesetzt -> codex, sonst claude).
-  --handover FILE   Handover-Markdown aus Datei ('-' = stdin). Ohne Flag: stdin, falls kein TTY.
+  --handover FILE   Handover-Markdown aus Datei ('-' = stdin). Ohne Flag: stdin bis EOF, falls kein TTY.
+                    Ohne Handover stdin schließen: </dev/null.
   --dry-run         Kommando und Handover-Vorschau ausgeben, nichts aufrufen.
   -C DIR            Arbeitsverzeichnis (Default: $PWD).
 EOF
@@ -105,7 +106,8 @@ read_handover() {
       [[ -r "$HANDOVER_SRC" ]] || die "Handover-Datei nicht lesbar: $HANDOVER_SRC"
       HANDOVER="$(cat "$HANDOVER_SRC")"
     fi
-  elif [[ ! -t 0 ]] && read -r -t 0; then
+  elif [[ ! -t 0 ]]; then
+    # Immer bis EOF lesen: eine Pipe kann ihre Daten verzögert liefern. Ohne Handover: </dev/null.
     HANDOVER="$(cat)"
   else
     HANDOVER=""
@@ -155,9 +157,11 @@ CODEX_MODEL=""; CODEX_EFFORT=""
 codex_model() {
   local catalog visible wish
   # Ohne lesbaren Katalog keine Klassenwahl. Statt abzubrechen entscheidet die CLI selbst.
-  catalog="$(codex debug models 2>/dev/null)" || {
+  catalog="$(codex debug models --bundled 2>/dev/null)" || {
     log_warn "codex debug models fehlgeschlagen -> Aufruf ohne Modellwahl"; return; }
-  visible="$(jq -c '[.models[] | select(.visibility == "list")]' <<<"$catalog")"
+  # Unlesbarer Katalog (kein JSON, kein .models) zählt als leer und läuft in den Rückfall unten.
+  visible="$(jq -c '[.models[] | select(.visibility == "list")]' <<<"$catalog" 2>/dev/null)" || {
+    log_warn "Katalog von codex debug models nicht lesbar -> als leer behandelt"; visible="[]"; }
   case "$TIER" in
     light)    wish="gpt-5.6-luna" ;;
     standard) wish="gpt-5.6-terra" ;;
