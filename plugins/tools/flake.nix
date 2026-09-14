@@ -1,5 +1,5 @@
 {
-  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv mit dem Flaggschiffmodell fragen";
+  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv fragen, Modell nach Aufgabenklasse";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -21,21 +21,38 @@
         };
       });
 
+      packages = forAll (system: pkgs: {
+        # Wrapper `ask`: jq/coreutils vorn im PATH, claude/codex weiter vom Host-PATH.
+        ask = pkgs.writeShellApplication {
+          name = "ask";
+          runtimeInputs = runtime pkgs;
+          text = ''
+            exec ${pkgs.bash}/bin/bash ${./scripts/ask.sh} "$@"
+          '';
+          meta.description = "Die jeweils andere CLI non-interaktiv fragen (ask read-only / execute workspace-write)";
+        };
+        default = self.packages.${system}.ask;
+      });
+
       apps = forAll (system: pkgs: {
         ask = {
           type = "app";
           meta.description = "Die jeweils andere CLI non-interaktiv fragen (ask read-only / execute workspace-write)";
-          program = toString (pkgs.writeShellScript "ask" ''
-            export PATH=${pkgs.lib.makeBinPath (runtime pkgs)}:$PATH
-            exec ${pkgs.bash}/bin/bash ${./scripts/ask.sh} "$@"
-          '');
+          program = "${self.packages.${system}.ask}/bin/ask";
         };
         default = self.apps.${system}.ask;
       });
 
       checks = forAll (system: pkgs: {
+        # Baut den Wrapper mit, damit `nix shell`/`nix run` nicht erst beim Aufruf scheitern.
+        package = self.packages.${system}.ask;
         shellcheck = pkgs.runCommand "ask-shellcheck" { nativeBuildInputs = [ pkgs.shellcheck ]; } ''
-          shellcheck ${./scripts/ask.sh}
+          shellcheck ${./scripts/ask.sh} ${./tests/ask-test.sh}
+          touch $out
+        '';
+        # Offline: Stub-codex/claude im PATH, keine echten CLI-Aufrufe.
+        ask-stubs = pkgs.runCommand "ask-stubs" { nativeBuildInputs = runtime pkgs ++ [ pkgs.bash ]; } ''
+          bash ${./tests/ask-test.sh} ${./scripts/ask.sh}
           touch $out
         '';
       });
