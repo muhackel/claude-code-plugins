@@ -1,5 +1,8 @@
 # grimm — Behörden-Schreibstilist
 
+> **Veraltet – Nachfolger `plugins/tools`.** Letzte Version `0.2.0-final`, keine weitere Pflege.
+> Agent `grimm`, Command `/grimm` und die Skills `amtsstil`/`dokumentaufbau` → `/tools:grimm`.
+
 Grimm, der Referats-Schreiber. Er überführt Sachverhalte in das nüchterne, distanzierte, hoheitliche
 Deutsch der öffentlichen Verwaltung — den Ton von innerdienstlicher Anordnung, Vermerk und Konzept.
 Diesen Vorgang nennen wir **grimmifizieren**. Kern-Prinzip: **Form, nicht Fakten** — der User liefert

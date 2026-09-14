@@ -1,0 +1,6 @@
+interface:
+  display_name: "Grimm"
+  short_description: "Sachverhalte in Verwaltungsdeutsch überführen"
+  default_prompt: "Nutze $grimm, um diesen Sachverhalt als innerdienstliche Anordnung nach dem Führungsschema auszuformulieren."
+policy:
+  allow_implicit_invocation: false

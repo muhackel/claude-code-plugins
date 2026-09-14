@@ -1,0 +1,6 @@
+interface:
+  display_name: "Execute"
+  short_description: "Die andere CLI einen Auftrag im Workspace ausführen lassen"
+  default_prompt: "Nutze $execute, um die andere CLI diesen Auftrag im Workspace umsetzen zu lassen."
+policy:
+  allow_implicit_invocation: false

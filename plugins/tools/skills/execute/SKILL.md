@@ -1,14 +1,11 @@
 ---
 name: execute
-description: "[VERALTET] Die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) non-interaktiv einen Auftrag im Workspace ausführen lassen — workspace-write, Auftrag ist Pflicht"
+description: "Die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) non-interaktiv einen Auftrag im Workspace ausführen lassen — workspace-write, Auftrag ist Pflicht"
+disable-model-invocation: true
 ---
 
-> **Veraltet (final):** Das Plugin `ask` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Aufruf wörtlich aus: „⚠ Plugin `ask` ist veraltet – bitte `/tools:execute` aus dem Plugin `tools`
-> verwenden." Danach normal fortfahren.
-
 Lasse die jeweils andere CLI einen Auftrag ausführen. Modus: **execute** (workspace-write). Ablauf und
-Handover-Format stehen im Skill `handover` dieses Plugins — erst lesen, dann handeln.
+Handover-Format stehen in `references/handover.md` im Plugin-Root — erst lesen, dann handeln.
 
 1. **Auftrag prüfen.** Ohne Argument gibt es kein Standard-Verhalten: nachfragen, was ausgeführt werden soll.
    Vor dem Start `git status --short` prüfen. Auf `main`/`master` oder bei uncommitted Changes, die nicht
@@ -31,10 +28,10 @@ Handover-Format stehen im Skill `handover` dieses Plugins — erst lesen, dann h
 
 3. **Plugin-Root ermitteln.** Unter Claude Code `${CLAUDE_PLUGIN_ROOT}`. Beginnt der Wert nicht mit `/`
    (Codex ersetzt den Platzhalter nicht), Root aus dem Pfad dieser Skill-Datei ableiten: das Verzeichnis,
-   das `.codex-plugin/` enthält (drei Ebenen über `source-command-execute/SKILL.md`).
+   das `.codex-plugin/` enthält (bei `…/skills/execute/SKILL.md` zwei Ebenen über dem Skill-Verzeichnis).
 
-4. **Handover schreiben** (Skill-Format, Abschnitt „Grenzen" mit: nur im Workspace ändern, kein Commit,
-   kein Push, Änderungsliste am Ende) und per Heredoc starten:
+4. **Handover schreiben** (Format aus `references/handover.md`, Abschnitt „Grenzen" mit: nur im Workspace
+   ändern, kein Commit, kein Push, Änderungsliste am Ende) und per Heredoc starten:
 
    ```bash
    bash "<root>/scripts/ask.sh" --mode execute --tier <klasse> <<'HANDOVER'

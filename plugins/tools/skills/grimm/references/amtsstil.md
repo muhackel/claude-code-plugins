@@ -1,17 +1,7 @@
----
-name: amtsstil
-description: "[VERALTET] Mikroebene des Behörden-Schreibstils — Ton, Grammatik, Satzbau, Floskellexikon und Anti-Patterns des nüchternen Verwaltungs- und Anordnungsdeutschs. Nutzen, wenn ein Sachverhalt verwaltungsförmig ausformuliert, ein Text ins Hoheitliche angehoben oder ein Entwurf auf Amtsstil-Konformität redigiert werden soll."
----
-
-> **Veraltet (final):** Das Plugin `grimm` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Aufruf wörtlich aus: „⚠ Plugin `grimm` ist veraltet – bitte `/tools:grimm` aus dem Plugin `tools`
-> verwenden." Innerhalb des Agenten `grimm` gilt dessen Hinweis, nicht doppelt ausgeben. Danach normal
-> fortfahren.
-
 # Amtsstil — der Behörden-Schreibstil im Detail
 
-Dieser Skill ist der Maßstab für die **Satz- und Wortebene**. Für den Aufbau ganzer Dokumente siehe
-`dokumentaufbau`. Die Beispiele hier sind bewusst generisch (Muster-Sachverhalte) — übertrage das
+Diese Referenz ist der Maßstab für die **Satz- und Wortebene**. Für den Aufbau ganzer Dokumente siehe
+`dokumentaufbau.md`. Die Beispiele hier sind bewusst generisch (Muster-Sachverhalte) — übertrage das
 Muster, nicht den Beispielinhalt.
 
 ## Grundhaltung
@@ -149,3 +139,10 @@ Form und ernster Lage ist der eigentliche Effekt.
 6. Keine Emphase, keine Ausrufezeichen, keine rhetorischen Fragen?
 7. Umlaute/ß korrekt, keine Ersatzschreibweisen im Fließtext?
 8. Hedging vorhanden, wo Zusagen Spielraum brauchen?
+
+## 8. Verhältnis zu unslop
+
+Mehrere Merkmale, die `/tools:unslop` als KI-Muster tilgt, sind im Amtstext gewollt: Nominalstil,
+Passiv, Funktionsverbgefüge, vorsichtige Formulierungen (Hedging), die fehlende Ich-Form und parallele
+Gebotsserien. Sie tragen das Register und die Verbindlichkeit. `/tools:unslop` ist auf Grimm-Ergebnisse
+deshalb nicht anzuwenden.
