@@ -204,6 +204,7 @@ sind bewusst separat; Aufrufe und Betriebsgrenzen stehen in `plugins/philharmoni
 
 ## Git-Workflow
 
-- `main` — stabile Releases
-- `develop` — Integrationsbranch
-- Feature-Branches: `feature/<plugin-name>` oder `feature/<beschreibung>`
+- `main` — stabile Releases, einziger dauerhafter Branch
+- Feature-Branches: `feature/<plugin-name>` oder `feature/<beschreibung>`, kurzlebig
+- Merge per PR bzw. `--no-ff`, danach den Branch lokal und auf origin löschen. Die Merge-Commits
+  halten fest, welche Commits zusammengehören, der Branch selbst wird nicht mehr gebraucht.
