@@ -157,8 +157,8 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
   Agent in `tools`. Skills mit `disable-model-invocation: true` lassen sich auch nicht in Subagenten vorladen.
 - Wissen, das ein Tool braucht, liegt als `references/*.md` (kein Skill-Frontmatter), damit es nicht
   selbst als Skill auftaucht.
-- Offen: Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab; ob die
-  Codex-Laufzeit das ebenfalls tut, ist ungeprüft.
+- Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
+  lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
 
 ## Externe Quellen
 
