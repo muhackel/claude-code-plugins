@@ -15,7 +15,7 @@ Dieser Skill läuft nur auf ausdrücklichen Aufruf (`/tools:unslop`). Was übera
 - **Mit Argument** (`$ARGUMENTS`): der übergebene Text oder, wenn eine Datei genannt ist, deren Inhalt.
 - **Ohne Argument:** der zuletzt selbst geschriebene Text in dieser Sitzung bzw. die zuletzt selbst bearbeitete Datei.
 
-Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält, außer er wird ausdrücklich zur Überarbeitung übergeben:
+Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält:
 
 - Zitate, Gesetzes-, Norm- und Vertragstexte
 - wörtliche Übersetzungen, bei denen der Ausgangstext maßgeblich ist
@@ -24,6 +24,8 @@ Dieser Skill läuft nur auf ausdrücklichen Aufruf (`/tools:unslop`). Was übera
 - Eigennamen, Bezeichner, API-Namen, Frontmatter-Werte
 
 Die Regel gilt pro Passage, nicht pro Dokument. In einem Text mit Zitaten bleibt das Zitat stehen, der eigene Text darum wird überarbeitet.
+
+Ein ausdrücklich übergebener fremder Fließtext (Mailentwurf, Issue-Text) wird als Ganzes überarbeitet. Code, Konfiguration, Befehle, Log- und Fehlerausgaben, Eigennamen, Bezeichner, API-Namen und Frontmatter-Werte darin bleiben trotzdem unverändert. Zitate, wörtliche Übersetzungen sowie Gesetzes-, Norm- und Vertragstexte darin werden nur umgeschrieben, wenn der Aufruf genau diese Passage benennt.
 
 ## Schnellprüfung
 

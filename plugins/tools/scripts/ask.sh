@@ -176,7 +176,7 @@ codex_model() {
     log_info "Klasse $TIER -> $CODEX_MODEL (effort $CODEX_EFFORT)"
   elif codex_usable "$visible" "$CODEX_FALLBACK" "$EFFORT"; then
     CODEX_MODEL="$CODEX_FALLBACK"; CODEX_EFFORT="$EFFORT"
-    log_warn "Klasse $TIER: '$wish' fehlt im Katalog dieser CLI-Version -> $CODEX_MODEL"
+    log_warn "Klasse $TIER: '$wish' (effort $EFFORT) fehlt im Katalog dieser CLI-Version -> $CODEX_MODEL"
   else
     log_warn "Klasse $TIER: weder '$wish' noch '$CODEX_FALLBACK' im Katalog -> Aufruf ohne Modellwahl"
   fi
@@ -199,19 +199,50 @@ build_cmd_codex() {
   fi
 }
 
+# Mustersemantik laut https://code.claude.com/docs/en/permissions (Stand 2026-09):
+# - `*` steht für beliebigen Text inkl. Leerzeichen; `Bash(git log *)` erlaubt auch `git log --output=<Datei>`.
+# - deny vor ask vor allow; eine deny-Regel kennt keine allow-Ausnahmen.
+# - dontAsk verweigert alles, was sonst nachfragen würde. Ohne Nachfrage laufen Lesezugriffe im
+#   Arbeitsverzeichnis und das eingebaute Read-only-Set von Bash, zu dem nur die lesenden git-Formen gehören.
+# - Bash-Regeln matchen den Befehlstext, keine Programmgrenze (`git -C . push`, `sh -c '…'`, `/usr/bin/git`).
+# ask: keine allow-Regeln für git. Jede allow-Regel mit `*` würde schreibende Optionen mitfreigeben; das
+# eingebaute Read-only-Set plus dontAsk ist die engere Grenze. Die deny-Regeln sichern die bekannten
+# schreibenden Formen zusätzlich über den Text ab. Die deny-Regel Edit greift auch für Umleitungen (`> datei`).
+CLAUDE_ASK_DENY=(
+  Edit
+  "Bash(git branch -d *)" "Bash(git branch -D *)" "Bash(git branch --delete *)"
+  "Bash(git branch -m *)" "Bash(git branch -M *)" "Bash(git branch --move *)"
+  "Bash(git branch -c *)" "Bash(git branch -C *)" "Bash(git branch --copy *)"
+  "Bash(git branch -f *)" "Bash(git branch --force *)"
+  "Bash(git branch -u *)" "Bash(git branch --set-upstream-to*)" "Bash(git branch --unset-upstream*)"
+  "Bash(git branch --edit-description*)"
+  # --out* statt --output: gitcli(7) erlaubt vielen Befehlen eindeutige Abkürzungen langer Optionen.
+  "Bash(git * --out*)"
+)
+# execute: Bash ist frei, `git push` ist nur über den Befehlstext gesperrt. `git * push` deckt Formen mit
+# Optionen vor dem Unterbefehl ab (`git -C . push`, `git -c k=v push origin`); die Variante ohne
+# nachgestelltes `*` braucht es, weil ein `*` am Ende den nackten Befehl nur bei einem einzigen Wildcard trifft.
+CLAUDE_EXECUTE_DENY=("Bash(git push *)" "Bash(git * push)" "Bash(git * push *)" WebFetch WebSearch)
+
 build_cmd_claude() {
-  CMD=(claude -p --model "$CLAUDE_MODEL" --effort "$EFFORT" --permission-prompts none
+  # Der Prompt steht direkt hinter -p: --tools/--allowedTools/--disallowedTools sind variadisch
+  # (<tools...>, claude --help) und können ein nachgestelltes Positionsargument als weiteren Eintrag schlucken.
+  local prompt
+  if [[ "$MODE" == "ask" ]]; then
+    prompt="Bearbeite den Auftrag aus stdin. Nur lesen, keine Dateien ändern. Antworte auf Deutsch."
+  else
+    prompt="Bearbeite den Auftrag aus stdin. Änderungen nur im Workspace, kein Commit, kein Push. Antworte auf Deutsch und liste am Ende alle geänderten Dateien."
+  fi
+  CMD=(claude -p "$prompt" --model "$CLAUDE_MODEL" --effort "$EFFORT" --permission-prompts none
        --name "$(session_label)" --output-format text)
   if [[ "$MODE" == "ask" ]]; then
     CMD+=(--permission-mode dontAsk
       --tools Read Glob Grep Bash
-      --allowedTools "Bash(git log *)" "Bash(git diff *)" "Bash(git status *)" "Bash(git show *)" "Bash(git branch *)"
-      "Bearbeite den Auftrag aus stdin. Nur lesen, keine Dateien ändern. Antworte auf Deutsch.")
+      --disallowedTools "${CLAUDE_ASK_DENY[@]}")
   else
     CMD+=(--permission-mode acceptEdits
       --allowedTools Edit Write MultiEdit NotebookEdit Bash
-      --disallowedTools "Bash(git push *)" WebFetch WebSearch
-      "Bearbeite den Auftrag aus stdin. Änderungen nur im Workspace, kein Commit, kein Push. Antworte auf Deutsch und liste am Ende alle geänderten Dateien.")
+      --disallowedTools "${CLAUDE_EXECUTE_DENY[@]}")
   fi
 }
 

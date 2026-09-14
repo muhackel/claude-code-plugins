@@ -60,7 +60,10 @@ HANDOVER
 bash "<root>/scripts/ask.sh" --mode execute --tier light <<'HANDOVER' # Auftrag mit Schreibrechten
 …
 HANDOVER
-bash "<root>/scripts/ask.sh" --dry-run …                              # nur Kommando + Handover zeigen
+bash "<root>/scripts/ask.sh" --dry-run … </dev/null                   # nur Kommando + Standard-Review zeigen
+bash "<root>/scripts/ask.sh" --dry-run … <<'HANDOVER'                 # nur Kommando + Handover zeigen
+…
+HANDOVER
 ```
 
 Weitere Flags: `--target claude|codex` (Override der Host-Erkennung), `--handover FILE`, `-C DIR`.
@@ -97,11 +100,22 @@ die Klassentabelle gegen den Katalog veraltet ist.
 
 | Modus | Codex (`codex exec`) | Claude (`claude -p`) |
 |---|---|---|
-| ask | `-s read-only` | `dontAsk`, Tools Read/Glob/Grep, Bash nur read-only git |
-| execute | `-s workspace-write` | `acceptEdits`, Edit/Write/Bash, `git push` und Web verboten |
+| ask | `-s read-only` | `dontAsk`, Tools Read/Glob/Grep/Bash, keine allow-Regeln: Bash nur im eingebauten Read-only-Set; deny für `Edit`, schreibende `git branch`-Formen und `git * --out*` |
+| execute | `-s workspace-write` | `acceptEdits`, Edit/Write/Bash, Web verboten; `git push` **nur Prompt-Anweisung plus Textmuster, keine technische Sperre** |
 
 Codex sandboxt das Dateisystem, Claude nicht: bei `execute` mit Ziel Claude sichert nur die Anweisung im
 Handover, dass außerhalb des Workspace nichts passiert. Deshalb `execute` nur auf Feature-Branch.
+
+Grenzen der Claude-Regeln (belegt in [Configure permissions](https://code.claude.com/docs/en/permissions)):
+Bash-Regeln matchen den Befehlstext, keine Programmgrenze.
+
+- **ask:** Lesend ist, was Claude Code in seinem eingebauten Read-only-Set als „read-only forms of git"
+  führt; welche Optionen dazu zählen, ist nicht im Einzelnen dokumentiert. Die deny-Regeln fangen die
+  bekannten schreibenden Formen (`git branch -D`, `git log --output=…`) zusätzlich über den Text ab.
+- **execute:** Die deny-Regeln `git push *`, `git * push`, `git * push *` fangen auch `git -C . push`, aber
+  nicht `git 'push'`, `/usr/bin/git push` oder `sh -c 'git push'`. Ob gepusht wird, entscheidet dort am Ende
+  die Anweisung „kein Push". Wer das ausschließen muss, braucht eine Grenze außerhalb von Claude Code
+  (etwa fehlende Push-Rechte auf dem Remote).
 
 ## Unter Codex
 
