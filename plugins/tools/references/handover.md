@@ -8,7 +8,8 @@ Arbeitsverzeichnis und das Handover. Alles, was sie wissen muss, steht im Handov
 1. Plugin-Root ermitteln (Claude Code: `${CLAUDE_PLUGIN_ROOT}`; Codex: Verzeichnis, das `.codex-plugin/` enthält).
 2. Handover nach dem Format unten schreiben. Bei `/tools:ask` ohne Argument entfällt das, das Skript hat ein Standard-Review.
 3. `scripts/ask.sh --mode ask|execute` mit dem Handover auf stdin starten (Heredoc). Das Skript erkennt den
-   Host, wählt die andere CLI, ermittelt deren Flaggschiffmodell und setzt Effort `high`.
+   Host, wählt die andere CLI und setzt Modell und Effort nach der Aufgabenklasse (`--tier`, siehe unten).
+   Ohne Handover stdin mit `</dev/null` schließen: das Skript liest stdin bis EOF.
 4. stdout ist die Antwort, stderr der Fortschritt. Antwort unverändert wiedergeben, dann kurz einordnen.
 
 ## Handover-Format
@@ -84,8 +85,9 @@ ausführen lassen — als für die Umsetzung selbst.
 
 Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf
 die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
-direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Der Rückfall steht als
-Warnung auf stderr.
+direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Im letzten Schritt übergibt das
+Skript weder Modell noch Effort, beides entscheidet dann die CLI. Dorthin führt auch ein fehlender oder
+unlesbarer Katalog. Der Rückfall steht als Warnung auf stderr.
 
 Der Rückfall passiert im Skript. Bei einer solchen Warnung nicht denselben Aufruf mit einer höheren Klasse
 wiederholen — das wäre teurer als der Rückfall, den das Skript schon gewählt hat. Stattdessen melden, dass
