@@ -1,7 +1,7 @@
 {
   "name": "grimm",
-  "version": "0.1.0",
-  "description": "Behörden-Schreibstilist (Grimm): formuliert Sachverhalte im nüchternen Verwaltungs- und Anordnungsdeutsch der öffentlichen Verwaltung — Nominalstil, Passiv- und Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), präzise Datums-/Aktenbezüge, hoheitlicher Ton. Baut Texte nach dem behördlichen Führungsschema (Lage → Kräfte → Auftrag/Absicht → Einzelaufträge → Sonstige Maßnahmen), als innerdienstliche Anordnung, Vermerk oder Konzept. Reine Formulierungs-/Redaktionsarbeit — keine fachliche Wahrheitsfindung.",
+  "version": "0.2.0-final",
+  "description": "[VERALTET – final, Nachfolger: tools] Behörden-Schreibstilist (Grimm): formuliert Sachverhalte im nüchternen Verwaltungs- und Anordnungsdeutsch der öffentlichen Verwaltung — Nominalstil, Passiv- und Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), präzise Datums-/Aktenbezüge, hoheitlicher Ton. Baut Texte nach dem behördlichen Führungsschema (Lage → Kräfte → Auftrag/Absicht → Einzelaufträge → Sonstige Maßnahmen), als innerdienstliche Anordnung, Vermerk oder Konzept. Reine Formulierungs-/Redaktionsarbeit — keine fachliche Wahrheitsfindung.",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
@@ -12,8 +12,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Grimm",
-    "shortDescription": "Behörden-Schreibstilist: überführt Sachverhalte in nüchternes Verwaltungs- und Anordnungsdeutsch",
-    "longDescription": "Grimm formuliert Sachverhalte im nüchternen Verwaltungs- und Anordnungsdeutsch der öffentlichen Verwaltung: Nominalstil, Passiv- und Gebotskonstruktionen, präzise Datums- und Aktenbezüge, hoheitlicher Ton. Er baut ganze Dokumente nach dem behördlichen Führungsschema (Lage, Kräfte, Auftrag/Absicht, Einzelaufträge, Sonstige Maßnahmen) als innerdienstliche Anordnung, Vermerk oder Konzept. Reine Formulierungs- und Redaktionsarbeit — die fachliche Wahrheitsfindung bleibt außen vor.",
+    "shortDescription": "[VERALTET – final, Nachfolger: tools] Behörden-Schreibstilist: überführt Sachverhalte in nüchternes Verwaltungs- und Anordnungsdeutsch",
+    "longDescription": "[VERALTET – final, Nachfolger: tools] Grimm formuliert Sachverhalte im nüchternen Verwaltungs- und Anordnungsdeutsch der öffentlichen Verwaltung: Nominalstil, Passiv- und Gebotskonstruktionen, präzise Datums- und Aktenbezüge, hoheitlicher Ton. Er baut ganze Dokumente nach dem behördlichen Führungsschema (Lage, Kräfte, Auftrag/Absicht, Einzelaufträge, Sonstige Maßnahmen) als innerdienstliche Anordnung, Vermerk oder Konzept. Reine Formulierungs- und Redaktionsarbeit — die fachliche Wahrheitsfindung bleibt außen vor.",
     "developerName": "Sebastian Rädle",
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],

@@ -1,19 +1,16 @@
 ---
 name: ask
-description: "[VERALTET] Die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) non-interaktiv fragen — read-only; ohne Argument Standard-Review des Projekts"
+description: "Die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) non-interaktiv fragen — read-only; ohne Argument Standard-Review des Projekts"
+disable-model-invocation: true
 ---
 
-> **Veraltet (final):** Das Plugin `ask` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Aufruf wörtlich aus: „⚠ Plugin `ask` ist veraltet – bitte `/tools:ask` aus dem Plugin `tools`
-> verwenden." Danach normal fortfahren.
-
 Hole eine Zweitmeinung von der jeweils anderen CLI. Modus: **ask** (read-only). Ablauf und
-Handover-Format stehen im Skill `handover` dieses Plugins — erst lesen, dann handeln.
+Handover-Format stehen in `references/handover.md` im Plugin-Root — erst lesen, dann handeln.
 
 1. **Plugin-Root ermitteln.** Unter Claude Code ist er `${CLAUDE_PLUGIN_ROOT}`. Beginnt dieser Wert nicht
    mit `/` (Codex ersetzt den Platzhalter nicht), leite den Root aus dem Pfad dieser Skill-Datei ab: das
-   Verzeichnis, das `.codex-plugin/` enthält (bei
-   `…/.codex-plugin/migrated-command-skills/source-command-ask/SKILL.md` drei Ebenen über der Datei).
+   Verzeichnis, das `.codex-plugin/` enthält (bei `…/skills/ask/SKILL.md` zwei Ebenen über dem
+   Skill-Verzeichnis).
 
 2. **Aufgabenklasse wählen.** Das Skript wählt das Modell nach Aufgabenklasse, nicht
    pauschal das Flaggschiff. Schätze die Aufgabe ein und übergib sie mit `--tier`:
@@ -36,7 +33,8 @@ Handover-Format stehen im Skill `handover` dieses Plugins — erst lesen, dann h
    bash "<root>/scripts/ask.sh" --mode ask --tier advanced </dev/null
    ```
 
-   **Mit Argument** (`$ARGUMENTS`): Handover nach dem Skill-Format schreiben und per Heredoc auf stdin geben:
+   **Mit Argument** (`$ARGUMENTS`): Handover nach dem Format aus `references/handover.md` schreiben und per
+   Heredoc auf stdin geben:
 
    ```bash
    bash "<root>/scripts/ask.sh" --mode ask --tier <klasse> <<'HANDOVER'

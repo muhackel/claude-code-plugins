@@ -145,6 +145,21 @@ interface:
 
 **Codex:** Der Marketplace liegt unter `.agents/plugins/marketplace.json`, Plugins unter `plugins/<n>/.codex-plugin/`. Skills werden in Codex über `/skills` bzw. `$skill-name` angesprochen. Den exakten Marketplace-/Plugin-Install-Befehl gegen die aktuelle Codex-Doku prüfen (`developers.openai.com/codex` → Customization/Plugins) — hier bewusst nicht aus dem Gedächtnis dokumentiert.
 
+## Tools: nur explizite Auslösung
+
+`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`).
+Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bis zur Entfernung bleiben.
+
+- Einstiegspunkte sind **Skills, keine Commands und keine Agents**: nur Skills haben in beiden CLIs einen
+  belegten Schalter. Claude Code: `disable-model-invocation: true` im Frontmatter. Codex:
+  `skills/<name>/agents/openai.yaml` mit `policy.allow_implicit_invocation: false`.
+- **Agents** kennen in Claude Code keinen solchen Schalter, Claude delegiert nach `description`. Darum kein
+  Agent in `tools`. Skills mit `disable-model-invocation: true` lassen sich auch nicht in Subagenten vorladen.
+- Wissen, das ein Tool braucht, liegt als `references/*.md` (kein Skill-Frontmatter), damit es nicht
+  selbst als Skill auftaucht.
+- Offen: Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab; ob die
+  Codex-Laufzeit das ebenfalls tut, ist ungeprüft.
+
 ## Externe Quellen
 
 - Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) liegen als Git Submodule unter `vendors/obsidian-skills/`. Plugins referenzieren diese per Symlink (`plugins/<name>/skills/<skill> → ../../../vendors/obsidian-skills/skills/<skill>`).
@@ -166,7 +181,7 @@ Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Hist
 
 Modelle werden nach Aufgabenklasse gewählt, nicht pauschal als Flaggschiff: `light` haiku/luna,
 `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra (Codex-Spitze aus dem Katalog der
-installierten Version). Bei ask entscheidet `--tier`, ohne Angabe `advanced` beim Standard-Review und
+installierten Version). Bei `tools:ask`/`tools:execute` entscheidet `--tier`, ohne Angabe `advanced` beim Standard-Review und
 sonst `standard`. Bei Philharmonie entscheidet die Rolle: Generator und Evaluator `advanced`,
 Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei
 Änderungen beide Ebenen zusammen halten.

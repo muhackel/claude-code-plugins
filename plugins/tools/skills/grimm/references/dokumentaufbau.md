@@ -1,16 +1,6 @@
----
-name: dokumentaufbau
-description: "[VERALTET] Makroebene des Behörden-Schreibstils — Gliederungsvorlagen für ganze Verwaltungsdokumente: innerdienstliche Anordnung nach dem behördlichen Führungsschema (Lage → Kräfte → Auftrag/Absicht → Einzelaufträge → Sonstige Maßnahmen → Kommunikation → Inkrafttreten), Vermerk, Konzept/Grobkonzept und Sachstandsbericht. Nutzen, wenn ein ganzes Dokument strukturiert und gegliedert werden soll, nicht nur ein einzelner Absatz."
----
-
-> **Veraltet (final):** Das Plugin `grimm` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Aufruf wörtlich aus: „⚠ Plugin `grimm` ist veraltet – bitte `/tools:grimm` aus dem Plugin `tools`
-> verwenden." Innerhalb des Agenten `grimm` gilt dessen Hinweis, nicht doppelt ausgeben. Danach normal
-> fortfahren.
-
 # Dokumentaufbau — Gliederungen für Verwaltungsdokumente
 
-Dieser Skill liefert das **Gerüst** ganzer Dokumente. Die Satz- und Wortebene kommt aus `amtsstil`.
+Diese Referenz liefert das **Gerüst** ganzer Dokumente. Die Satz- und Wortebene kommt aus `amtsstil.md`.
 Vorgehen: passende Vorlage wählen → Gerüst mit Überschriften vorschlagen → bei größeren Dokumenten
 Freigabe abwarten → Abschnitte ausformulieren → Zeichnung ans Ende.
 
@@ -113,4 +103,4 @@ Planungsgrundlage" gekennzeichnet, wenn noch offen).
 - Kontakt-/Zuständigkeitsangaben und Termine gern als Tabelle.
 - Jeder benutzte, aber nicht gelieferte Wert bleibt Platzhalter; offene Platzhalter am Textende
   gesammelt ausweisen.
-- Register durchgängig nach `amtsstil`.
+- Register durchgängig nach `amtsstil.md`.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Ask"
+  short_description: "Die andere CLI read-only um eine Zweitmeinung fragen"
+  default_prompt: "Nutze $ask, um ein Review des aktuellen Projektstands von der anderen CLI zu holen."
+policy:
+  allow_implicit_invocation: false

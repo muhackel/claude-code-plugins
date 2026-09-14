@@ -1,13 +1,3 @@
----
-name: handover
-description: "[VERALTET] Handover-Format und Ablauf für Cross-CLI-Aufrufe (/ask read-only, /execute workspace-write) — wie ein Auftrag an die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) formuliert, übergeben und die Antwort wiedergegeben wird. Nutzen, wenn eine unabhängige Zweitmeinung, ein Review des Projektstands oder eine delegierte Ausführung durch die andere CLI gebraucht wird."
----
-
-> **Veraltet (final):** Das Plugin `ask` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Aufruf wörtlich aus: „⚠ Plugin `ask` ist veraltet – bitte `/tools:ask` bzw. `/tools:execute` aus dem
-> Plugin `tools` verwenden." Hat `/ask` oder `/execute` den Hinweis in diesem Aufruf schon ausgegeben,
-> nicht wiederholen. Danach normal fortfahren.
-
 # Handover für Cross-CLI-Aufrufe
 
 Die andere CLI startet mit leerem Kontext. Sie sieht weder diese Sitzung noch den Chatverlauf, nur das
@@ -16,7 +6,7 @@ Arbeitsverzeichnis und das Handover. Alles, was sie wissen muss, steht im Handov
 ## Ablauf
 
 1. Plugin-Root ermitteln (Claude Code: `${CLAUDE_PLUGIN_ROOT}`; Codex: Verzeichnis, das `.codex-plugin/` enthält).
-2. Handover nach dem Format unten schreiben. Bei `/ask` ohne Argument entfällt das, das Skript hat ein Standard-Review.
+2. Handover nach dem Format unten schreiben. Bei `/tools:ask` ohne Argument entfällt das, das Skript hat ein Standard-Review.
 3. `scripts/ask.sh --mode ask|execute` mit dem Handover auf stdin starten (Heredoc). Das Skript erkennt den
    Host, wählt die andere CLI, ermittelt deren Flaggschiffmodell und setzt Effort `high`.
 4. stdout ist die Antwort, stderr der Fortschritt. Antwort unverändert wiedergeben, dann kurz einordnen.
