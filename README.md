@@ -242,7 +242,8 @@ bewusst vom Host-PATH, nicht aus nixpkgs. Hilfswerkzeuge und Checks via Nix
 ### grimm, ask, unslop (veraltet)
 
 Letzte Versionen `grimm` 0.2.0-final, `ask` 0.4.0-final, `unslop` 0.4.0-final. Funktion unverändert,
-bei jeder Nutzung erscheint ein Hinweis auf den Nachfolger `tools`. Werden später entfernt.
+ein Hinweis auf den Nachfolger `tools` erscheint bei ask und grimm bei jedem Aufruf, bei unslop
+einmal pro Sitzung. Werden später entfernt.
 
 ### philharmonie
 
