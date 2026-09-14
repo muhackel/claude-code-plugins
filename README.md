@@ -212,57 +212,37 @@ empfiehlt dem Hauptagenten, `nixie` bzw. `bruce` zu spawnen.
 /plugin install christian@muhackel-plugins --scope user
 ```
 
-### grimm
+### tools
 
-Behörden-Schreibstilist (Persona **Grimm**) — überführt Sachverhalte in das nüchterne, distanzierte,
-hoheitliche Deutsch der öffentlichen Verwaltung: Nominalstil, Gebotskonstruktionen (`ist zu`,
-„gewährleistet, dass…"), exakte Datums-/Aktenbezüge, spürbare Dringlichkeit ohne Emphase. Diesen Vorgang
-nennen wir **grimmifizieren**. Baut ganze Dokumente nach dem behördlichen Führungsschema (innerdienstliche
-Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Kern-Prinzip **Form, nicht Fakten**: der User
-liefert den Sachverhalt, Grimm die Sprache — fehlt ein Fakt, setzt er einen Platzhalter statt zu raten
-und bewertet nie die fachliche Sache.
+Werkzeuge, die **nur auf ausdrücklichen Aufruf** laufen und nie automatisch anspringen. Nachfolger der
+Plugins `ask`, `unslop` und `grimm`. Jeder Skill trägt `disable-model-invocation: true` (Claude Code)
+und eine `agents/openai.yaml` mit `allow_implicit_invocation: false` (Codex).
 
-Slash Command:
-- `/grimm` — Grimm direkt aufrufen (mit optionalem Sachverhalt/Auftrag)
+Skills:
+- `/tools:ask` — Cross-CLI-Zweitmeinung, read-only: fragt non-interaktiv die **jeweils andere CLI**
+  (aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem Modell zur **Aufgabenklasse**
+  (`light` haiku/luna, `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra).
+  Ohne Argument ein Standard-Review des aktuellen Projekts, mit Argument eine eigene Frage.
+- `/tools:execute` — dasselbe mit Schreibrechten im Workspace (kein Commit/Push).
+- `/tools:unslop` — entfernt typische KI-Muster (62 Erkennungsmerkmale in acht Kategorien) aus einem
+  übergebenen Text oder ohne Argument aus dem zuletzt selbst geschriebenen.
+- `/tools:grimm` — Behörden-Schreibstilist: überführt Sachverhalte ins nüchterne Verwaltungs- und
+  Anordnungsdeutsch und baut ganze Dokumente (Anordnung nach Führungsschema, Vermerk, Konzept,
+  Sachstandsbericht). Kern-Prinzip **Form, nicht Fakten**: fehlt ein Fakt, setzt Grimm einen Platzhalter.
 
-Enthaltene Skills:
-- `amtsstil` — Mikroebene: Ton, Gebotsgrammatik, Nominalstil/Funktionsverbgefüge, Floskellexikon, spürbare Dringlichkeit, Anti-Patterns, Redigier-Checkliste
-- `dokumentaufbau` — Makroebene: Gliederungsvorlagen (Anordnung nach Führungsschema, Vermerk, Konzept/Grobkonzept, Sachstandsbericht)
-
-Standalone nutzbar — reine Formulierungsarbeit; die fachlichen Inhalte liefert der User oder ein Fachagent,
-dessen Ergebnis anschließend „grimmifiziert" wird.
-
-```bash
-/plugin install grimm@muhackel-plugins --scope user
-```
-
-### ask
-
-Cross-CLI-Zweitmeinung: fragt aus einer laufenden Sitzung heraus non-interaktiv die **jeweils andere CLI**
-(aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem Modell zur **Aufgabenklasse**:
-`light` haiku/luna, `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra.
-Der Host schreibt ein Handover (Kontext, Ziel, Frage, Grenzen), die andere CLI startet mit leerem Kontext
-und antwortet; der Host gibt die Antwort unverändert wieder und ordnet sie ein.
-
-Slash Commands:
-- `/ask` — read-only; ohne Argument ein Standard-Review des aktuellen Projekts, mit Argument eine eigene Frage
-- `/execute` — workspace-write; die andere CLI führt einen Auftrag im Workspace aus (kein Commit/Push)
-
-In Codex heißen die migrierten Commands `$ask:source-command-ask` bzw. `$ask:source-command-execute`.
-
-Enthaltener Skill:
-- `handover` — Handover-Format, Ablauf, Rechte-Matrix je Ziel-CLI, Standard-Review
-
-Jeder Aufruf schreibt eine Sitzungsdatei der Ziel-CLI und erscheint damit in `ccusage`. Die Kennung
-`/<modus> <projekt>` unterscheidet ihn im Resume-Picker von einer eigenen Sitzung.
-
-Die Ziel-CLIs kommen bewusst vom Host-PATH, nicht aus nixpkgs (sonst wäre es nicht „die installierte Version").
-Hilfswerkzeuge und Checks via Nix (`flake.nix`, Details in [`build.md`](plugins/ask/build.md)):
-`nix run ./plugins/ask#ask`, `nix flake check`.
+Für ask/execute schreibt der Host ein Handover ([`references/handover.md`](plugins/tools/references/handover.md)),
+die andere CLI startet mit leerem Kontext. Jeder Aufruf erscheint in `ccusage`. Die Ziel-CLIs kommen
+bewusst vom Host-PATH, nicht aus nixpkgs. Hilfswerkzeuge und Checks via Nix
+(Details in [`build.md`](plugins/tools/build.md)): `nix run ./plugins/tools#ask`, `nix flake check`.
 
 ```bash
-/plugin install ask@muhackel-plugins --scope user
+/plugin install tools@muhackel-plugins --scope user
 ```
+
+### grimm, ask, unslop (veraltet)
+
+Letzte Versionen `grimm` 0.2.0-final, `ask` 0.4.0-final, `unslop` 0.4.0-final. Funktion unverändert,
+bei jeder Nutzung erscheint ein Hinweis auf den Nachfolger `tools`. Werden später entfernt.
 
 ### philharmonie
 
@@ -282,36 +262,10 @@ Die Sitzungsverzeichnisse der Ziel-CLIs sind in die Sandbox eingebunden, sodass 
 
 Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
 Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.
-Das bestehende ask-Plugin bleibt separat nutzbar.
+Die Einzelaufrufe bleiben über `/tools:ask` und `/tools:execute` separat nutzbar.
 
 Details und Betriebsgrenzen in [README](plugins/philharmonie/README.md) und
 [build.md](plugins/philharmonie/build.md); Entwurf in [design-ask-tandem.md](docs/design-ask-tandem.md).
-
-### unslop
-
-Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme. Der Skill arbeitet in
-zwei Richtungen: 62 Erkennungsmerkmale in acht Kategorien beseitigen (Werbesprache, KI-Wortschatz,
-Struktur- und Rhetorik-Schablonen, Gesprächsartefakte, Fülltext, Jargon, unklare Sprache) und dem Text
-anschließend Charakter geben (Position beziehen, Rhythmus variieren, konkret werden).
-
-Der Skill gilt für jede selbst formulierte Textausgabe — auch Chat- und Konsolenantworten,
-Zusammenfassungen und Commit-Messages, nicht nur explizite Schreibaufträge. Übernommener Wortlaut
-bleibt unverändert: Zitate, Normtexte, wörtliche Übersetzungen, fremde Beiträge, Code und Ausgaben.
-Selbst geschriebene Kommentare in Code und Konfiguration werden dagegen überarbeitet. Die Ausnahme
-greift pro Passage, nicht pro Dokument. Eine Schnellprüfung mit den sieben häufigsten Mustern steht
-vor der vollständigen Liste.
-
-Wartungsnotiz: Ob der Skill geladen wird, entscheidet das Modell anhand der Skill-Description.
-Greift das in der Praxis zu selten, ist der nächste Hebel ein UserPromptSubmit-Hook im Plugin,
-der bei jedem Prompt eine kompakte Regelzeile als Kontext injiziert. Das übersteht auch die
-Kontext-Kompaktierung langer Sitzungen, kostet dafür ein paar Token pro Turn.
-
-Enthaltener Skill:
-- `unslop` — Erkennungsmerkmale samt Anleitung zum Umschreiben
-
-```bash
-/plugin install unslop@muhackel-plugins --scope user
-```
 
 ## Lizenz
 

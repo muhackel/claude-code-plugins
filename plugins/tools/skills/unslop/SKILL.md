@@ -1,12 +1,8 @@
 ---
 name: unslop
-description: "[VERALTET] Entfernt typische KI-Merkmale aus selbst verfasstem Text. Gilt für JEDE selbst formulierte Textausgabe — Chat- und Konsolenantworten, Zusammenfassungen, Erklärungen, Commit-Messages, Dokumentation, Code-Kommentare — nicht nur für explizite Schreibaufträge. Ausnahmen sind übernommener Wortlaut (Zitate, Norm- und Gesetzestexte, fremde Beiträge) sowie Code und Konfiguration selbst; Kommentare darin sind eigener Text und fallen in den Geltungsbereich."
+description: "Überarbeitet einen Text so, dass typische KI-Merkmale verschwinden — den übergebenen Text bzw. die genannte Datei oder, ohne Argument, den zuletzt selbst geschriebenen Text"
+disable-model-invocation: true
 ---
-
-> **Veraltet (final):** Das Plugin `unslop` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
-> Sitzung wörtlich aus: „⚠ Plugin `unslop` ist veraltet – bitte `/tools:unslop` aus dem Plugin `tools`
-> verwenden." Nur beim ersten Anwenden dieses Skills in der Sitzung, nicht bei jeder Antwort. Danach
-> normal fortfahren.
 
 # Unslop
 
@@ -14,9 +10,12 @@ description: "[VERALTET] Entfernt typische KI-Merkmale aus selbst verfasstem Tex
 
 ## Geltungsbereich
 
-Dieser Skill gilt für jeden selbst verfassten Text — nicht nur für Dokumente und explizite Schreibaufträge, sondern auch für Chat- und Konsolenantworten, Statusmeldungen, Zusammenfassungen, Erklärungen und Commit-Messages. Jede Prosa, die selbst formuliert wird, fällt in den Geltungsbereich.
+Dieser Skill läuft nur auf ausdrücklichen Aufruf (`/tools:unslop`). Was überarbeitet wird, bestimmt der Aufruf:
 
-Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält:
+- **Mit Argument** (`$ARGUMENTS`): der übergebene Text oder, wenn eine Datei genannt ist, deren Inhalt.
+- **Ohne Argument:** der zuletzt selbst geschriebene Text in dieser Sitzung bzw. die zuletzt selbst bearbeitete Datei.
+
+Übernommener Wortlaut bleibt unverändert, auch wenn er KI-Muster enthält, außer er wird ausdrücklich zur Überarbeitung übergeben:
 
 - Zitate, Gesetzes-, Norm- und Vertragstexte
 - wörtliche Übersetzungen, bei denen der Ausgangstext maßgeblich ist
@@ -46,6 +45,11 @@ Bei längeren oder wichtigen Texten die vollständige Liste unten durchgehen.
 2. Schreibe die betroffenen Stellen um. Erhalte die Aussage und triff den beabsichtigten Ton.
 3. Gib dem Text Charakter. Beachte dazu den nächsten Abschnitt.
 4. Prüfe zum Schluss: "Woran erkennt man noch, dass dieser Text offensichtlich von einer KI stammt?" Beseitige die übrigen Merkmale.
+
+## Ergebnis
+
+- **Text:** Gib den überarbeiteten Text vollständig aus, ohne Vorrede und ohne Änderungsprotokoll.
+- **Datei:** Ändere die Datei direkt und nenne danach knapp, welche Passagen überarbeitet wurden.
 
 ## Dem Text Charakter geben
 

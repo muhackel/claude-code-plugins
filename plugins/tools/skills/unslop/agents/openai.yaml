@@ -1,0 +1,6 @@
+interface:
+  display_name: "Unslop"
+  short_description: "Typische KI-Muster aus einem Text entfernen"
+  default_prompt: "Nutze $unslop, um den zuletzt geschriebenen Text von KI-Mustern zu befreien."
+policy:
+  allow_implicit_invocation: false

@@ -1,5 +1,9 @@
 # ask — Cross-CLI-Zweitmeinung
 
+> **Veraltet – Nachfolger `plugins/tools`.** Letzte Version `0.4.0-final`, keine weitere Pflege.
+> `/ask` → `/tools:ask`, `/execute` → `/tools:execute`; der Skill `handover` ist dort Bestandteil beider
+> Commands.
+
 Fragt aus einer laufenden Sitzung heraus die **jeweils andere CLI**: aus Claude Code wird Codex gefragt,
 aus Codex Claude Code. Non-interaktiv, mit dem Modell zur **Aufgabenklasse** statt pauschal dem
 Flaggschiff. Sinn: eine unabhängige zweite Meinung mit leerem Kontext, die den eigenen blinden Fleck
