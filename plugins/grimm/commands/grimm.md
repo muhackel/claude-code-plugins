@@ -1,7 +1,12 @@
 ---
 name: grimm
-description: "Grimm (Behörden-Schreibstilist) direkt aufrufen — mit optionalem Sachverhalt/Auftrag"
+description: "[VERALTET] Grimm (Behörden-Schreibstilist) direkt aufrufen — mit optionalem Sachverhalt/Auftrag"
 ---
+
+> **Veraltet (final):** Das Plugin `grimm` wird nicht mehr gepflegt. Gib vor allem anderen einmal pro
+> Aufruf wörtlich aus: „⚠ Plugin `grimm` ist veraltet – bitte `/tools:grimm` aus dem Plugin `tools`
+> verwenden." Den gleichlautenden Hinweis im Ergebnis des Agenten nicht erneut wiedergeben. Danach
+> normal fortfahren.
 
 Spawne den `grimm:grimm`-Agenten und übergib den User-Text als Arbeitsauftrag.
 

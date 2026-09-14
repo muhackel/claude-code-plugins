@@ -45,26 +45,32 @@
     {
       "name": "grimm",
       "source": "./plugins/grimm",
-      "description": "Behörden-Schreibstilist (Grimm): 'grimmifiziert' Sachverhalte ins nüchterne Verwaltungs- und Anordnungsdeutsch — Nominalstil, Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), exakte Datums-/Aktenbezüge, hoheitlicher Ton. Baut ganze Dokumente nach dem behördlichen Führungsschema (Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Form, nicht Fakten: setzt Platzhalter statt zu raten, bewertet nicht die fachliche Sache",
-      "version": "0.1.0"
+      "description": "[VERALTET – final, Nachfolger: tools] Behörden-Schreibstilist (Grimm): 'grimmifiziert' Sachverhalte ins nüchterne Verwaltungs- und Anordnungsdeutsch — Nominalstil, Gebotskonstruktionen ('ist zu', 'gewährleistet, dass'), exakte Datums-/Aktenbezüge, hoheitlicher Ton. Baut ganze Dokumente nach dem behördlichen Führungsschema (Anordnung), als Vermerk, Konzept oder Sachstandsbericht. Form, nicht Fakten: setzt Platzhalter statt zu raten, bewertet nicht die fachliche Sache",
+      "version": "0.2.0-final"
     },
     {
       "name": "ask",
       "source": "./plugins/ask",
-      "description": "Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace",
-      "version": "0.3.1"
+      "description": "[VERALTET – final, Nachfolger: tools] Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace",
+      "version": "0.4.0-final"
     },
     {
       "name": "unslop",
       "source": "./plugins/unslop",
-      "description": "Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
-      "version": "0.3.0"
+      "description": "[VERALTET – final, Nachfolger: tools] Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
+      "version": "0.4.0-final"
     },
     {
       "name": "philharmonie",
       "source": "./plugins/philharmonie",
       "description": "Cross-CLI-Aufträge mit Spec, getrennten Generator- und Evaluator-Rollen sowie persistentem Missionszustand",
       "version": "0.3.1"
+    },
+    {
+      "name": "tools",
+      "source": "./plugins/tools",
+      "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins ask, unslop und grimm.",
+      "version": "0.1.0"
     }
   ]
 }
