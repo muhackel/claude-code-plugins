@@ -231,6 +231,12 @@ Skills:
 - `/tools:grimm` — Behörden-Schreibstilist: überführt Sachverhalte ins nüchterne Verwaltungs- und
   Anordnungsdeutsch und baut ganze Dokumente (Anordnung nach Führungsschema, Vermerk, Konzept,
   Sachstandsbericht). Kern-Prinzip **Form, nicht Fakten**: fehlt ein Fakt, setzt Grimm einen Platzhalter.
+- `/tools:orchestrator`, `/tools:orchestrator-review`, `/tools:orchestrator-cross` — Rollen-Prompt für die
+  laufende Sitzung: steuern statt arbeiten. Alle drei tragen denselben Kern (zerlegen, Agents der eigenen
+  CLI briefen, Ergebnisse abnehmen, keine eigene Umsetzung). Stufe 2 darf Arbeit per ask `strong --fast`
+  (komplex: `strong`) gegenprüfen lassen, `--boost` nur nach Rückfrage einmal pro Sitzung. Stufe 3 setzt
+  die andere CLI auch per execute (`drone`/`advanced`) ein, Boost nach Abwägung mit Begründung. Weil
+  ask/execute für das Modell gesperrt sind, liest der Orchestrator deren `SKILL.md` und folgt ihr.
 
 Für ask/execute schreibt der Host ein Handover ([`references/handover.md`](plugins/tools/references/handover.md)),
 die andere CLI startet mit leerem Kontext. Jeder Aufruf erscheint in `ccusage`. Die Ziel-CLIs kommen

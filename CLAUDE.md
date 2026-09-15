@@ -147,7 +147,8 @@ interface:
 
 ## Tools: nur explizite Auslösung
 
-`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`).
+`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`,
+`orchestrator[-review|-cross]`).
 Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bis zur Entfernung bleiben.
 
 - Einstiegspunkte sind **Skills, keine Commands und keine Agents**: nur Skills haben in beiden CLIs einen
@@ -157,6 +158,10 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
   Agent in `tools`. Skills mit `disable-model-invocation: true` lassen sich auch nicht in Subagenten vorladen.
 - Wissen, das ein Tool braucht, liegt als `references/*.md` (kein Skill-Frontmatter), damit es nicht
   selbst als Skill auftaucht.
+- Die `orchestrator`-Skills sind Rollen-Prompts in drei kumulativen Stufen; der Kern steht in allen drei
+  `SKILL.md` wörtlich gleich (bewusst dreifach, kein Verweis: der Prompt soll beim Aufruf direkt im Kontext
+  liegen). Stufe 2 und 3 nutzen `ask`/`execute` über deren `SKILL.md` als Datei, weil die Sperre gegen
+  Modell-Aufruf keine Ausnahme für Rollen kennt.
 - Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
   lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
 

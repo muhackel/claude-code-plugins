@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrator mit Revision"
+  short_description: "Rolle: steuern statt arbeiten, Revision durch die andere CLI (Stufe 2)"
+  default_prompt: "Nutze $orchestrator-review, um diese Sitzung als Orchestrator zu führen, der Arbeit von der anderen CLI gegenprüfen lässt."
+policy:
+  allow_implicit_invocation: false

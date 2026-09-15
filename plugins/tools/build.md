@@ -115,6 +115,10 @@ von `claude -p`. Der Check
 - **stdin:** Ohne `--handover` liest das Skript stdin bis EOF, sobald stdin kein TTY ist, auch wenn die
   Daten verzögert kommen. Eine offene Pipe ohne EOF blockiert deshalb; Aufrufe ohne Handover hängen
   `</dev/null` an. Nur ein leeres Ergebnis (oder stdin als TTY) startet das Standard-Review.
+- **Orchestrator-Skills:** `skills/orchestrator*/SKILL.md` sind reine Rollen-Prompts ohne Skript. Stufe 2
+  und 3 rufen `ask`/`execute` nicht als Skill auf (für das Modell gesperrt), sondern lesen deren `SKILL.md`
+  und folgen ihr. Der Kern der drei Dateien muss identisch bleiben:
+  `diff <(sed -n '6,$p' skills/orchestrator/SKILL.md) <(sed -n '6,34p' skills/orchestrator-review/SKILL.md)`.
 - **Codex-Sandbox:** Ziel `claude` aus einer Codex-Sitzung braucht Netz, also `require_escalated`. Das Skript
   warnt bei `CODEX_SANDBOX_NETWORK_DISABLED=1`.
 - **Nested Claude:** Ziel `claude` aus einer Claude-Code-Sitzung (nur per `--target`) läuft mit
