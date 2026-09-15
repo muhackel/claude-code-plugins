@@ -12,32 +12,30 @@ Handover-Format stehen in `references/handover.md` im Plugin-Root — erst lesen
    Verzeichnis, das `.codex-plugin/` enthält (bei `…/skills/ask/SKILL.md` zwei Ebenen über dem
    Skill-Verzeichnis).
 
-2. **Aufgabenklasse wählen.** Das Skript wählt das Modell nach Aufgabenklasse, nicht
-   pauschal das Flaggschiff. Schätze die Aufgabe ein und übergib sie mit `--tier`:
+2. **Stufe wählen.** Das Skript wählt Modell und Effort nach Stufe, nicht pauschal das Flaggschiff.
+   Schätze die Aufgabe ein und übergib sie mit `--tier`:
 
-   | Klasse | Wofür | Claude | Codex |
-   |---|---|---|---|
-   | `light` | eindeutige Kleinarbeit: String fixen, Datei finden, Formatierung | haiku | luna |
-   | `standard` | einzelnes Modul, Test schreiben, lokale Fehleranalyse | sonnet | terra |
-   | `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Projekt-Review | opus | sol |
-   | `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable | astra |
+   | Stufe | Wofür | Claude | Codex | Effort | `--boost` | `--fast` |
+   |---|---|---|---|---|---|---|
+   | `advanced` | Zweitmeinung, Review, Fehlersuche, Refactoring (Default) | opus | sol | high | xhigh | – |
+   | `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable | astra | medium | high | low |
 
-   Ohne `--tier` gilt `advanced` beim Standard-Review und sonst `standard`. Im Zweifel die kleinere Klasse:
-   eine zu schwache Antwort erkennst du am Ergebnis, verbranntes Budget nicht. Bei wirklich harten Aufgaben
-   lohnt sich `strong` eher für einen Plan, den du anschließend in `standard` ausführen lässt, als für die
-   Umsetzung selbst.
+   Ohne `--tier` gilt `advanced`: eine Zweitmeinung darf nicht schwächer sein als der Fragende. `strong`
+   lohnt sich für einen Plan oder ein Urteil; `--fast` liefert das starke Modell als schnelle Einschätzung,
+   `--boost` als tiefe. `--model <alias|slug>` und `--effort low|medium|high|xhigh|max` setzen Modell und
+   Effort frei (bei `--model` ist der Effort high) — nur, wenn der User es ausdrücklich so verlangt.
 
 3. **Ohne Argument:** Skript ohne Handover starten, es liefert das Standard-Review des Projekts:
 
    ```bash
-   bash "<root>/scripts/ask.sh" --mode ask --tier advanced </dev/null
+   bash "<root>/scripts/ask.sh" --mode ask </dev/null
    ```
 
    **Mit Argument** (`$ARGUMENTS`): Handover nach dem Format aus `references/handover.md` schreiben und per
    Heredoc auf stdin geben:
 
    ```bash
-   bash "<root>/scripts/ask.sh" --mode ask --tier <klasse> <<'HANDOVER'
+   bash "<root>/scripts/ask.sh" --mode ask --tier <stufe> [--boost|--fast] <<'HANDOVER'
    # Handover
    …
    HANDOVER
@@ -45,8 +43,8 @@ Handover-Format stehen in `references/handover.md` im Plugin-Root — erst lesen
 
 4. **Unter Codex** den Aufruf mit `require_escalated` starten: `claude -p` braucht Netz, das die
    Codex-Sandbox standardmäßig sperrt. Unter Claude Code läuft der Aufruf normal per Bash.
-   Das Skript ermittelt die Ziel-CLI selbst und wählt das Modell nach der Klasse; der Aufruf dauert je nach Umfang mehrere Minuten,
-   Timeout großzügig setzen.
+   Das Skript ermittelt die Ziel-CLI selbst und wählt das Modell nach der Stufe; der Aufruf dauert je nach
+   Umfang mehrere Minuten, Timeout großzügig setzen.
 
 5. **Ergebnis wiedergeben:** stdout ist die Antwort der anderen CLI, stderr der Fortschritt. Die Antwort
    **unverändert** ausgeben, danach in wenigen Sätzen einordnen: wo du zustimmst, wo du widersprichst,

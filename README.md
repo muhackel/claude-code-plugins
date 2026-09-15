@@ -220,10 +220,12 @@ und eine `agents/openai.yaml` mit `allow_implicit_invocation: false` (Codex).
 
 Skills:
 - `/tools:ask` — Cross-CLI-Zweitmeinung, read-only: fragt non-interaktiv die **jeweils andere CLI**
-  (aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit dem Modell zur **Aufgabenklasse**
-  (`light` haiku/luna, `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra).
-  Ohne Argument ein Standard-Review des aktuellen Projekts, mit Argument eine eigene Frage.
-- `/tools:execute` — dasselbe mit Schreibrechten im Workspace (kein Commit/Push).
+  (aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit Modell und Effort zur **Stufe**
+  (`advanced` opus/sol high, `strong` fable/astra medium; `--boost`/`--fast` verschieben den Effort,
+  `--model`/`--effort` setzen beides frei). Ohne Argument ein Standard-Review des aktuellen Projekts,
+  mit Argument eine eigene Frage.
+- `/tools:execute` — dasselbe mit Schreibrechten im Workspace (kein Commit/Push), zusätzlich Stufe
+  `drone` (sonnet/luna) für mechanische Aufträge.
 - `/tools:unslop` — entfernt typische KI-Muster (62 Erkennungsmerkmale in acht Kategorien) aus einem
   übergebenen Text oder ohne Argument aus dem zuletzt selbst geschriebenen.
 - `/tools:grimm` — Behörden-Schreibstilist: überführt Sachverhalte ins nüchterne Verwaltungs- und

@@ -7,7 +7,7 @@ Ziel-CLIs selbst kommen **bewusst nicht** aus nixpkgs.
 
 - **Nix mit Flakes** (`experimental-features = nix-command flakes`).
 - **`claude` und `codex` auf dem Host installiert und eingeloggt** (im PATH). Das Skript ruft die jeweils
-  installierte Version auf, weil Modellkatalog und Aliase von dieser Version abhängen (Codex-Klasse
+  installierte Version auf, weil Modellkatalog und Aliase von dieser Version abhängen (Codex-Stufe
   `strong` kommt aus deren Katalog). Ein Pinning über nixpkgs würde genau das aushebeln.
 - Netzzugang für die API der Ziel-CLI.
 
@@ -36,7 +36,7 @@ Das „Erzeugnis" ist das Paket `ask` (`packages.<system>.default`), ein Wrapper
 ```bash
 nix build .#ask                                  # ./result/bin/ask
 nix shell ./plugins/tools                        # vom Repo-Root: ask im PATH
-nix run .#ask -- --dry-run </dev/null            # Kommando + Handover zeigen, nichts aufrufen
+nix run .#ask -- --dry-run </dev/null            # Kommando + Handover zeigen, keinen Auftrag starten
 nix run .#ask </dev/null                         # Standard-Review des aktuellen Verzeichnisses (read-only)
 nix run .#ask <<'EOF'                            # eigene Frage (read-only)
 # Handover
@@ -53,6 +53,17 @@ nix run .#ask -- -C /anderes/projekt </dev/null  # anderes Arbeitsverzeichnis
 ```
 
 stdout ist die Antwort der anderen CLI, stderr der Fortschritt. Der Exit-Code der CLI wird durchgereicht.
+Bei Codex ist das nicht selbstverständlich: `codex exec` schreibt die ganze Trajektorie (Sitzungskopf,
+Tool-Aufrufe, Zwischenschritte) auf stdout. Das Skript leitet sie nach stderr und gibt nur die letzte
+Nachricht aus, die Codex über `-o FILE` in eine Temp-Datei schreibt. Claude läuft mit
+`--output-format json`: das Skript gibt `.result` aus und loggt die Modell-IDs aus `.modelUsage` auf stderr
+als nativen Nachweis (`Modell laut claude: …`); der Effort steht dort nicht drin und wird aus dem Flag
+gemeldet. Ist die Ausgabe kein Ergebnis-JSON (Absturz, Login-Fehler), geht sie unverändert durch.
+
+Nachweis, welches Modell mit welchem Effort gearbeitet hat: bei Codex der Sitzungskopf auf stderr
+(`model:`, `reasoning effort:`), bei Claude die `modelUsage`-Zeile. Die Selbstauskunft des Modells im
+Antworttext ist kein Beleg; Codex-Modelle kennen ihren Slug nicht, Claude kennt ihn nur aus dem
+Aufrufkontext.
 
 ## Testen
 
@@ -67,29 +78,40 @@ echo "Nenne die drei wichtigsten Dateien dieses Repos" | nix run .#ask   # echte
 
 Die Stub-Tests (`tests/ask-test.sh`, Check `ask-stubs`) laufen offline mit Stub-`codex`/`claude`, die argv
 zeilenweise und ihr stdin vollständig mitschreiben. Sie prüfen: zeitversetzte stdin-Blöcke kommen byte-genau
-beim Ziel an (beide CLIs, beide Modi), die Codex-Rückfallkette mit tatsächlichem argv, Warnung und Exit-Code,
-den exakten Katalogaufruf `debug models --bundled` sowie die Rechte-Argumente von `claude -p`. Der Check
+beim Ziel an (beide CLIs, beide Modi), bei Codex nur die letzte Nachricht auf stdout und die Trajektorie auf
+stderr, bei Claude `.result` auf stdout und die Modell-ID auf stderr, die Codex-Rückfallkette mit
+tatsächlichem argv, Warnung und Exit-Code,
+Modell, Effort und Sitzungslabel je Stufe inklusive `--boost`/`--fast`/`--model`/`--effort`, die Abweisung
+unzulässiger Kombinationen, den exakten Katalogaufruf `debug models --bundled` sowie die Rechte-Argumente
+von `claude -p`. Der Check
 `package` baut den Wrapper, den `nix shell` und `nix run` nutzen.
 
 ## Projektspezifisches
 
 - **Host-Erkennung:** `CLAUDECODE` gesetzt → Ziel `codex`, sonst Ziel `claude`. `--target` überschreibt.
-- **Modellwahl nach Aufgabenklasse** (`--tier`; ohne Angabe `advanced` beim Standard-Review, sonst
-  `standard`):
+- **Modellwahl nach Stufe** (`--tier`; ohne Angabe `advanced` in beiden Modi):
 
-  | Klasse | Claude (`--model`, `--effort`) | Codex (`-m`, `model_reasoning_effort`) |
-  |---|---|---|
-  | `light` | `haiku`, `medium` | `gpt-5.6-luna`, `medium` |
-  | `standard` | `sonnet`, `high` | `gpt-5.6-terra`, `high` |
-  | `advanced` | `opus`, `high` | `gpt-5.6-sol`, `high` |
-  | `strong` | `fable`, `high` | sichtbares Modell mit niedrigster `priority`, `high` |
+  | Stufe | Claude (`--model`) | Codex (`-m`) | Effort | `--boost` | `--fast` | Modus |
+  |---|---|---|---|---|---|---|
+  | `strong` | `fable` | sichtbares Modell mit niedrigster `priority` | `medium` | `high` | `low` | ask, execute |
+  | `advanced` | `opus` | `gpt-5.6-sol` | `high` | `xhigh` | – | ask, execute |
+  | `drone` | `sonnet` | `gpt-5.6-luna` | `high` | – | – | nur execute |
+
+  `--model SLUG` setzt das Modell frei (Effort `high`), `--effort low|medium|high|xhigh|max` den Effort;
+  `--effort` gewinnt über alles, `--model` schließt `--tier`/`--boost`/`--fast` aus. Unzulässige Kombinationen
+  (`drone` bei ask, `--fast` außerhalb `strong`, `--boost` bei `drone`, `--boost` mit `--fast`) brechen vor
+  dem Aufruf ab.
 
   Claude bekommt Alias und Effort immer direkt. Codex prüft gegen `codex debug models --bundled` (nur
-  `visibility == "list"`), ob das Klassenmodell existiert und den Effort kann. Rückfall: Klassenmodell →
-  `gpt-5.6-sol` mit dem Effort der Klasse → Aufruf **ohne `-m` und ohne `model_reasoning_effort`**; dann
+  `visibility == "list"`), ob das Stufenmodell existiert und den Effort kann. Rückfall: Stufenmodell →
+  `gpt-5.6-sol` mit dem Effort der Stufe → Aufruf **ohne `-m` und ohne `model_reasoning_effort`**; dann
   entscheidet die Codex-CLI Modell und Effort selbst (nach Messung das Flaggschiff). Den letzten Schritt
   lösen auch ein fehlschlagender Katalogaufruf und ein unlesbarer Katalog (kein JSON, kein `.models`) aus.
-  Jeder Rückfall steht als Warnung auf stderr.
+  Jeder Rückfall steht als Warnung auf stderr. Bei `--model` gibt es keinen Rückfall: unbekannter Slug oder
+  nicht unterstützter Effort ist ein Fehler (geprüft gegen den vollen Katalog, auch versteckte Modelle),
+  ein unlesbarer Katalog reicht den Slug ungeprüft durch.
+- **Dry-Run:** startet keinen Auftrag, liest bei Ziel `codex` aber den lokalen Katalog
+  (`codex debug models --bundled`, ohne Netz), damit die Modellwahl im gezeigten Kommando echt ist.
 - **stdin:** Ohne `--handover` liest das Skript stdin bis EOF, sobald stdin kein TTY ist, auch wenn die
   Daten verzögert kommen. Eine offene Pipe ohne EOF blockiert deshalb; Aufrufe ohne Handover hängen
   `</dev/null` an. Nur ein leeres Ergebnis (oder stdin als TTY) startet das Standard-Review.
