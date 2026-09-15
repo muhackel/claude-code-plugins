@@ -1,12 +1,12 @@
 {
   "name": "tools",
-  "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins ask, unslop und grimm.",
-  "version": "0.1.1",
+  "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen), /tools:orchestrator[-review|-cross] (Rollen-Prompt: steuern statt arbeiten, in drei Stufen bis zur anderen CLI als Arbeiter). Nachfolger der Plugins ask, unslop und grimm.",
+  "version": "0.2.0",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["tools", "codex", "claude", "cross-cli", "zweitmeinung", "handover", "schreiben", "ki-muster", "unslop", "amtsdeutsch", "verwaltung"],
+  "keywords": ["tools", "codex", "claude", "cross-cli", "zweitmeinung", "handover", "orchestrator", "delegation", "schreiben", "ki-muster", "unslop", "amtsdeutsch", "verwaltung"],
   "skills": "./skills"
 }

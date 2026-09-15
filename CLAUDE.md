@@ -147,7 +147,8 @@ interface:
 
 ## Tools: nur explizite Auslösung
 
-`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`).
+`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`,
+`orchestrator[-review|-cross]`).
 Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bis zur Entfernung bleiben.
 
 - Einstiegspunkte sind **Skills, keine Commands und keine Agents**: nur Skills haben in beiden CLIs einen
@@ -157,6 +158,10 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
   Agent in `tools`. Skills mit `disable-model-invocation: true` lassen sich auch nicht in Subagenten vorladen.
 - Wissen, das ein Tool braucht, liegt als `references/*.md` (kein Skill-Frontmatter), damit es nicht
   selbst als Skill auftaucht.
+- Die `orchestrator`-Skills sind Rollen-Prompts in drei kumulativen Stufen; der Kern steht in allen drei
+  `SKILL.md` wörtlich gleich (bewusst dreifach, kein Verweis: der Prompt soll beim Aufruf direkt im Kontext
+  liegen). Stufe 2 und 3 nutzen `ask`/`execute` über deren `SKILL.md` als Datei, weil die Sperre gegen
+  Modell-Aufruf keine Ausnahme für Rollen kennt.
 - Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
   lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
 
@@ -179,12 +184,16 @@ Spec, Vertrag und Projektstand gebunden; offene Blocker verhindern die Freigabe 
 Die Laufzeit berichtet Modellarbeit je Aufruf auf stderr und als `invocation_models` in Zustandsausgaben.
 Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Historie ist kein neuer Aufruf.
 
-Modelle werden nach Aufgabenklasse gewählt, nicht pauschal als Flaggschiff: `light` haiku/luna,
+Modelle werden nach Stufe gewählt, nicht pauschal als Flaggschiff. Philharmonie kennt `light` haiku/luna,
 `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra (Codex-Spitze aus dem Katalog der
-installierten Version). Bei `tools:ask`/`tools:execute` entscheidet `--tier`, ohne Angabe `advanced` beim Standard-Review und
-sonst `standard`. Bei Philharmonie entscheidet die Rolle: Generator und Evaluator `advanced`,
-Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei
-Änderungen beide Ebenen zusammen halten.
+installierten Version); dort entscheidet die Rolle: Generator und Evaluator `advanced`, Spec-Gegenprüfung
+`strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei Änderungen beide
+Ebenen zusammen halten.
+
+`tools:ask`/`tools:execute` haben eine eigene, bewusst von Philharmonie entkoppelte Tabelle (`--tier`):
+`strong` fable/astra mit Effort medium (`--boost` high, `--fast` low), `advanced` opus/sol mit high
+(`--boost` xhigh; Default beider Modi), `drone` sonnet/luna mit high (nur execute). `--model` und
+`--effort` setzen beides frei, bei `--model` ist der Effort high.
 
 Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
 der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,

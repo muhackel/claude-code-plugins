@@ -1,19 +1,19 @@
 {
   "name": "tools",
-  "version": "0.1.1",
-  "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins ask, unslop und grimm.",
+  "version": "0.2.0",
+  "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen), /tools:orchestrator[-review|-cross] (Rollen-Prompt: steuern statt arbeiten, in drei Stufen bis zur anderen CLI als Arbeiter). Nachfolger der Plugins ask, unslop und grimm.",
   "author": {
     "name": "Sebastian Rädle",
     "email": "muhackel@gmail.com"
   },
   "repository": "https://github.com/muhackel/claude-code-plugins",
   "license": "MIT",
-  "keywords": ["tools", "codex", "claude", "cross-cli", "zweitmeinung", "handover", "schreiben", "ki-muster", "unslop", "amtsdeutsch", "verwaltung"],
+  "keywords": ["tools", "codex", "claude", "cross-cli", "zweitmeinung", "handover", "orchestrator", "delegation", "schreiben", "ki-muster", "unslop", "amtsdeutsch", "verwaltung"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Tools",
     "shortDescription": "Explizit aufzurufende Werkzeuge: Cross-CLI-Aufrufe, unslop, Grimm",
-    "longDescription": "Tools bündelt Werkzeuge, die nur auf ausdrücklichen Aufruf laufen und nie automatisch anspringen. ask und execute rufen die jeweils andere CLI mit einem Handover auf, lesend oder mit Schreibrechten im Workspace. unslop entfernt typische KI-Muster aus einem Text, grimm überführt Sachverhalte in nüchternes Verwaltungsdeutsch.",
+    "longDescription": "Tools bündelt Werkzeuge, die nur auf ausdrücklichen Aufruf laufen und nie automatisch anspringen. ask und execute rufen die jeweils andere CLI mit einem Handover auf, lesend oder mit Schreibrechten im Workspace. unslop entfernt typische KI-Muster aus einem Text, grimm überführt Sachverhalte in nüchternes Verwaltungsdeutsch. Die orchestrator-Skills laden einen Rollen-Prompt, der die Sitzung vom Arbeiter zum Steuermann macht, in drei Stufen von eigenen Agents bis zur anderen CLI als Arbeiter.",
     "developerName": "Sebastian Rädle",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Read", "Write"],

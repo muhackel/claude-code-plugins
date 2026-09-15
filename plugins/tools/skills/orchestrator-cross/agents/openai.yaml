@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrator cross-agentisch"
+  short_description: "Rolle: steuern statt arbeiten, andere CLI als Gutachter und Arbeiter (Stufe 3)"
+  default_prompt: "Nutze $orchestrator-cross, um diese Sitzung als Orchestrator zu führen, der die andere CLI auch ausführen lässt."
+policy:
+  allow_implicit_invocation: false

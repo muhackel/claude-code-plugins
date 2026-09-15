@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrator"
+  short_description: "Rolle: steuern statt arbeiten, nur eigene Agents (Stufe 1)"
+  default_prompt: "Nutze $orchestrator, um diese Sitzung als Orchestrator zu führen, der nur über eigene Agents arbeitet."
+policy:
+  allow_implicit_invocation: false
