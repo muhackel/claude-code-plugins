@@ -1,6 +1,6 @@
 {
   "name": "tools",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins ask, unslop und grimm.",
   "author": {
     "name": "Sebastian Rädle",

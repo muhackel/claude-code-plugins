@@ -179,12 +179,16 @@ Spec, Vertrag und Projektstand gebunden; offene Blocker verhindern die Freigabe 
 Die Laufzeit berichtet Modellarbeit je Aufruf auf stderr und als `invocation_models` in Zustandsausgaben.
 Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Historie ist kein neuer Aufruf.
 
-Modelle werden nach Aufgabenklasse gewählt, nicht pauschal als Flaggschiff: `light` haiku/luna,
+Modelle werden nach Stufe gewählt, nicht pauschal als Flaggschiff. Philharmonie kennt `light` haiku/luna,
 `standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra (Codex-Spitze aus dem Katalog der
-installierten Version). Bei `tools:ask`/`tools:execute` entscheidet `--tier`, ohne Angabe `advanced` beim Standard-Review und
-sonst `standard`. Bei Philharmonie entscheidet die Rolle: Generator und Evaluator `advanced`,
-Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei
-Änderungen beide Ebenen zusammen halten.
+installierten Version); dort entscheidet die Rolle: Generator und Evaluator `advanced`, Spec-Gegenprüfung
+`strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei Änderungen beide
+Ebenen zusammen halten.
+
+`tools:ask`/`tools:execute` haben eine eigene, bewusst von Philharmonie entkoppelte Tabelle (`--tier`):
+`strong` fable/astra mit Effort medium (`--boost` high, `--fast` low), `advanced` opus/sol mit high
+(`--boost` xhigh; Default beider Modi), `drone` sonnet/luna mit high (nur execute). `--model` und
+`--effort` setzen beides frei, bei `--model` ist der Effort high.
 
 Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
 der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,

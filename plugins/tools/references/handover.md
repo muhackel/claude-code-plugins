@@ -8,9 +8,12 @@ Arbeitsverzeichnis und das Handover. Alles, was sie wissen muss, steht im Handov
 1. Plugin-Root ermitteln (Claude Code: `${CLAUDE_PLUGIN_ROOT}`; Codex: Verzeichnis, das `.codex-plugin/` enthält).
 2. Handover nach dem Format unten schreiben. Bei `/tools:ask` ohne Argument entfällt das, das Skript hat ein Standard-Review.
 3. `scripts/ask.sh --mode ask|execute` mit dem Handover auf stdin starten (Heredoc). Das Skript erkennt den
-   Host, wählt die andere CLI und setzt Modell und Effort nach der Aufgabenklasse (`--tier`, siehe unten).
+   Host, wählt die andere CLI und setzt Modell und Effort nach der Stufe (`--tier`, siehe unten).
    Ohne Handover stdin mit `</dev/null` schließen: das Skript liest stdin bis EOF.
-4. stdout ist die Antwort, stderr der Fortschritt. Antwort unverändert wiedergeben, dann kurz einordnen.
+4. stdout ist die Antwort, stderr der Fortschritt (bei Codex auch dessen Trajektorie mit Tool-Aufrufen).
+   Welches Modell gearbeitet hat, steht auf stderr: bei Codex im Sitzungskopf (`model:`,
+   `reasoning effort:`), bei Claude als `Modell laut claude: …`. Die Selbstauskunft im Antworttext ist
+   kein Beleg. Antwort unverändert wiedergeben, dann kurz einordnen.
 
 ## Handover-Format
 
@@ -53,48 +56,59 @@ Befunde nach Schwere priorisiert, Deutsch.
 ## Skript-Aufrufe
 
 ```bash
-bash "<root>/scripts/ask.sh" --mode ask --tier advanced </dev/null   # Standard-Review
-bash "<root>/scripts/ask.sh" --mode ask --tier standard <<'HANDOVER'  # eigene Frage
+bash "<root>/scripts/ask.sh" --mode ask </dev/null                        # Standard-Review (advanced)
+bash "<root>/scripts/ask.sh" --mode ask --tier strong --fast <<'HANDOVER'  # schnelles Urteil des starken Modells
 …
 HANDOVER
-bash "<root>/scripts/ask.sh" --mode execute --tier light <<'HANDOVER' # Auftrag mit Schreibrechten
+bash "<root>/scripts/ask.sh" --mode execute --tier drone <<'HANDOVER'      # mechanischer Auftrag mit Schreibrechten
 …
 HANDOVER
-bash "<root>/scripts/ask.sh" --dry-run … </dev/null                   # nur Kommando + Standard-Review zeigen
-bash "<root>/scripts/ask.sh" --dry-run … <<'HANDOVER'                 # nur Kommando + Handover zeigen
+bash "<root>/scripts/ask.sh" --dry-run … </dev/null                        # nur Kommando + Standard-Review zeigen
+bash "<root>/scripts/ask.sh" --dry-run … <<'HANDOVER'                      # nur Kommando + Handover zeigen
 …
 HANDOVER
 ```
 
-Weitere Flags: `--target claude|codex` (Override der Host-Erkennung), `--handover FILE`, `-C DIR`.
+Weitere Flags: `--boost`, `--fast`, `--model SLUG`, `--effort STUFE` (siehe Stufe), `--target claude|codex`
+(Override der Host-Erkennung), `--handover FILE`, `-C DIR`.
 
-## Aufgabenklasse
+## Stufe
 
-`--tier` bestimmt das Modell. Ohne Angabe gilt `advanced` beim Standard-Review und sonst `standard`.
+`--tier` bestimmt Modell und Effort. Ohne Angabe gilt in beiden Modi `advanced`.
 
-| Klasse | Wofür | Claude | Codex |
-|---|---|---|---|
-| `light` | eindeutige Kleinarbeit: String fixen, Datei finden, Formatierung | haiku, medium | luna, medium |
-| `standard` | einzelnes Modul, Test schreiben, lokale Fehleranalyse | sonnet, high | terra, high |
-| `advanced` | mehrere Module, Refactoring, schwere Fehlersuche, Projekt-Review | opus, high | sol, high |
-| `strong` | Architektur, widersprüchliche Anforderungen, Planung | fable, high | astra, high |
+| Stufe | Wofür | Claude | Codex | Effort | `--boost` | `--fast` | Modus |
+|---|---|---|---|---|---|---|---|
+| `strong` | Architektur, widersprüchliche Anforderungen, Planung, Urteil | fable | astra | medium | high | low | ask, execute |
+| `advanced` | Zweitmeinung, Review, Fehlersuche, Refactoring, Umsetzung mit Spielraum | opus | sol | high | xhigh | – | ask, execute |
+| `drone` | mechanische Umsetzung nach klarem, vollständigem Auftrag | sonnet | luna | high | – | – | nur execute |
 
-Die Staffelung entspricht der, mit der philharmonie seine Subagenten besetzt. Bei Codex steht die Spitze
-nicht fest, sie kommt aus dem Katalog der installierten Version.
+Die starken Modelle brauchen für dieselbe Qualität weniger Effort, ihr Default liegt darum eine Stufe
+unter dem der advanced-Modelle. `--fast` gibt es nur bei `strong`: das starke Modell als schnelle, aber
+tiefe Einschätzung. `--boost` gibt es bei `strong` und `advanced`, nicht bei `drone`. Bei Codex steht die
+Spitze nicht fest, sie kommt aus dem Katalog der installierten Version (sichtbares Modell mit niedrigster
+`priority`).
 
-Im Zweifel die kleinere Klasse: eine zu schwache Antwort erkennst du am Ergebnis, verbranntes Budget nicht.
-Für wirklich harte Aufgaben lohnt `strong` eher als Planer — den Plan holen, ihn dann in `standard`
-ausführen lassen — als für die Umsetzung selbst.
+`ask` startet ohne Angabe auf `advanced`, weil eine Zweitmeinung nicht schwächer sein darf als der
+Fragende. `execute` ebenfalls; `drone` ist ein bewusstes „das ist wirklich mechanisch" und verlangt einen
+Auftrag, der alles vorgibt. Für wirklich harte Aufgaben lohnt `strong` eher als Planer — den Plan holen,
+ihn dann in `advanced` ausführen lassen — als für die Umsetzung selbst.
 
-Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` zurück und erst danach auf
-die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
-direkter Sprung dorthin wäre teurer als die Klasse, die ersetzt werden soll. Im letzten Schritt übergibt das
+Freie Wahl: `--model <alias|slug>` setzt das Modell der Ziel-CLI direkt (Claude-Alias wie `sonnet` oder
+voller Name, Codex-Slug wie `gpt-5.5`), der Effort ist dann `high`. `--effort low|medium|high|xhigh|max`
+überschreibt jeden Effort, auch den aus `--boost`/`--fast`. `--model` schließt `--tier`, `--boost` und
+`--fast` aus. Beides nur, wenn der User es ausdrücklich so verlangt.
+
+Fehlt ein Stufenmodell im Codex-Katalog, fällt der Aufruf erst auf `advanced` (sol) zurück und erst danach
+auf die Wahl der CLI. Der Umweg ist Absicht: `codex exec` ohne Modellangabe landet auf dem Flaggschiff, ein
+direkter Sprung dorthin wäre teurer als die Stufe, die ersetzt werden soll. Im letzten Schritt übergibt das
 Skript weder Modell noch Effort, beides entscheidet dann die CLI. Dorthin führt auch ein fehlender oder
-unlesbarer Katalog. Der Rückfall steht als Warnung auf stderr.
+unlesbarer Katalog. Der Rückfall steht als Warnung auf stderr. Bei `--model` gibt es keinen Rückfall: ein
+Slug, den der Katalog nicht kennt, ist ein Fehler (geprüft wird der volle Katalog, auch versteckte
+Modelle); ist der Katalog nicht lesbar, geht der Slug ungeprüft durch.
 
-Der Rückfall passiert im Skript. Bei einer solchen Warnung nicht denselben Aufruf mit einer höheren Klasse
+Der Rückfall passiert im Skript. Bei einer solchen Warnung nicht denselben Aufruf mit einer höheren Stufe
 wiederholen — das wäre teurer als der Rückfall, den das Skript schon gewählt hat. Stattdessen melden, dass
-die Klassentabelle gegen den Katalog veraltet ist.
+die Stufentabelle gegen den Katalog veraltet ist.
 
 ## Rechte der anderen CLI
 

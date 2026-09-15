@@ -1,5 +1,5 @@
 {
-  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv fragen, Modell nach Aufgabenklasse";
+  description = "tools — Cross-CLI-Zweitmeinung (ask/execute): die jeweils andere CLI (Codex/Claude) non-interaktiv fragen, Modell und Effort nach Stufe";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -15,7 +15,7 @@
         default = pkgs.mkShell {
           packages = runtime pkgs ++ [ pkgs.shellcheck ];
           shellHook = ''
-            echo "tools devShell —scripts/ask.sh [--mode ask|execute] [--target claude|codex] [--dry-run]"
+            echo "tools devShell — scripts/ask.sh [--mode ask|execute] [--tier strong|advanced|drone] [--boost|--fast] [--target claude|codex] [--dry-run]"
             echo "claude/codex kommen vom Host-PATH, nicht aus nixpkgs"
           '';
         };
