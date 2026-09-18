@@ -1,6 +1,7 @@
 ---
 name: vpn-reference
 description: "Reference-first-Disziplin für VPN- und Linux-Router-Stacks: Befehlsreferenz, Config-Syntax und Best Practices der jeweiligen Technik (OpenVPN, WireGuard, strongSwan/Libreswan, FRR/BIRD, nftables, pf/pfSense/OPNsense, Mesh-Overlays, OpenWrt/UCI) zitierfähig nachschlagen und anwenden, statt Optionen aus dem Gedächtnis zu raten. Nutzen, bevor eine unsichere Option, ein Default-Wert oder ein Feature-Verhalten ausgegeben wird. Quellen erst aufrufen, dann zitieren. Read-only-Default — Live-Deploy läuft über die wan-link/router-appliance-Doktrin."
+disable-model-invocation: true
 ---
 
 # VPN-Reference — Nachschlagen statt raten

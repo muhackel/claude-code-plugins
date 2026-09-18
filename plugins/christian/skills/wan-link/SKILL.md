@@ -1,6 +1,7 @@
 ---
 name: wan-link
 description: "Design-Ebene für sichere WAN-Verbindungen zwischen Netzen/Standorten: Kopplungs-Szenario → Tech-Wahl (Site-to-Site: WireGuard/IPsec/OpenVPN; Road-Warrior: OpenVPN/WireGuard/OpenConnect; Multi-Site-Mesh: Headscale/NetBird/Netmaker/Nebula; durch NAT/CGNAT: UDP-Encap/keepalive/TCP-Fallback/SSL-VPN). L2-vs-L3-Kopplung (GRETAP/L2TPv3/VXLAN/EtherIP nur wenn wirklich L2). Krypto-Härtung (AEAD/PFS, keine Legacy; bei Unsicherheit bruce/BSI TR-02102). Failover/Redundanz (mehrere Tunnel, Metrik/Priorität, BFD/Health-Check). MTU/Fragmentierung (Overhead, PMTU-Blackhole, MSS-Clamping, tun-mtu/mssfix). Blast-Radius: ein WAN-Change kappt den Standort → Rollback-Netz. Umsetzung → vpn-tunnel/openvpn/router-appliance. Nutzen, wenn eine Standort-/Netzkopplung geplant oder bewertet wird — die Ebene 'welche Kopplung', bevor die Umsetzung sie baut."
+disable-model-invocation: true
 ---
 
 # WAN-Link — wie die Kopplung aussehen soll

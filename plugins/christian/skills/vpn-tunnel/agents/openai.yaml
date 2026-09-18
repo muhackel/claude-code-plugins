@@ -1,0 +1,6 @@
+interface:
+  display_name: "Christian: VPN-Tunnel"
+  short_description: "VPN-Technik wählen: WireGuard, IPsec, L2-Overlay, Mesh, SSL-VPN"
+  default_prompt: "Nutze $christian:vpn-tunnel, um einen WireGuard-Tunnel zwischen zwei Standorten zu entwerfen."
+policy:
+  allow_implicit_invocation: false

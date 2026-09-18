@@ -1,6 +1,7 @@
 ---
 name: openvpn
 description: "Tiefen-Skill OpenVPN: PKI-Aufbau (easy-rsa 3), tls-crypt/tls-auth-Control-Channel-Härtung, topology subnet, Server-/Client-Config, client-config-dir + iroute für Site-to-Site, Krypto-Härtung (data-ciphers AEAD, tls-version-min, ECDH, remote-cert-tls), systemd-Integration und das häufige Troubleshooting (Routing-Push, MTU/mssfix, TLS-Handshake, Zertifikatsgültigkeit). Nutzen bei jedem OpenVPN-Setup, -Review oder -Störungsbild. Optionen gegen openvpn(8) der Zielversion verifizieren; Krypto-Bewertung über bruce/gs-krypto (TR-02102)."
+disable-model-invocation: true
 ---
 
 # OpenVPN — Kern-Expertise

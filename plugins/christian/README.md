@@ -16,7 +16,8 @@ und `bertram` („Vendor-Referenz-first").
   ausgibt.
 - **Blast-Radius-Respekt:** Ein WAN-Link-, Firewall- oder Routing-Change kann einen Standort aussperren.
   Default ist bauen + read-only-Analyse; Live-Deploys nur auf explizite Anforderung, mit Bestätigung
-  und Rollback-Netz (Config-Backup, keepalive-Fenster, `at`-Auto-Rollback).
+  und Rollback-Netz (Config-Backup, keepalive-Fenster, unter Linux `at`-Auto-Rollback, auf
+  pfSense/OPNsense Config History und Konsole).
 - **Linux-first:** Zuständig für Linux/Open-Source (OpenWrt, DD-WRT, generisches Linux, VyOS/NixOS
   rudimentär). Kommerzielle Hardware (Cisco/MikroTik/Palo Alto) bleibt bertrams Revier.
 
@@ -24,14 +25,21 @@ und `bertram` („Vendor-Referenz-first").
 
 | Typ | Name | Zweck |
 |-----|------|-------|
-| Agent | `christian:christian` | Linux-VPN-/Router-Persona, orchestriert die Skills |
+| Agent | `christian:christian` | Linux-VPN-/Router-Persona, liest die Skills bei Bedarf |
 | Command | `/christian` | Christian direkt aufrufen (mit optionalem Auftrag) |
 | Skill | `vpn-reference` | Config-Syntax/Krypto-Suiten/Manpage-Defaults zitierfähig nachschlagen (Reference-first) |
 | Skill | `openvpn` | OpenVPN-Kern-Expertise: Server/Client, Krypto-Suite, tls-crypt, Routing/Push |
-| Skill | `vpn-tunnel` | Protokoll-übergreifend Tunnel entwerfen (OpenVPN/WireGuard/IPsec), Site-to-Site vs. Client-Server |
+| Skill | `vpn-tunnel` | Breite VPN-Palette jenseits OpenVPN: WireGuard, IPsec, L2-Overlays, Mesh, SSL-VPN; Technik-Wahl |
 | Skill | `router-appliance` | Linux-Router-Appliance bauen — nftables, FRR, Persistenz, gestufter Live-Zugriff |
 | Skill | `bsd-firewall` | BSD-Firewall-Appliance pfSense/OPNsense — pf, VPN-Instanzen, Multi-WAN/Gateway-Groups, elementare Plugins, config.xml |
 | Skill | `wan-link` | Sichere WAN-Kopplung zwischen Netzen — Routing, Firewall-Zonen, PMTU/MSS, Failover |
+
+Die Skills sind Christians Fachwissen und für den automatischen Aufruf gesperrt: Sie stehen weder im
+Kontext der Hauptsitzung noch in dem anderer Agenten. Christian liest die jeweilige `SKILL.md` erst, wenn
+ein Auftrag sie braucht. Von Hand holst du einen Skill mit `/christian:openvpn` (Claude Code) bzw.
+`$christian:openvpn` (Codex) in die laufende Sitzung. So geladen wirkt er allein: Seine Verweise auf
+andere Skills werden nicht nachgeladen. Für Live-Eingriffe Christian nutzen, nicht `router-appliance`
+oder `bsd-firewall` von Hand.
 
 Weitere geplante Erweiterungen (VyOS-Tiefe, Appliance-Image-Builds, FRR-Multipoint-Overlays,
 PMTU-/MSS-Tooling) in [BACKLOG.md](./BACKLOG.md).
@@ -45,8 +53,9 @@ PMTU-/MSS-Tooling) in [BACKLOG.md](./BACKLOG.md).
 /christian welche data-ciphers sollte ich bei OpenVPN 2.6 setzen?
 ```
 
-Ohne Text spawnt der Command Christian, der dann nach Ziel (VPN/Router/WAN), Endpunkten/Netzen und
-Plattform fragt.
+Ohne Text startet der Command Christian, der dann nach Ziel (VPN/Router/WAN), Endpunkten/Netzen und
+Plattform fragt. Unter Codex, das keine Plugin-Agenten kennt, lädt der Command die Rollenanweisung aus
+`agents/christian.md`.
 
 ## Installation (lokal)
 

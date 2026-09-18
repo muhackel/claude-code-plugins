@@ -1,0 +1,6 @@
+interface:
+  display_name: "Christian: Router-Appliance"
+  short_description: "Linux-Router bauen und prüfen: nftables, FRR, iproute2, OpenWrt"
+  default_prompt: "Nutze $christian:router-appliance, um dieses nftables-Ruleset auf Zonen und Default-Drop zu prüfen."
+policy:
+  allow_implicit_invocation: false

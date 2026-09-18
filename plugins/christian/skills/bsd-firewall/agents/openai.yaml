@@ -1,0 +1,6 @@
+interface:
+  display_name: "Christian: BSD-Firewall"
+  short_description: "pfSense/OPNsense: pf-Regeln, NAT, Multi-WAN, VPN, config.xml"
+  default_prompt: "Nutze $christian:bsd-firewall, um Port-Forward und Multi-WAN auf dieser OPNsense zu prüfen."
+policy:
+  allow_implicit_invocation: false
