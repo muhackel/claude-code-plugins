@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bertram: Net-Operate"
+  short_description: "Gestufter Live-Zugriff auf Netzwerkgeräte mit Rollback-Netz"
+  default_prompt: "Nutze $bertram:net-operate, um das Gerät read-only zu inspizieren."
+policy:
+  allow_implicit_invocation: false

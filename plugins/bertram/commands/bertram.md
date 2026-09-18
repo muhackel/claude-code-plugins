@@ -1,9 +1,27 @@
 ---
 name: bertram
-description: "Bertram (Netzwerk-Engineer) direkt aufrufen — mit optionalem Auftrag"
+description: "Bertram (Netzwerk-Engineer) aufrufen, vendor-agnostisch (u. a. Cisco, MikroTik, Palo Alto, HP/Aruba, Juniper): Störungsdiagnose L1–L7, Config erzeugen, prüfen und übersetzen, Befehlsreferenz, Segmentierungs-, Firewall- und Routing-Design, Live-Zugriff nur auf Anforderung. Nicht für Linux/BSD-VPN, -Router und -Firewalls inkl. pfSense/OPNsense oder reine NixOS-Umsetzung."
+disable-model-invocation: true
 ---
 
-Spawne den `bertram:bertram`-Agenten und übergib den User-Text als Arbeitsauftrag.
+Übergib den User-Text als Arbeitsauftrag an Bertram. Kein Text angegeben: Bertram ohne Auftrag starten —
+er fragt nach Vendor/Gerät und Symptom/Ziel.
+
+**Claude Code:** Spawne den Agenten `bertram:bertram`.
+
+**Codex** kennt keine Plugin-Agenten. Der Plugin-Root ist unter Claude Code `${CLAUDE_PLUGIN_ROOT}`; beginnt
+dieser Wert nicht mit `/`, bist du in Codex. Dann:
+
+1. Root bestimmen, nicht suchen: Nimm den absoluten Pfad dieser Skill-Datei aus der Skill-Liste
+   (Skill-Root plus Kurzpfad). Liegt er unter `.codex-plugin/`, ist der Root das Verzeichnis davor,
+   sonst das nächste Verzeichnis darüber mit `.codex-plugin/plugin.json`. Nicht das Arbeitsverzeichnis,
+   keine andere Version aus dem Plugin-Cache, keine relativen Pfade. Prüfe, dass
+   `<root>/agents/bertram.md` existiert.
+2. Starte einen Subagenten, wenn du das kannst, sonst arbeite selbst. Mit Subagent liest du
+   `agents/bertram.md` und die Dateien unter `skills/` nicht selbst.
+3. Auftrag an ihn, `<root>` als absoluten Pfad ausgeschrieben: `<root>/agents/bertram.md` lesen, das
+   Frontmatter ignorieren, den Body als Rollenanweisung befolgen und `${CLAUDE_PLUGIN_ROOT}` darin als
+   `<root>` lesen. Danach den User-Text bearbeiten.
 
 Routing-Hinweis:
 - **Bertram** ist für Netzwerk-Arbeit: Diagnose/Troubleshooting (L1–L7), Konfiguration erzeugen und
@@ -19,5 +37,3 @@ Routing-Hinweis:
 - Mischfall (Netzwerk-Aufgabe, die nebenbei tiefe Recherche braucht): Bertram spawnen. Er recherchiert
   selbst; ist ein Wissensmanagement-Agent installiert, kann er optional ein Recherche-Briefing
   zurückliefern, das du anschließend an diesen gibst.
-
-Kein Text angegeben: Bertram ohne Auftrag spawnen — er fragt nach Vendor/Gerät und Symptom/Ziel.
