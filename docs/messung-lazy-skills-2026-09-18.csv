@@ -1,0 +1,1562 @@
+# Messreihe Lazy Skills 2026-09-18 (Bericht docs/messung-lazy-skills-2026-09-18.md). CSV, UTF-8, Komma, Textfelder mit Komma in doppelten Anführungszeichen. Spalten: cli=claude|codex; zustand=vorher (main f22c0dc)|nachher (HEAD 71871af)|differenz (nachher − vorher); messung=context (Claude /context)|baseline (Claude-Persona mit Auftrag OK)|prompt-input (Codex-Startprompt)|dynamisch (Claude-Arbeitsauftrag)|dynamisch-implizit|dynamisch-explizit (Codex-Arbeitsauftrag ohne/mit $-Command); persona=bertram|christian|bruce (Plugin it-grundschutz)|nixie, sonst Plugin (bibliothekarin, tools), builtin oder gesamt; metrik=Name laut Abschnitt Metriken im Bericht; wert=Zahl mit Punkt als Dezimaltrenner ohne Tausendertrenner oder n/a; einheit=tokens|zeichen|bytes|requests|anzahl|dateien|usd|s|bool; anmerkung=Quelle, Zusammensetzung, Einschränkung. Dynamische Werte sind Einzelläufe (n=1) ohne Streuung.
+cli,zustand,messung,persona,metrik,wert,einheit,anmerkung
+claude,vorher,context,gesamt,system_prompt,2100,tokens,Anzeige 2.1k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,system_prompt,2100,tokens,Anzeige 2.1k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,system_prompt,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,system_tools,1900,tokens,"Anzeige 1.9k; Läufe sc-context-before-3/-4 identisch; Artefakt: /context zieht Skills-Schätzung von 9545 (count_tokens der 11 System-Tools, in beiden Zuständen gleich) ab"
+claude,nachher,context,gesamt,system_tools,6400,tokens,"Anzeige 6.4k; Läufe sc-context-after-3/-4 identisch; Artefakt: /context zieht Skills-Schätzung von 9545 (count_tokens der 11 System-Tools, in beiden Zuständen gleich) ab"
+claude,differenz,context,gesamt,system_tools,4500,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,mcp_tools,627,tokens,Anzeige 627; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,mcp_tools,627,tokens,Anzeige 627; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,mcp_tools,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,mcp_tools_deferred,7300,tokens,Anzeige 7.3k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,mcp_tools_deferred,7300,tokens,Anzeige 7.3k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,mcp_tools_deferred,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,system_tools_deferred,13400,tokens,Anzeige 13.4k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,system_tools_deferred,13400,tokens,Anzeige 13.4k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,system_tools_deferred,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,custom_agents,2600,tokens,Anzeige 2.6k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,custom_agents,1500,tokens,Anzeige 1.5k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,custom_agents,-1100,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,memory_files,2800,tokens,Anzeige 2.8k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,memory_files,2800,tokens,Anzeige 2.8k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,memory_files,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,skills,7600,tokens,Anzeige 7.6k; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,skills,3100,tokens,Anzeige 3.1k; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,skills,-4500,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,messages,8,tokens,Anzeige 8; Läufe sc-context-before-3/-4 identisch
+claude,nachher,context,gesamt,messages,8,tokens,Anzeige 8; Läufe sc-context-after-3/-4 identisch
+claude,differenz,context,gesamt,messages,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,summe,17800,tokens,"Anzeige 17.8k; Läufe sc-context-before-3/-4 identisch; Tokens-Zeile, enthält die Skill-Ersparnis wegen des System-tools-Artefakts nicht"
+claude,nachher,context,gesamt,summe,16600,tokens,"Anzeige 16.6k; Läufe sc-context-after-3/-4 identisch; Tokens-Zeile, enthält die Skill-Ersparnis wegen des System-tools-Artefakts nicht"
+claude,differenz,context,gesamt,summe,-1200,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,count_tokens_system_tools,9545,tokens,"count_tokens-Request von /context (11 Tools: Agent,Bash,Edit,ListAgents,Read,ReportFindings,ScheduleWakeup,Skill,ToolSearch,Workflow,Write), per Proxy mitgeschnitten"
+claude,vorher,context,gesamt,count_tokens_skill_tool,917,tokens,"count_tokens-Request von /context nur Skill-Tool, per Proxy"
+claude,nachher,context,gesamt,count_tokens_system_tools,9545,tokens,"count_tokens-Request von /context (11 Tools: Agent,Bash,Edit,ListAgents,Read,ReportFindings,ScheduleWakeup,Skill,ToolSearch,Workflow,Write), per Proxy mitgeschnitten"
+claude,nachher,context,gesamt,count_tokens_skill_tool,917,tokens,"count_tokens-Request von /context nur Skill-Tool, per Proxy"
+claude,vorher,context,bertram,agent:bertram,549,tokens,/context Custom Agents
+claude,nachher,context,bertram,agent:bertram,264,tokens,/context Custom Agents
+claude,differenz,context,bertram,agent:bertram,-285,tokens,nachher − vorher
+claude,vorher,context,bibliothekarin,agent:bibliothekarin,362,tokens,/context Custom Agents
+claude,nachher,context,bibliothekarin,agent:bibliothekarin,362,tokens,/context Custom Agents
+claude,differenz,context,bibliothekarin,agent:bibliothekarin,0,tokens,nachher − vorher
+claude,vorher,context,bibliothekarin,agent:bibliothekarin-search,99,tokens,/context Custom Agents
+claude,nachher,context,bibliothekarin,agent:bibliothekarin-search,99,tokens,/context Custom Agents
+claude,differenz,context,bibliothekarin,agent:bibliothekarin-search,0,tokens,nachher − vorher
+claude,vorher,context,christian,agent:christian,594,tokens,/context Custom Agents
+claude,nachher,context,christian,agent:christian,257,tokens,/context Custom Agents
+claude,differenz,context,christian,agent:christian,-337,tokens,nachher − vorher
+claude,vorher,context,bruce,agent:bruce,709,tokens,/context Custom Agents
+claude,nachher,context,bruce,agent:bruce,257,tokens,/context Custom Agents
+claude,differenz,context,bruce,agent:bruce,-452,tokens,nachher − vorher
+claude,vorher,context,nixie,agent:nixie,308,tokens,/context Custom Agents
+claude,nachher,context,nixie,agent:nixie,260,tokens,/context Custom Agents
+claude,differenz,context,nixie,agent:nixie,-48,tokens,nachher − vorher
+claude,vorher,context,gesamt,custom_agents_exakt,2621,tokens,Summe der Detailzeilen
+claude,nachher,context,gesamt,custom_agents_exakt,1499,tokens,Summe der Detailzeilen
+claude,differenz,context,gesamt,custom_agents_exakt,-1122,tokens,nachher − vorher
+claude,vorher,context,bibliothekarin,skill:karin,30,tokens,/context-Schätzwert ~30
+claude,nachher,context,bibliothekarin,skill:karin,30,tokens,/context-Schätzwert ~30
+claude,vorher,context,bibliothekarin,skill:vault,30,tokens,/context-Schätzwert ~30
+claude,nachher,context,bibliothekarin,skill:vault,30,tokens,/context-Schätzwert ~30
+claude,vorher,context,nixie,skill:nixie,30,tokens,/context-Schätzwert ~30; Persona-Command im Skill-Listing
+claude,nachher,context,nixie,skill:nixie,0,tokens,nicht mehr gelistet; Persona-Command im Skill-Listing
+claude,vorher,context,bruce,skill:bruce,30,tokens,/context-Schätzwert ~30; Persona-Command im Skill-Listing
+claude,nachher,context,bruce,skill:bruce,0,tokens,nicht mehr gelistet; Persona-Command im Skill-Listing
+claude,vorher,context,bertram,skill:bertram,30,tokens,/context-Schätzwert ~30; Persona-Command im Skill-Listing
+claude,nachher,context,bertram,skill:bertram,0,tokens,nicht mehr gelistet; Persona-Command im Skill-Listing
+claude,vorher,context,christian,skill:christian,40,tokens,/context-Schätzwert ~40; Persona-Command im Skill-Listing
+claude,nachher,context,christian,skill:christian,0,tokens,nicht mehr gelistet; Persona-Command im Skill-Listing
+claude,vorher,context,bibliothekarin,skill:defuddle,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:defuddle,130,tokens,/context-Schätzwert ~130
+claude,vorher,context,bibliothekarin,skill:diagramm-auswahl,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:diagramm-auswahl,130,tokens,/context-Schätzwert ~130
+claude,vorher,context,bibliothekarin,skill:json-canvas,90,tokens,/context-Schätzwert ~90
+claude,nachher,context,bibliothekarin,skill:json-canvas,90,tokens,/context-Schätzwert ~90
+claude,vorher,context,bibliothekarin,skill:mermaid,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:mermaid,130,tokens,/context-Schätzwert ~130
+claude,vorher,context,bibliothekarin,skill:obsidian-bases,100,tokens,/context-Schätzwert ~100
+claude,nachher,context,bibliothekarin,skill:obsidian-bases,100,tokens,/context-Schätzwert ~100
+claude,vorher,context,bibliothekarin,skill:obsidian-cli,170,tokens,/context-Schätzwert ~170
+claude,nachher,context,bibliothekarin,skill:obsidian-cli,170,tokens,/context-Schätzwert ~170
+claude,vorher,context,bibliothekarin,skill:obsidian-markdown,100,tokens,/context-Schätzwert ~100
+claude,nachher,context,bibliothekarin,skill:obsidian-markdown,100,tokens,/context-Schätzwert ~100
+claude,vorher,context,bibliothekarin,skill:plantuml,160,tokens,/context-Schätzwert ~160
+claude,nachher,context,bibliothekarin,skill:plantuml,160,tokens,/context-Schätzwert ~160
+claude,vorher,context,nixie,skill:nix-deploy,140,tokens,/context-Schätzwert ~140
+claude,nachher,context,nixie,skill:nix-deploy,0,tokens,nicht mehr gelistet
+claude,vorher,context,nixie,skill:nix-docs,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,nixie,skill:nix-docs,0,tokens,nicht mehr gelistet
+claude,vorher,context,nixie,skill:nix-packaging,120,tokens,/context-Schätzwert ~120
+claude,nachher,context,nixie,skill:nix-packaging,0,tokens,nicht mehr gelistet
+claude,vorher,context,nixie,skill:nixos-config,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,nixie,skill:nixos-config,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-cache,220,tokens,/context-Schätzwert ~220
+claude,nachher,context,bruce,skill:gs-cache,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-crosswalk,210,tokens,/context-Schätzwert ~210
+claude,nachher,context,bruce,skill:gs-crosswalk,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-dokument,210,tokens,/context-Schätzwert ~210
+claude,nachher,context,bruce,skill:gs-dokument,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-ingest,180,tokens,/context-Schätzwert ~180
+claude,nachher,context,bruce,skill:gs-ingest,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-krypto,200,tokens,/context-Schätzwert ~200
+claude,nachher,context,bruce,skill:gs-krypto,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-lookup,140,tokens,/context-Schätzwert ~140
+claude,nachher,context,bruce,skill:gs-lookup,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-modellierung,190,tokens,/context-Schätzwert ~190
+claude,nachher,context,bruce,skill:gs-modellierung,0,tokens,nicht mehr gelistet
+claude,vorher,context,bruce,skill:gs-review,230,tokens,/context-Schätzwert ~230
+claude,nachher,context,bruce,skill:gs-review,0,tokens,nicht mehr gelistet
+claude,vorher,context,bertram,skill:net-config,180,tokens,/context-Schätzwert ~180
+claude,nachher,context,bertram,skill:net-config,0,tokens,nicht mehr gelistet
+claude,vorher,context,bertram,skill:net-design,180,tokens,/context-Schätzwert ~180
+claude,nachher,context,bertram,skill:net-design,0,tokens,nicht mehr gelistet
+claude,vorher,context,bertram,skill:net-diagnose,160,tokens,/context-Schätzwert ~160
+claude,nachher,context,bertram,skill:net-diagnose,0,tokens,nicht mehr gelistet
+claude,vorher,context,bertram,skill:net-operate,160,tokens,/context-Schätzwert ~160
+claude,nachher,context,bertram,skill:net-operate,0,tokens,nicht mehr gelistet
+claude,vorher,context,bertram,skill:net-reference,140,tokens,/context-Schätzwert ~140
+claude,nachher,context,bertram,skill:net-reference,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:bsd-firewall,360,tokens,/context-Schätzwert ~360
+claude,nachher,context,christian,skill:bsd-firewall,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:openvpn,190,tokens,/context-Schätzwert ~190
+claude,nachher,context,christian,skill:openvpn,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:router-appliance,250,tokens,/context-Schätzwert ~250
+claude,nachher,context,christian,skill:router-appliance,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:vpn-reference,190,tokens,/context-Schätzwert ~190
+claude,nachher,context,christian,skill:vpn-reference,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:vpn-tunnel,240,tokens,/context-Schätzwert ~240
+claude,nachher,context,christian,skill:vpn-tunnel,0,tokens,nicht mehr gelistet
+claude,vorher,context,christian,skill:wan-link,290,tokens,/context-Schätzwert ~290
+claude,nachher,context,christian,skill:wan-link,0,tokens,nicht mehr gelistet
+claude,vorher,context,bibliothekarin,skills_plugin,1070,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,bibliothekarin,skills_plugin,1070,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,bibliothekarin,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,nixie,skills_plugin,550,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,nixie,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,nixie,skills_plugin,-550,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,bruce,skills_plugin,1610,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,bruce,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,bruce,skills_plugin,-1610,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,bertram,skills_plugin,850,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,bertram,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,bertram,skills_plugin,-850,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,christian,skills_plugin,1560,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,christian,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,christian,skills_plugin,-1560,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,tools,skills_plugin,0,tokens,Summe der ~-Schätzwerte; tools-Skills in keinem Zustand gelistet (disable-model-invocation)
+claude,nachher,context,tools,skills_plugin,0,tokens,Summe der ~-Schätzwerte; tools-Skills in keinem Zustand gelistet (disable-model-invocation)
+claude,differenz,context,tools,skills_plugin,0,tokens,Summe der ~-Schätzwerte; tools-Skills in keinem Zustand gelistet (disable-model-invocation)
+claude,vorher,context,builtin,skills_plugin,2050,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,builtin,skills_plugin,2050,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,builtin,skills_plugin,0,tokens,Summe der ~-Schätzwerte
+claude,vorher,context,gesamt,skills_plugins_gesamt,5640,tokens,Summe der ~-Schätzwerte aller Plugin-Skills
+claude,nachher,context,gesamt,skills_plugins_gesamt,1070,tokens,Summe der ~-Schätzwerte aller Plugin-Skills
+claude,differenz,context,gesamt,skills_plugins_gesamt,-4570,tokens,Summe der ~-Schätzwerte aller Plugin-Skills
+claude,vorher,baseline,bertram,main_first,43771,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-before-bertram-sonnet)"
+claude,vorher,baseline,bertram,main_first_proxy,35479,tokens,--model sonnet über Proxy (sc-b-before-bertram-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,vorher,baseline,bertram,sub_first,22553,tokens,"Persona claude-opus-5, Proxy (sc-b-before-bertram-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,vorher,baseline,bertram,sub_n,3,requests,Proxy (sc-b-before-bertram-1)
+claude,vorher,baseline,bertram,sub_sum,68839,tokens,Proxy (sc-b-before-bertram-1)
+claude,vorher,baseline,bertram,sub_peak,23682,tokens,Proxy (sc-b-before-bertram-1)
+claude,vorher,baseline,bertram,output_sum,513,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-before-bertram-1); ohne Titel/Klassifikator"
+claude,vorher,baseline,bertram,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,vorher,baseline,bertram,cost_usd,0.234,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-before-bertram-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,vorher,baseline,bertram,duration_s,10.3,s,"result.duration_ms, Lauf ohne Proxy (sc-np-before-bertram-sonnet)"
+claude,vorher,baseline,bertram,main_first_default,31837,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-bertram-opusdef-1)"
+claude,vorher,baseline,bertram,main_first_default_ohne_proxy,32046,tokens,"Default-Modell ohne Proxy (sc-np-before-bertram-default), stream-json"
+claude,vorher,baseline,bertram,sub_first_default,22437,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-bertram-opusdef-1)"
+claude,nachher,baseline,bertram,main_first,35412,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-after-bertram-sonnet)"
+claude,nachher,baseline,bertram,main_first_proxy,34030,tokens,--model sonnet über Proxy (sc-b-after-bertram-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,nachher,baseline,bertram,sub_first,12123,tokens,"Persona claude-opus-5, Proxy (sc-b-after-bertram-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,nachher,baseline,bertram,sub_n,2,requests,Proxy (sc-b-after-bertram-1)
+claude,nachher,baseline,bertram,sub_sum,25071,tokens,Proxy (sc-b-after-bertram-1)
+claude,nachher,baseline,bertram,sub_peak,12948,tokens,Proxy (sc-b-after-bertram-1)
+claude,nachher,baseline,bertram,output_sum,204,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-after-bertram-1); ohne Titel/Klassifikator"
+claude,nachher,baseline,bertram,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,nachher,baseline,bertram,cost_usd,0.1048,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-after-bertram-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,nachher,baseline,bertram,duration_s,9.9,s,"result.duration_ms, Lauf ohne Proxy (sc-np-after-bertram-sonnet)"
+claude,nachher,baseline,bertram,main_first_default,23478,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-bertram-opusdef-1)"
+claude,nachher,baseline,bertram,main_first_default_ohne_proxy,23688,tokens,"Default-Modell ohne Proxy (sc-np-after-bertram-default), stream-json"
+claude,nachher,baseline,bertram,sub_first_default,12008,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-bertram-opusdef-1)"
+claude,differenz,baseline,bertram,main_first,-8359,tokens,nachher − vorher (-19.1 %)
+claude,differenz,baseline,bertram,main_first_proxy,-1449,tokens,nachher − vorher (-4.1 %)
+claude,differenz,baseline,bertram,sub_first,-10430,tokens,nachher − vorher (-46.2 %)
+claude,differenz,baseline,bertram,sub_sum,-43768,tokens,nachher − vorher (-63.6 %)
+claude,differenz,baseline,bertram,main_first_default,-8359,tokens,nachher − vorher (-26.3 %)
+claude,differenz,baseline,bertram,sub_first_default,-10429,tokens,nachher − vorher (-46.5 %)
+claude,differenz,baseline,bertram,main_first_default_ohne_proxy,-8358,tokens,nachher − vorher (-26.1 %)
+claude,vorher,baseline,christian,main_first,43768,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-before-christian-sonnet)"
+claude,vorher,baseline,christian,main_first_proxy,35477,tokens,--model sonnet über Proxy (sc-b-before-christian-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,vorher,baseline,christian,sub_first,43705,tokens,"Persona claude-opus-5, Proxy (sc-b-before-christian-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,vorher,baseline,christian,sub_n,3,requests,Proxy (sc-b-before-christian-1)
+claude,vorher,baseline,christian,sub_sum,132257,tokens,Proxy (sc-b-before-christian-1)
+claude,vorher,baseline,christian,sub_peak,44796,tokens,Proxy (sc-b-before-christian-1)
+claude,vorher,baseline,christian,output_sum,423,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-before-christian-1); ohne Titel/Klassifikator"
+claude,vorher,baseline,christian,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,vorher,baseline,christian,cost_usd,0.4156,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-before-christian-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,vorher,baseline,christian,duration_s,13.4,s,"result.duration_ms, Lauf ohne Proxy (sc-np-before-christian-sonnet)"
+claude,vorher,baseline,christian,main_first_default,31834,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-christian-opusdef-1)"
+claude,vorher,baseline,christian,sub_first_default,43588,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-christian-opusdef-1)"
+claude,nachher,baseline,christian,main_first,35410,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-after-christian-sonnet)"
+claude,nachher,baseline,christian,main_first_proxy,34029,tokens,--model sonnet über Proxy (sc-b-after-christian-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,nachher,baseline,christian,sub_first,14176,tokens,"Persona claude-opus-5, Proxy (sc-b-after-christian-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,nachher,baseline,christian,sub_n,2,requests,Proxy (sc-b-after-christian-1)
+claude,nachher,baseline,christian,sub_sum,29177,tokens,Proxy (sc-b-after-christian-1)
+claude,nachher,baseline,christian,sub_peak,15001,tokens,Proxy (sc-b-after-christian-1)
+claude,nachher,baseline,christian,output_sum,255,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-after-christian-1); ohne Titel/Klassifikator"
+claude,nachher,baseline,christian,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,nachher,baseline,christian,cost_usd,0.1468,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-after-christian-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,nachher,baseline,christian,duration_s,8.3,s,"result.duration_ms, Lauf ohne Proxy (sc-np-after-christian-sonnet)"
+claude,nachher,baseline,christian,main_first_default,23477,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-christian-opusdef-1)"
+claude,nachher,baseline,christian,sub_first_default,14061,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-christian-opusdef-1)"
+claude,differenz,baseline,christian,main_first,-8358,tokens,nachher − vorher (-19.1 %)
+claude,differenz,baseline,christian,main_first_proxy,-1448,tokens,nachher − vorher (-4.1 %)
+claude,differenz,baseline,christian,sub_first,-29529,tokens,nachher − vorher (-67.6 %)
+claude,differenz,baseline,christian,sub_sum,-103080,tokens,nachher − vorher (-77.9 %)
+claude,differenz,baseline,christian,main_first_default,-8357,tokens,nachher − vorher (-26.3 %)
+claude,differenz,baseline,christian,sub_first_default,-29527,tokens,nachher − vorher (-67.7 %)
+claude,vorher,baseline,bruce,main_first,43775,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-before-it-grundschutz-sonnet)"
+claude,vorher,baseline,bruce,main_first_proxy,35484,tokens,--model sonnet über Proxy (sc-b-before-it-grundschutz-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,vorher,baseline,bruce,sub_first,35138,tokens,"Persona claude-opus-5, Proxy (sc-b-before-it-grundschutz-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,vorher,baseline,bruce,sub_n,3,requests,Proxy (sc-b-before-it-grundschutz-1)
+claude,vorher,baseline,bruce,sub_sum,106791,tokens,Proxy (sc-b-before-it-grundschutz-1)
+claude,vorher,baseline,bruce,sub_peak,36464,tokens,Proxy (sc-b-before-it-grundschutz-1)
+claude,vorher,baseline,bruce,output_sum,719,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-before-it-grundschutz-1); ohne Titel/Klassifikator"
+claude,vorher,baseline,bruce,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,vorher,baseline,bruce,cost_usd,0.3615,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-before-it-grundschutz-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,vorher,baseline,bruce,duration_s,24.0,s,"result.duration_ms, Lauf ohne Proxy (sc-np-before-it-grundschutz-sonnet)"
+claude,vorher,baseline,bruce,main_first_default,31841,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-it-grundschutz-opusdef-1)"
+claude,vorher,baseline,bruce,sub_first_default,35021,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-it-grundschutz-opusdef-1)"
+claude,nachher,baseline,bruce,main_first,35416,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-after-it-grundschutz-sonnet)"
+claude,nachher,baseline,bruce,main_first_proxy,34035,tokens,--model sonnet über Proxy (sc-b-after-it-grundschutz-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,nachher,baseline,bruce,sub_first,13044,tokens,"Persona claude-opus-5, Proxy (sc-b-after-it-grundschutz-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,nachher,baseline,bruce,sub_n,2,requests,Proxy (sc-b-after-it-grundschutz-1)
+claude,nachher,baseline,bruce,sub_sum,26913,tokens,Proxy (sc-b-after-it-grundschutz-1)
+claude,nachher,baseline,bruce,sub_peak,13869,tokens,Proxy (sc-b-after-it-grundschutz-1)
+claude,nachher,baseline,bruce,output_sum,208,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-after-it-grundschutz-1); ohne Titel/Klassifikator"
+claude,nachher,baseline,bruce,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,nachher,baseline,bruce,cost_usd,0.1386,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-after-it-grundschutz-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,nachher,baseline,bruce,duration_s,7.4,s,"result.duration_ms, Lauf ohne Proxy (sc-np-after-it-grundschutz-sonnet)"
+claude,nachher,baseline,bruce,main_first_default,23482,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-it-grundschutz-opusdef-1)"
+claude,nachher,baseline,bruce,sub_first_default,12928,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-it-grundschutz-opusdef-1)"
+claude,differenz,baseline,bruce,main_first,-8359,tokens,nachher − vorher (-19.1 %)
+claude,differenz,baseline,bruce,main_first_proxy,-1449,tokens,nachher − vorher (-4.1 %)
+claude,differenz,baseline,bruce,sub_first,-22094,tokens,nachher − vorher (-62.9 %)
+claude,differenz,baseline,bruce,sub_sum,-79878,tokens,nachher − vorher (-74.8 %)
+claude,differenz,baseline,bruce,main_first_default,-8359,tokens,nachher − vorher (-26.3 %)
+claude,differenz,baseline,bruce,sub_first_default,-22093,tokens,nachher − vorher (-63.1 %)
+claude,vorher,baseline,nixie,main_first,43772,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-before-nixie-sonnet)"
+claude,vorher,baseline,nixie,main_first_proxy,35479,tokens,--model sonnet über Proxy (sc-b-before-nixie-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,vorher,baseline,nixie,sub_first,26506,tokens,"Persona claude-opus-5, Proxy (sc-b-before-nixie-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,vorher,baseline,nixie,sub_n,3,requests,Proxy (sc-b-before-nixie-1)
+claude,vorher,baseline,nixie,sub_sum,80654,tokens,Proxy (sc-b-before-nixie-1)
+claude,vorher,baseline,nixie,sub_peak,27591,tokens,Proxy (sc-b-before-nixie-1)
+claude,vorher,baseline,nixie,output_sum,512,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-before-nixie-1); ohne Titel/Klassifikator"
+claude,vorher,baseline,nixie,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,vorher,baseline,nixie,cost_usd,0.2896,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-before-nixie-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,vorher,baseline,nixie,duration_s,13.8,s,"result.duration_ms, Lauf ohne Proxy (sc-np-before-nixie-sonnet)"
+claude,vorher,baseline,nixie,main_first_default,31836,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-nixie-opusdef-2)"
+claude,vorher,baseline,nixie,sub_first_default,26389,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-before-nixie-opusdef-2)"
+claude,nachher,baseline,nixie,main_first,35412,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (sc-np-after-nixie-sonnet)"
+claude,nachher,baseline,nixie,main_first_proxy,34030,tokens,--model sonnet über Proxy (sc-b-after-nixie-1); verzerrt: Plugin-Skills im Listing nur als Namen
+claude,nachher,baseline,nixie,sub_first,12633,tokens,"Persona claude-opus-5, Proxy (sc-b-after-nixie-1); ohne Proxy sichtbarer Sub-Request weicht ≤1 ab"
+claude,nachher,baseline,nixie,sub_n,2,requests,Proxy (sc-b-after-nixie-1)
+claude,nachher,baseline,nixie,sub_sum,26091,tokens,Proxy (sc-b-after-nixie-1)
+claude,nachher,baseline,nixie,sub_peak,13458,tokens,Proxy (sc-b-after-nixie-1)
+claude,nachher,baseline,nixie,output_sum,204,tokens,"Haupt- + Subagent-Requests, Proxy (sc-b-after-nixie-1); ohne Titel/Klassifikator"
+claude,nachher,baseline,nixie,files_read,0,dateien,"keine Read-Aufrufe, einziges Tool der Persona: SubagentHandback"
+claude,nachher,baseline,nixie,cost_usd,0.1358,usd,"total_cost_usd, ein result-Event, Lauf ohne Proxy (sc-np-after-nixie-sonnet); inkl. Titel- und Auto-Mode-Klassifikator-Requests"
+claude,nachher,baseline,nixie,duration_s,7.2,s,"result.duration_ms, Lauf ohne Proxy (sc-np-after-nixie-sonnet)"
+claude,nachher,baseline,nixie,main_first_default,23476,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-nixie-opusdef-1)"
+claude,nachher,baseline,nixie,sub_first_default,12516,tokens,"Hauptsitzung Default claude-opus-5[1m], Proxy (sc-b-after-nixie-opusdef-1)"
+claude,differenz,baseline,nixie,main_first,-8360,tokens,nachher − vorher (-19.1 %)
+claude,differenz,baseline,nixie,main_first_proxy,-1449,tokens,nachher − vorher (-4.1 %)
+claude,differenz,baseline,nixie,sub_first,-13873,tokens,nachher − vorher (-52.3 %)
+claude,differenz,baseline,nixie,sub_sum,-54563,tokens,nachher − vorher (-67.7 %)
+claude,differenz,baseline,nixie,main_first_default,-8360,tokens,nachher − vorher (-26.3 %)
+claude,differenz,baseline,nixie,sub_first_default,-13873,tokens,nachher − vorher (-52.6 %)
+claude,vorher,context,gesamt,summe_mcp_pending,17100,tokens,"Läufe sc-context-*-1/-2, Claude Docs im init-Event noch pending, MCP-Zeilen fehlen; nicht gewertet"
+claude,nachher,context,gesamt,summe_mcp_pending,16000,tokens,"Läufe sc-context-*-1/-2, Claude Docs im init-Event noch pending, MCP-Zeilen fehlen; nicht gewertet"
+claude,vorher,baseline,bertram,sub_first_wiederholung,22553,tokens,"Proxy, Wiederholungslauf sc-b-*-bertram-2"
+claude,nachher,baseline,bertram,sub_first_wiederholung,12125,tokens,"Proxy, Wiederholungslauf sc-b-*-bertram-2"
+claude,vorher,baseline,bertram,main_first_proxy_wiederholung,35479,tokens,"--model sonnet über Proxy, Wiederholungslauf sc-b-*-bertram-2; verzerrt"
+claude,nachher,baseline,bertram,main_first_proxy_wiederholung,34032,tokens,"--model sonnet über Proxy, Wiederholungslauf sc-b-*-bertram-2; verzerrt"
+claude,nachher,baseline,bertram,sub_first_ohne_proxy,12124,tokens,"erster Persona-Request, im stream-json ohne Proxy sichtbar"
+claude,nachher,baseline,christian,sub_first_ohne_proxy,14176,tokens,"erster Persona-Request, im stream-json ohne Proxy sichtbar"
+claude,nachher,baseline,bruce,sub_first_ohne_proxy,13044,tokens,"erster Persona-Request, im stream-json ohne Proxy sichtbar"
+claude,nachher,baseline,nixie,sub_first_ohne_proxy,12634,tokens,"erster Persona-Request, im stream-json ohne Proxy sichtbar"
+claude,vorher,baseline,bertram,sub_request2_ohne_proxy,22604,tokens,vorher ist ohne Proxy erst der 2. Persona-Request sichtbar
+claude,vorher,baseline,bertram,sub_request2_proxy,22604,tokens,"2. Persona-Request über Proxy, zum Abgleich"
+claude,vorher,baseline,christian,sub_request2_ohne_proxy,43755,tokens,vorher ist ohne Proxy erst der 2. Persona-Request sichtbar
+claude,vorher,baseline,christian,sub_request2_proxy,43756,tokens,"2. Persona-Request über Proxy, zum Abgleich"
+claude,vorher,baseline,bruce,sub_request2_ohne_proxy,35188,tokens,vorher ist ohne Proxy erst der 2. Persona-Request sichtbar
+claude,vorher,baseline,bruce,sub_request2_proxy,35189,tokens,"2. Persona-Request über Proxy, zum Abgleich"
+claude,vorher,baseline,nixie,sub_request2_ohne_proxy,26558,tokens,vorher ist ohne Proxy erst der 2. Persona-Request sichtbar
+claude,vorher,baseline,nixie,sub_request2_proxy,26557,tokens,"2. Persona-Request über Proxy, zum Abgleich"
+claude,vorher,baseline,bertram,skills_vorgeladen,5,anzahl,Skill-Texte als User-Blöcke im ersten Persona-Request (Frontmatter skills:)
+claude,nachher,baseline,bertram,skills_vorgeladen,0,anzahl,keine
+claude,vorher,baseline,christian,skills_vorgeladen,6,anzahl,Skill-Texte als User-Blöcke im ersten Persona-Request (Frontmatter skills:)
+claude,nachher,baseline,christian,skills_vorgeladen,0,anzahl,keine
+claude,vorher,baseline,bruce,skills_vorgeladen,8,anzahl,Skill-Texte als User-Blöcke im ersten Persona-Request (Frontmatter skills:)
+claude,nachher,baseline,bruce,skills_vorgeladen,0,anzahl,keine
+claude,vorher,baseline,nixie,skills_vorgeladen,4,anzahl,Skill-Texte als User-Blöcke im ersten Persona-Request (Frontmatter skills:)
+claude,nachher,baseline,nixie,skills_vorgeladen,0,anzahl,keine
+claude,vorher,baseline,christian,persona_systemprompt,10786,zeichen,Systemprompt der Persona
+claude,nachher,baseline,christian,persona_systemprompt,14157,zeichen,Systemprompt der Persona
+claude,vorher,baseline,gesamt,liste_skills_agenten,34586,zeichen,"Skill- und Agentenliste im mitgeschnittenen Body, Hauptsitzung claude-opus-5[1m]"
+claude,nachher,baseline,gesamt,liste_skills_agenten,18815,zeichen,"Skill- und Agentenliste im mitgeschnittenen Body, Hauptsitzung claude-opus-5[1m]"
+claude,vorher,baseline,gesamt,tool_definitionen,42900,zeichen,"Tool-Definitionen im ersten Hauptrequest, --model sonnet; in beiden Zuständen gleich lang"
+claude,nachher,baseline,gesamt,tool_definitionen,42900,zeichen,"Tool-Definitionen im ersten Hauptrequest, --model sonnet; in beiden Zuständen gleich lang"
+codex,vorher,prompt-input,gesamt,prompt_gesamt,35267,zeichen,Summe aller 10 input_text; Unicode-Codepoints
+codex,vorher,prompt-input,gesamt,prompt_gesamt,9147,tokens,o200k_base; ohne Base-Instructions/Tool-Schemas/Message-Framing
+codex,vorher,prompt-input,gesamt,prompt_gesamt,35514,bytes,UTF-8 der input_text
+codex,vorher,prompt-input,gesamt,prompt_json,38347,bytes,Dateigröße Ausgabe debug prompt-input
+codex,vorher,prompt-input,gesamt,prompt_gesamt_normiert,35157,zeichen,CODEX_HOME=/home/muhackel/.codex und cwd=/tmp/lazy-mess/work gleichgesetzt
+codex,vorher,prompt-input,gesamt,prompt_gesamt_normiert,9118,tokens,wie oben normiert
+codex,vorher,prompt-input,gesamt,skills_instructions,19796,zeichen,Block <skills_instructions>
+codex,vorher,prompt-input,gesamt,skills_instructions,5562,tokens,Block <skills_instructions>
+codex,vorher,prompt-input,gesamt,skills_instructions_normiert,19730,zeichen,Pfade gleichgesetzt
+codex,vorher,prompt-input,gesamt,skills_instructions_normiert,5551,tokens,Pfade gleichgesetzt
+codex,vorher,prompt-input,gesamt,katalog_eintraege,37,anzahl,inkl. 5 System-Skills
+codex,vorher,prompt-input,gesamt,katalog_eintraege_plugins,32,anzahl,6 Plugins muhackel-plugins
+codex,vorher,prompt-input,gesamt,plugin_eintraege,16212,zeichen,Summe Zeilen inkl. '- ' und Zeilenumbruch
+codex,vorher,prompt-input,gesamt,plugin_eintraege,4594,tokens,Summe isoliert kodierter Zeilen
+codex,vorher,prompt-input,gesamt,skill_roots,11,anzahl,Tabelle ### Skill roots
+codex,vorher,prompt-input,gesamt,skill_roots,1148,zeichen,inkl. Zeilenumbruch
+codex,vorher,prompt-input,gesamt,skill_roots,429,tokens,
+codex,vorher,prompt-input,gesamt,rest_ausserhalb_skills,15471,zeichen,9 übrige input_text-Items
+codex,vorher,prompt-input,gesamt,rest_ausserhalb_skills,3585,tokens,9 übrige input_text-Items
+codex,vorher,prompt-input,builtin,eintraege,5,anzahl,skills/.system
+codex,vorher,prompt-input,builtin,eintraege,2083,zeichen,
+codex,vorher,prompt-input,builtin,eintraege,459,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintraege,5,anzahl,
+codex,vorher,prompt-input,bibliothekarin,eintraege,1618,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintraege,436,tokens,
+codex,vorher,prompt-input,bibliothekarin,skill_roots,227,zeichen,2 Roots
+codex,vorher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,413,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,113,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:mermaid,416,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:mermaid,116,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:plantuml,494,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:plantuml,125,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-karin,146,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-karin,41,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-vault,149,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-vault,41,tokens,
+codex,vorher,prompt-input,nixie,eintraege,5,anzahl,
+codex,vorher,prompt-input,nixie,eintraege,1827,zeichen,
+codex,vorher,prompt-input,nixie,eintraege,523,tokens,
+codex,vorher,prompt-input,nixie,skill_roots,210,zeichen,2 Roots
+codex,vorher,prompt-input,nixie,eintrag:nix-deploy,459,zeichen,
+codex,vorher,prompt-input,nixie,eintrag:nix-deploy,131,tokens,
+codex,vorher,prompt-input,nixie,eintrag:nix-docs,415,zeichen,
+codex,vorher,prompt-input,nixie,eintrag:nix-docs,122,tokens,
+codex,vorher,prompt-input,nixie,eintrag:nix-packaging,392,zeichen,
+codex,vorher,prompt-input,nixie,eintrag:nix-packaging,118,tokens,
+codex,vorher,prompt-input,nixie,eintrag:nixos-config,426,zeichen,
+codex,vorher,prompt-input,nixie,eintrag:nixos-config,109,tokens,
+codex,vorher,prompt-input,nixie,eintrag:source-command-nixie,135,zeichen,
+codex,vorher,prompt-input,nixie,eintrag:source-command-nixie,43,tokens,
+codex,vorher,prompt-input,bruce,eintraege,9,anzahl,
+codex,vorher,prompt-input,bruce,eintraege,5124,zeichen,
+codex,vorher,prompt-input,bruce,eintraege,1385,tokens,
+codex,vorher,prompt-input,bruce,skill_roots,227,zeichen,2 Roots
+codex,vorher,prompt-input,bruce,eintrag:gs-cache,680,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-cache,176,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-crosswalk,656,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-crosswalk,165,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-dokument,647,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-dokument,163,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-ingest,564,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-ingest,159,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-krypto,621,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-krypto,182,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-lookup,460,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-lookup,125,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-modellierung,617,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-modellierung,165,tokens,
+codex,vorher,prompt-input,bruce,eintrag:gs-review,727,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:gs-review,208,tokens,
+codex,vorher,prompt-input,bruce,eintrag:source-command-bruce,152,zeichen,
+codex,vorher,prompt-input,bruce,eintrag:source-command-bruce,42,tokens,
+codex,vorher,prompt-input,bertram,eintraege,6,anzahl,
+codex,vorher,prompt-input,bertram,eintraege,2780,zeichen,
+codex,vorher,prompt-input,bertram,eintraege,790,tokens,
+codex,vorher,prompt-input,bertram,skill_roots,213,zeichen,2 Roots
+codex,vorher,prompt-input,bertram,eintrag:net-config,567,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:net-config,153,tokens,
+codex,vorher,prompt-input,bertram,eintrag:net-design,569,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:net-design,163,tokens,
+codex,vorher,prompt-input,bertram,eintrag:net-diagnose,513,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:net-diagnose,161,tokens,
+codex,vorher,prompt-input,bertram,eintrag:net-operate,525,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:net-operate,142,tokens,
+codex,vorher,prompt-input,bertram,eintrag:net-reference,460,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:net-reference,129,tokens,
+codex,vorher,prompt-input,bertram,eintrag:source-command-bertram,146,zeichen,
+codex,vorher,prompt-input,bertram,eintrag:source-command-bertram,42,tokens,
+codex,vorher,prompt-input,christian,eintraege,7,anzahl,
+codex,vorher,prompt-input,christian,eintraege,4863,zeichen,
+codex,vorher,prompt-input,christian,eintraege,1460,tokens,
+codex,vorher,prompt-input,christian,skill_roots,217,zeichen,2 Roots
+codex,vorher,prompt-input,christian,eintrag:bsd-firewall,1084,zeichen,
+codex,vorher,prompt-input,christian,eintrag:bsd-firewall,322,tokens,
+codex,vorher,prompt-input,christian,eintrag:openvpn,585,zeichen,
+codex,vorher,prompt-input,christian,eintrag:openvpn,174,tokens,
+codex,vorher,prompt-input,christian,eintrag:router-appliance,792,zeichen,
+codex,vorher,prompt-input,christian,eintrag:router-appliance,236,tokens,
+codex,vorher,prompt-input,christian,eintrag:source-command-christian,167,zeichen,
+codex,vorher,prompt-input,christian,eintrag:source-command-christian,44,tokens,
+codex,vorher,prompt-input,christian,eintrag:vpn-reference,607,zeichen,
+codex,vorher,prompt-input,christian,eintrag:vpn-reference,165,tokens,
+codex,vorher,prompt-input,christian,eintrag:vpn-tunnel,738,zeichen,
+codex,vorher,prompt-input,christian,eintrag:vpn-tunnel,239,tokens,
+codex,vorher,prompt-input,christian,eintrag:wan-link,890,zeichen,
+codex,vorher,prompt-input,christian,eintrag:wan-link,280,tokens,
+codex,vorher,prompt-input,tools,eintraege,0,anzahl,0 sichtbar; 7 Skills im Cache mit allow_implicit_invocation false
+codex,vorher,prompt-input,tools,eintraege,0,zeichen,
+codex,vorher,prompt-input,tools,eintraege,0,tokens,
+codex,vorher,prompt-input,tools,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,gesamt,prompt_gesamt,22048,zeichen,Summe aller 10 input_text; Unicode-Codepoints
+codex,nachher,prompt-input,gesamt,prompt_gesamt,5334,tokens,o200k_base; ohne Base-Instructions/Tool-Schemas/Message-Framing
+codex,nachher,prompt-input,gesamt,prompt_gesamt,22153,bytes,UTF-8 der input_text
+codex,nachher,prompt-input,gesamt,prompt_json,24957,bytes,Dateigröße Ausgabe debug prompt-input
+codex,nachher,prompt-input,gesamt,prompt_gesamt_normiert,21986,zeichen,CODEX_HOME=/home/muhackel/.codex und cwd=/tmp/lazy-mess/work gleichgesetzt
+codex,nachher,prompt-input,gesamt,prompt_gesamt_normiert,5312,tokens,wie oben normiert
+codex,nachher,prompt-input,gesamt,skills_instructions,6579,zeichen,Block <skills_instructions>
+codex,nachher,prompt-input,gesamt,skills_instructions,1749,tokens,Block <skills_instructions>
+codex,nachher,prompt-input,gesamt,skills_instructions_normiert,6559,zeichen,Pfade gleichgesetzt
+codex,nachher,prompt-input,gesamt,skills_instructions_normiert,1745,tokens,Pfade gleichgesetzt
+codex,nachher,prompt-input,gesamt,katalog_eintraege,14,anzahl,inkl. 5 System-Skills
+codex,nachher,prompt-input,gesamt,katalog_eintraege_plugins,9,anzahl,6 Plugins muhackel-plugins
+codex,nachher,prompt-input,gesamt,plugin_eintraege,3796,zeichen,Summe Zeilen inkl. '- ' und Zeilenumbruch
+codex,nachher,prompt-input,gesamt,plugin_eintraege,1080,tokens,Summe isoliert kodierter Zeilen
+codex,nachher,prompt-input,gesamt,skill_roots,4,anzahl,Tabelle ### Skill roots
+codex,nachher,prompt-input,gesamt,skill_roots,347,zeichen,inkl. Zeilenumbruch
+codex,nachher,prompt-input,gesamt,skill_roots,130,tokens,
+codex,nachher,prompt-input,gesamt,rest_ausserhalb_skills,15469,zeichen,9 übrige input_text-Items
+codex,nachher,prompt-input,gesamt,rest_ausserhalb_skills,3585,tokens,9 übrige input_text-Items
+codex,nachher,prompt-input,builtin,eintraege,5,anzahl,skills/.system
+codex,nachher,prompt-input,builtin,eintraege,2083,zeichen,
+codex,nachher,prompt-input,builtin,eintraege,459,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintraege,5,anzahl,
+codex,nachher,prompt-input,bibliothekarin,eintraege,1618,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintraege,436,tokens,
+codex,nachher,prompt-input,bibliothekarin,skill_roots,225,zeichen,2 Roots
+codex,nachher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,413,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,113,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:mermaid,416,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:mermaid,116,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:plantuml,494,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:plantuml,125,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-karin,146,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-karin,41,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-vault,149,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-vault,41,tokens,
+codex,nachher,prompt-input,nixie,eintraege,1,anzahl,
+codex,nachher,prompt-input,nixie,eintraege,551,zeichen,
+codex,nachher,prompt-input,nixie,eintraege,160,tokens,
+codex,nachher,prompt-input,nixie,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,nixie,eintrag:source-command-nixie,551,zeichen,
+codex,nachher,prompt-input,nixie,eintrag:source-command-nixie,160,tokens,
+codex,nachher,prompt-input,bruce,eintraege,1,anzahl,
+codex,nachher,prompt-input,bruce,eintraege,571,zeichen,
+codex,nachher,prompt-input,bruce,eintraege,162,tokens,
+codex,nachher,prompt-input,bruce,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,bruce,eintrag:source-command-bruce,571,zeichen,
+codex,nachher,prompt-input,bruce,eintrag:source-command-bruce,162,tokens,
+codex,nachher,prompt-input,bertram,eintraege,1,anzahl,
+codex,nachher,prompt-input,bertram,eintraege,501,zeichen,
+codex,nachher,prompt-input,bertram,eintraege,158,tokens,
+codex,nachher,prompt-input,bertram,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,bertram,eintrag:source-command-bertram,501,zeichen,
+codex,nachher,prompt-input,bertram,eintrag:source-command-bertram,158,tokens,
+codex,nachher,prompt-input,christian,eintraege,1,anzahl,
+codex,nachher,prompt-input,christian,eintraege,555,zeichen,
+codex,nachher,prompt-input,christian,eintraege,164,tokens,
+codex,nachher,prompt-input,christian,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,christian,eintrag:source-command-christian,555,zeichen,
+codex,nachher,prompt-input,christian,eintrag:source-command-christian,164,tokens,
+codex,nachher,prompt-input,tools,eintraege,0,anzahl,0 sichtbar; 7 Skills im Cache mit allow_implicit_invocation false
+codex,nachher,prompt-input,tools,eintraege,0,zeichen,
+codex,nachher,prompt-input,tools,eintraege,0,tokens,
+codex,nachher,prompt-input,tools,skill_roots,0,zeichen,0 Roots
+codex,nachher,prompt-input,gesamt,skill_root_gemeinsam,69,zeichen,r1 = plugins/cache/muhackel-plugins für bertram/christian/it-grundschutz/nixie
+codex,differenz,prompt-input,gesamt,prompt_gesamt,-13219,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,prompt_gesamt,-3813,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,prompt_gesamt,-13361,bytes,nachher − vorher
+codex,differenz,prompt-input,gesamt,prompt_json,-13390,bytes,nachher − vorher
+codex,differenz,prompt-input,gesamt,prompt_gesamt_normiert,-13171,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,prompt_gesamt_normiert,-3806,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,skills_instructions,-13217,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,skills_instructions,-3813,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,skills_instructions_normiert,-13171,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,skills_instructions_normiert,-3806,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,katalog_eintraege,-23,anzahl,nachher − vorher
+codex,differenz,prompt-input,gesamt,katalog_eintraege_plugins,-23,anzahl,nachher − vorher
+codex,differenz,prompt-input,gesamt,plugin_eintraege,-12416,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,plugin_eintraege,-3514,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,skill_roots,-7,anzahl,nachher − vorher
+codex,differenz,prompt-input,gesamt,skill_roots,-801,zeichen,nachher − vorher
+codex,differenz,prompt-input,gesamt,skill_roots,-299,tokens,nachher − vorher
+codex,differenz,prompt-input,gesamt,rest_ausserhalb_skills,-2,zeichen,nachher − vorher; nur cwd-Pfad (mktemp-Name before/after je 2x)
+codex,differenz,prompt-input,gesamt,rest_ausserhalb_skills,0,tokens,nachher − vorher
+codex,differenz,prompt-input,bibliothekarin,eintraege,0,anzahl,nachher − vorher
+codex,differenz,prompt-input,bibliothekarin,eintraege,0,zeichen,nachher − vorher
+codex,differenz,prompt-input,bibliothekarin,eintraege,0,tokens,nachher − vorher
+codex,differenz,prompt-input,nixie,eintraege,-4,anzahl,nachher − vorher
+codex,differenz,prompt-input,nixie,eintraege,-1276,zeichen,nachher − vorher
+codex,differenz,prompt-input,nixie,eintraege,-363,tokens,nachher − vorher
+codex,differenz,prompt-input,bruce,eintraege,-8,anzahl,nachher − vorher
+codex,differenz,prompt-input,bruce,eintraege,-4553,zeichen,nachher − vorher
+codex,differenz,prompt-input,bruce,eintraege,-1223,tokens,nachher − vorher
+codex,differenz,prompt-input,bertram,eintraege,-5,anzahl,nachher − vorher
+codex,differenz,prompt-input,bertram,eintraege,-2279,zeichen,nachher − vorher
+codex,differenz,prompt-input,bertram,eintraege,-632,tokens,nachher − vorher
+codex,differenz,prompt-input,christian,eintraege,-6,anzahl,nachher − vorher
+codex,differenz,prompt-input,christian,eintraege,-4308,zeichen,nachher − vorher
+codex,differenz,prompt-input,christian,eintraege,-1296,tokens,nachher − vorher
+codex,differenz,prompt-input,tools,eintraege,0,anzahl,nachher − vorher
+codex,differenz,prompt-input,tools,eintraege,0,zeichen,nachher − vorher
+codex,differenz,prompt-input,tools,eintraege,0,tokens,nachher − vorher
+codex,vorher,prompt-input,gesamt,prompt_json_setup,38304,bytes,Setup-Lauf mit cwd /tmp/lazy-mess/work; anderer Lauf als prompt_json
+codex,nachher,prompt-input,gesamt,prompt_json_setup,24915,bytes,Setup-Lauf mit cwd /tmp/lazy-mess/work; anderer Lauf als prompt_json
+codex,vorher,prompt-input,gesamt,plugins_instructions,1014,zeichen,"Block <plugins_instructions>, listet keine Plugins"
+codex,vorher,prompt-input,gesamt,plugins_instructions,209,tokens,Block <plugins_instructions>
+codex,nachher,prompt-input,gesamt,plugins_instructions,1014,zeichen,"Block <plugins_instructions>, listet keine Plugins"
+codex,nachher,prompt-input,gesamt,plugins_instructions,209,tokens,Block <plugins_instructions>
+claude,vorher,dynamisch,bertram,spawn,1,bool,"Agent subagent_type=bertram:bertram, ohne model-Parameter; Lauf bertram-dyn-before"
+claude,vorher,dynamisch,bertram,spawn_prompt,697,zeichen,User-Text plus eigener Rahmen der Hauptsitzung
+claude,vorher,dynamisch,bertram,main_first,32922,tokens,input 2 + cache_creation 22937 + cache_read 9983
+claude,vorher,dynamisch,bertram,main_sum,71420,tokens,Spawn + Abschluss
+claude,vorher,dynamisch,bertram,main_n,2,requests,
+claude,vorher,dynamisch,bertram,sub_first,22845,tokens,input 2 + cache_creation 19533 + cache_read 3310; 5 Skills vorgeladen
+claude,vorher,dynamisch,bertram,sub_peak,49330,tokens,letzter Persona-Request
+claude,vorher,dynamisch,bertram,sub_sum,453857,tokens,"nur Persona-Requests (Opus), ohne Helfer"
+claude,vorher,dynamisch,bertram,sub_n,13,requests,Persona-Requests
+claude,vorher,dynamisch,bertram,helfer_n,12,requests,"Haiku, WebSearch 5 + WebFetch 7; Marker cc_is_subagent=true ohne Persona"
+claude,vorher,dynamisch,bertram,helfer_sum,264718,tokens,
+claude,vorher,dynamisch,bertram,sub_sum_inkl_helfer,718575,tokens,"sub_sum + helfer_sum, Summe der Einzelwerte, bei Berichtserstellung berechnet"
+claude,vorher,dynamisch,bertram,klassifikator_n,12,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,vorher,dynamisch,bertram,klassifikator_sum,571748,tokens,nicht in total_cost_usd
+claude,vorher,dynamisch,bertram,output_main,2767,tokens,
+claude,vorher,dynamisch,bertram,output_sub,12054,tokens,
+claude,vorher,dynamisch,bertram,output_helfer,5734,tokens,
+claude,vorher,dynamisch,bertram,output_klassifikator,108,tokens,
+claude,vorher,dynamisch,bertram,output_sum,20555,tokens,"Haupt + Persona + Helfer ohne Klassifikator, Summe der Einzelwerte, bei Berichtserstellung berechnet; Bericht nennt 20663 inkl. Klassifikator"
+claude,vorher,dynamisch,bertram,cost_usd,1.5121635,usd,1 result-Event; Opus 1.1687755 + Haiku 0.343388; ohne Sonnet-Klassifikator
+claude,vorher,dynamisch,bertram,duration_s,218.4,s,result.duration_ms
+claude,vorher,dynamisch,bertram,wandzeit_s,220.7,s,
+claude,vorher,dynamisch,bertram,files_read,0,dateien,keine Read-Aufrufe
+claude,vorher,dynamisch,bertram,skills_vorgeladen,5,anzahl,net-reference 3386; net-diagnose 5616; net-config 3964; net-operate 4030; net-design 4988 Zeichen
+claude,vorher,dynamisch,bertram,skills_vorgeladen_zeichen,21984,zeichen,"Summe der Einzelwerte, bei Berichtserstellung berechnet"
+claude,vorher,dynamisch,bertram,persona_systemprompt,8230,zeichen,
+claude,vorher,dynamisch,bertram,liste_skills_agenten,34561,zeichen,System-Message mit Skill- und Agentenliste im ersten Hauptrequest
+claude,vorher,dynamisch,bertram,command_text,1557,zeichen,expandierter Persona-Command im ersten Hauptrequest
+claude,vorher,dynamisch,bertram,tool_aufrufe_persona,15,anzahl,"WebSearch 5, WebFetch 7, Bash 3; ohne SubagentHandback, aus stream-json nachgezählt"
+claude,vorher,dynamisch,bertram,watchdog_befunde,0,anzahl,
+claude,nachher,dynamisch,bertram,spawn,1,bool,"Agent subagent_type=bertram:bertram, ohne model-Parameter; gewerteter Lauf bertram-dyn-after2"
+claude,nachher,dynamisch,bertram,spawn_prompt,225,zeichen,User-Text wörtlich plus eine Zeile Einschränkung
+claude,nachher,dynamisch,bertram,main_first,25203,tokens,input 2 + cache_creation 13556 + cache_read 11645
+claude,nachher,dynamisch,bertram,main_sum,53745,tokens,Spawn + Abschluss
+claude,nachher,dynamisch,bertram,main_n,2,requests,
+claude,nachher,dynamisch,bertram,sub_first,12159,tokens,input 2 + cache_creation 3927 + cache_read 8230; keine Skills vorgeladen
+claude,nachher,dynamisch,bertram,sub_peak,31319,tokens,letzter Persona-Request
+claude,nachher,dynamisch,bertram,sub_sum,178485,tokens,"nur Persona-Requests (Opus), ohne Helfer"
+claude,nachher,dynamisch,bertram,sub_n,8,requests,Persona-Requests
+claude,nachher,dynamisch,bertram,helfer_n,2,requests,"Haiku, WebSearch 1 + WebFetch 1"
+claude,nachher,dynamisch,bertram,helfer_sum,40604,tokens,
+claude,nachher,dynamisch,bertram,sub_sum_inkl_helfer,219089,tokens,"sub_sum + helfer_sum, Summe der Einzelwerte, bei Berichtserstellung berechnet"
+claude,nachher,dynamisch,bertram,klassifikator_n,6,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,nachher,dynamisch,bertram,klassifikator_sum,280644,tokens,nicht in total_cost_usd
+claude,nachher,dynamisch,bertram,output_main,2132,tokens,
+claude,nachher,dynamisch,bertram,output_sub,8690,tokens,
+claude,nachher,dynamisch,bertram,output_helfer,672,tokens,
+claude,nachher,dynamisch,bertram,output_klassifikator,54,tokens,
+claude,nachher,dynamisch,bertram,output_sum,11494,tokens,"Haupt + Persona + Helfer ohne Klassifikator, Summe der Einzelwerte, bei Berichtserstellung berechnet; Bericht nennt 11548 inkl. Klassifikator"
+claude,nachher,dynamisch,bertram,cost_usd,0.73397175,usd,1 result-Event; Opus 0.68000775 + Haiku 0.053964; ohne Sonnet-Klassifikator
+claude,nachher,dynamisch,bertram,duration_s,116.7,s,result.duration_ms
+claude,nachher,dynamisch,bertram,wandzeit_s,119.1,s,
+claude,nachher,dynamisch,bertram,files_read,2,dateien,"skills/net-diagnose/SKILL.md; skills/net-reference/SKILL.md (Reihenfolge, erster Persona-Turn)"
+claude,nachher,dynamisch,bertram,skills_vorgeladen,0,anzahl,keine
+claude,nachher,dynamisch,bertram,skills_vorgeladen_zeichen,0,zeichen,
+claude,nachher,dynamisch,bertram,persona_systemprompt,10251,zeichen,
+claude,nachher,dynamisch,bertram,liste_skills_agenten,18790,zeichen,System-Message mit Skill- und Agentenliste im ersten Hauptrequest
+claude,nachher,dynamisch,bertram,command_text,2813,zeichen,expandierter Persona-Command im ersten Hauptrequest
+claude,nachher,dynamisch,bertram,tool_aufrufe_persona,7,anzahl,"Read 2, WebSearch 1, WebFetch 1, Bash 3; ohne SubagentHandback, aus stream-json nachgezählt; Bericht nennt 8 (dort inkl. SubagentHandback)"
+claude,nachher,dynamisch,bertram,watchdog_befunde,0,anzahl,mit privater Watchdog-Kopie (Umleitungen nur außerhalb von Quotes)
+claude,nachher,dynamisch,bertram,main_first_lauf1,25203,tokens,"abgebrochener Lauf bertram-dyn-after, nicht gewertet"
+claude,nachher,dynamisch,bertram,sub_first_lauf1,12163,tokens,"abgebrochener Lauf bertram-dyn-after, nicht gewertet"
+claude,nachher,dynamisch,bertram,sub_n_lauf1,4,requests,bis zum Abbruch nach 35.9 s
+claude,nachher,dynamisch,bertram,watchdog_befunde_lauf1,1,anzahl,"Fehlalarm: sed-Ausdruck 's/<[^>]*>//g' als Umleitung erkannt, Kill"
+claude,differenz,dynamisch,bertram,spawn_prompt,-472,zeichen,nachher − vorher; -67.7 %
+claude,differenz,dynamisch,bertram,main_first,-7719,tokens,nachher − vorher; -23.4 %
+claude,differenz,dynamisch,bertram,main_sum,-17675,tokens,nachher − vorher; -24.7 %
+claude,differenz,dynamisch,bertram,main_n,0,requests,nachher − vorher
+claude,differenz,dynamisch,bertram,sub_first,-10686,tokens,nachher − vorher; -46.8 %
+claude,differenz,dynamisch,bertram,sub_peak,-18011,tokens,nachher − vorher; -36.5 %
+claude,differenz,dynamisch,bertram,sub_sum,-275372,tokens,nachher − vorher; -60.7 %
+claude,differenz,dynamisch,bertram,sub_n,-5,requests,nachher − vorher
+claude,differenz,dynamisch,bertram,helfer_n,-10,requests,nachher − vorher
+claude,differenz,dynamisch,bertram,helfer_sum,-224114,tokens,nachher − vorher; -84.7 %
+claude,differenz,dynamisch,bertram,sub_sum_inkl_helfer,-499486,tokens,nachher − vorher; -69.5 %
+claude,differenz,dynamisch,bertram,klassifikator_n,-6,requests,nachher − vorher
+claude,differenz,dynamisch,bertram,klassifikator_sum,-291104,tokens,nachher − vorher; -50.9 %
+claude,differenz,dynamisch,bertram,output_main,-635,tokens,nachher − vorher; -22.9 %
+claude,differenz,dynamisch,bertram,output_sub,-3364,tokens,nachher − vorher; -27.9 %
+claude,differenz,dynamisch,bertram,output_helfer,-5062,tokens,nachher − vorher; -88.3 %
+claude,differenz,dynamisch,bertram,output_klassifikator,-54,tokens,nachher − vorher; -50.0 %
+claude,differenz,dynamisch,bertram,output_sum,-9061,tokens,nachher − vorher; -44.1 %
+claude,differenz,dynamisch,bertram,cost_usd,-0.77819175,usd,nachher − vorher; -51.5 %
+claude,differenz,dynamisch,bertram,duration_s,-101.7,s,nachher − vorher; -46.6 %
+claude,differenz,dynamisch,bertram,wandzeit_s,-101.6,s,nachher − vorher; -46.0 %
+claude,differenz,dynamisch,bertram,files_read,2,dateien,nachher − vorher
+claude,differenz,dynamisch,bertram,skills_vorgeladen,-5,anzahl,nachher − vorher
+claude,differenz,dynamisch,bertram,skills_vorgeladen_zeichen,-21984,zeichen,nachher − vorher; -100.0 %
+claude,differenz,dynamisch,bertram,persona_systemprompt,2021,zeichen,nachher − vorher; +24.6 %
+claude,differenz,dynamisch,bertram,liste_skills_agenten,-15771,zeichen,nachher − vorher; -45.6 %
+claude,differenz,dynamisch,bertram,command_text,1256,zeichen,nachher − vorher; +80.7 %
+claude,differenz,dynamisch,bertram,tool_aufrufe_persona,-8,anzahl,nachher − vorher
+claude,differenz,dynamisch,bertram,watchdog_befunde,0,anzahl,nachher − vorher
+claude,vorher,dynamisch,christian,spawn,1,bool,"Agent subagent_type=christian:christian, model opus explizit; Lauf dyn-christian-claude-before"
+claude,vorher,dynamisch,christian,spawn_prompt,1548,zeichen,User-Text plus eigener Rahmen der Hauptsitzung
+claude,vorher,dynamisch,christian,main_first,32817,tokens,input 2 + cache_creation 21367 + cache_read 11448
+claude,vorher,dynamisch,christian,main_sum,75726,tokens,Spawn + Abschluss
+claude,vorher,dynamisch,christian,main_n,2,requests,
+claude,vorher,dynamisch,christian,sub_first,44379,tokens,6 Skills vorgeladen
+claude,vorher,dynamisch,christian,sub_peak,78600,tokens,letzter Persona-Request
+claude,vorher,dynamisch,christian,sub_sum,663590,tokens,"nur Persona-Requests, ohne WebFetch-Helfer"
+claude,vorher,dynamisch,christian,sub_n,11,requests,ohne 7 WebFetch-Helfer
+claude,vorher,dynamisch,christian,helfer_n,7,requests,WebFetch-Helfer (Marker ohne Persona); laut modelUsage claude-opus-5
+claude,vorher,dynamisch,christian,helfer_sum,64288,tokens,
+claude,vorher,dynamisch,christian,sub_sum_inkl_helfer,727878,tokens,
+claude,vorher,dynamisch,christian,klassifikator_n,12,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,vorher,dynamisch,christian,klassifikator_sum,581988,tokens,nicht in total_cost_usd
+claude,vorher,dynamisch,christian,output_main,3707,tokens,
+claude,vorher,dynamisch,christian,output_sub,22204,tokens,
+claude,vorher,dynamisch,christian,output_helfer,6666,tokens,
+claude,vorher,dynamisch,christian,output_klassifikator,108,tokens,
+claude,vorher,dynamisch,christian,output_sum,32577,tokens,"Haupt + Persona + Helfer ohne Klassifikator, Summe der Einzelwerte, bei Berichtserstellung berechnet; Bericht nennt 32685 inkl. Klassifikator"
+claude,vorher,dynamisch,christian,alle_requests_n,32,requests,alle messages-Requests inkl. Klassifikator
+claude,vorher,dynamisch,christian,alle_requests_sum,1385592,tokens,
+claude,vorher,dynamisch,christian,cost_usd,2.2374065,usd,"1 result-Event; nur Opus (Haupt, Persona, WebFetch); Klassifikator nicht enthalten"
+claude,vorher,dynamisch,christian,duration_s,402.595,s,result.duration_ms; parallel zum Nachher-Lauf
+claude,vorher,dynamisch,christian,wandzeit_s,404.5,s,
+claude,vorher,dynamisch,christian,files_read,0,dateien,keine Plugin-Reads
+claude,vorher,dynamisch,christian,skills_vorgeladen,6,anzahl,vpn-reference; openvpn; vpn-tunnel; router-appliance; bsd-firewall; wan-link
+claude,vorher,dynamisch,christian,skills_vorgeladen_zeichen,n/a,zeichen,"Bericht nennt nur etwa 59,4k Zeichen"
+claude,vorher,dynamisch,christian,liste_skills_agenten,34950,zeichen,System-Message mit Skill- und Agentenliste im ersten Hauptrequest
+claude,vorher,dynamisch,christian,command_text,1741,zeichen,expandierter /christian-Command
+claude,vorher,dynamisch,christian,hook_aufrufe,20,anzahl,"PreToolUse-Hook, 0 Blocks"
+claude,vorher,dynamisch,christian,watchdog_befunde,0,anzahl,
+claude,nachher,dynamisch,christian,spawn,1,bool,"Agent subagent_type=christian:christian, ohne model-Parameter; Lauf dyn-christian-claude-after"
+claude,nachher,dynamisch,christian,spawn_prompt,375,zeichen,User-Text plus Einschränkungen
+claude,nachher,dynamisch,christian,main_first,25090,tokens,input 2 + cache_creation 13640 + cache_read 11448
+claude,nachher,dynamisch,christian,main_sum,57542,tokens,Spawn + Abschluss
+claude,nachher,dynamisch,christian,main_n,2,requests,
+claude,nachher,dynamisch,christian,sub_first,14250,tokens,keine Skills vorgeladen
+claude,nachher,dynamisch,christian,sub_peak,58645,tokens,letzter Persona-Request
+claude,nachher,dynamisch,christian,sub_sum,400978,tokens,"nur Persona-Requests, ohne WebFetch-Helfer"
+claude,nachher,dynamisch,christian,sub_n,10,requests,ohne 5 WebFetch-Helfer
+claude,nachher,dynamisch,christian,helfer_n,5,requests,WebFetch-Helfer (Marker ohne Persona); laut modelUsage claude-opus-5
+claude,nachher,dynamisch,christian,helfer_sum,25975,tokens,
+claude,nachher,dynamisch,christian,sub_sum_inkl_helfer,426953,tokens,
+claude,nachher,dynamisch,christian,klassifikator_n,11,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,nachher,dynamisch,christian,klassifikator_sum,518678,tokens,nicht in total_cost_usd
+claude,nachher,dynamisch,christian,output_main,3002,tokens,
+claude,nachher,dynamisch,christian,output_sub,14053,tokens,
+claude,nachher,dynamisch,christian,output_helfer,4004,tokens,
+claude,nachher,dynamisch,christian,output_klassifikator,99,tokens,
+claude,nachher,dynamisch,christian,output_sum,21059,tokens,"Haupt + Persona + Helfer ohne Klassifikator, Summe der Einzelwerte, bei Berichtserstellung berechnet; Bericht nennt 21158 inkl. Klassifikator"
+claude,nachher,dynamisch,christian,alle_requests_n,28,requests,alle messages-Requests inkl. Klassifikator
+claude,nachher,dynamisch,christian,alle_requests_sum,1003173,tokens,
+claude,nachher,dynamisch,christian,cost_usd,1.40340175,usd,1 result-Event; nur Opus; Klassifikator nicht enthalten; cache-abhängig
+claude,nachher,dynamisch,christian,duration_s,272.250,s,result.duration_ms; parallel zum Vorher-Lauf
+claude,nachher,dynamisch,christian,wandzeit_s,274.1,s,
+claude,nachher,dynamisch,christian,files_read,4,dateien,"skills/vpn-reference, vpn-tunnel, wan-link, router-appliance (je SKILL.md, in dieser Reihenfolge)"
+claude,nachher,dynamisch,christian,skills_vorgeladen,0,anzahl,keine
+claude,nachher,dynamisch,christian,liste_skills_agenten,18969,zeichen,System-Message mit Skill- und Agentenliste im ersten Hauptrequest
+claude,nachher,dynamisch,christian,command_text,3009,zeichen,expandierter /christian-Command
+claude,nachher,dynamisch,christian,hook_aufrufe,16,anzahl,"PreToolUse-Hook, 0 Blocks"
+claude,nachher,dynamisch,christian,watchdog_befunde,0,anzahl,
+claude,differenz,dynamisch,christian,spawn_prompt,-1173,zeichen,nachher − vorher; -75.8 %
+claude,differenz,dynamisch,christian,main_first,-7727,tokens,nachher − vorher; -23.5 %
+claude,differenz,dynamisch,christian,main_sum,-18184,tokens,nachher − vorher; -24.0 %
+claude,differenz,dynamisch,christian,main_n,0,requests,nachher − vorher
+claude,differenz,dynamisch,christian,sub_first,-30129,tokens,nachher − vorher; -67.9 %
+claude,differenz,dynamisch,christian,sub_peak,-19955,tokens,nachher − vorher; -25.4 %
+claude,differenz,dynamisch,christian,sub_sum,-262612,tokens,nachher − vorher; -39.6 %
+claude,differenz,dynamisch,christian,sub_n,-1,requests,nachher − vorher
+claude,differenz,dynamisch,christian,helfer_n,-2,requests,nachher − vorher
+claude,differenz,dynamisch,christian,helfer_sum,-38313,tokens,nachher − vorher; -59.6 %
+claude,differenz,dynamisch,christian,sub_sum_inkl_helfer,-300925,tokens,nachher − vorher; -41.3 %
+claude,differenz,dynamisch,christian,klassifikator_n,-1,requests,nachher − vorher
+claude,differenz,dynamisch,christian,klassifikator_sum,-63310,tokens,nachher − vorher; -10.9 %
+claude,differenz,dynamisch,christian,output_main,-705,tokens,nachher − vorher; -19.0 %
+claude,differenz,dynamisch,christian,output_sub,-8151,tokens,nachher − vorher; -36.7 %
+claude,differenz,dynamisch,christian,output_helfer,-2662,tokens,nachher − vorher; -39.9 %
+claude,differenz,dynamisch,christian,output_klassifikator,-9,tokens,nachher − vorher; -8.3 %
+claude,differenz,dynamisch,christian,output_sum,-11518,tokens,nachher − vorher; -35.4 %
+claude,differenz,dynamisch,christian,alle_requests_n,-4,requests,nachher − vorher
+claude,differenz,dynamisch,christian,alle_requests_sum,-382419,tokens,nachher − vorher; -27.6 %
+claude,differenz,dynamisch,christian,cost_usd,-0.83400475,usd,nachher − vorher; -37.3 %
+claude,differenz,dynamisch,christian,duration_s,-130.345,s,nachher − vorher; -32.4 %
+claude,differenz,dynamisch,christian,wandzeit_s,-130.4,s,nachher − vorher; -32.2 %
+claude,differenz,dynamisch,christian,files_read,4,dateien,nachher − vorher
+claude,differenz,dynamisch,christian,skills_vorgeladen,-6,anzahl,nachher − vorher
+claude,differenz,dynamisch,christian,liste_skills_agenten,-15981,zeichen,nachher − vorher; -45.7 %
+claude,differenz,dynamisch,christian,command_text,1268,zeichen,nachher − vorher; +72.8 %
+claude,differenz,dynamisch,christian,hook_aufrufe,-4,anzahl,nachher − vorher
+claude,differenz,dynamisch,christian,watchdog_befunde,0,anzahl,nachher − vorher
+claude,vorher,dynamisch,bruce,spawn,1,bool,"Agent subagent_type=it-grundschutz:bruce, Vordergrund, ohne Modell-Override; Lauf bruce-dyn-before"
+claude,vorher,dynamisch,bruce,spawn_prompt,751,zeichen,User-Text plus eigener Rahmen der Hauptsitzung
+claude,vorher,dynamisch,bruce,main_first,32579,tokens,input 2 + cache_creation 32577 + cache_read 0
+claude,vorher,dynamisch,bruce,main_sum,68776,tokens,Spawn + Abschluss
+claude,vorher,dynamisch,bruce,main_n,2,requests,
+claude,vorher,dynamisch,bruce,sub_first,35393,tokens,8 Skills vorgeladen
+claude,vorher,dynamisch,bruce,sub_peak,47769,tokens,letzter Persona-Request
+claude,vorher,dynamisch,bruce,sub_sum,329306,tokens,
+claude,vorher,dynamisch,bruce,sub_n,8,requests,
+claude,vorher,dynamisch,bruce,helfer_n,0,requests,keine; Haupt + Persona entspricht exakt modelUsage
+claude,vorher,dynamisch,bruce,helfer_sum,0,tokens,
+claude,vorher,dynamisch,bruce,klassifikator_n,9,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,vorher,dynamisch,bruce,klassifikator_sum,420361,tokens,nicht in total_cost_usd
+claude,vorher,dynamisch,bruce,output_main,1947,tokens,
+claude,vorher,dynamisch,bruce,output_sub,4996,tokens,
+claude,vorher,dynamisch,bruce,output_helfer,0,tokens,
+claude,vorher,dynamisch,bruce,output_klassifikator,81,tokens,
+claude,vorher,dynamisch,bruce,output_sum,6943,tokens,"Haupt + Persona, ohne Klassifikator"
+claude,vorher,dynamisch,bruce,cost_usd,0.99121875,usd,"1 result-Event; nur claude-opus-5, Klassifikator nicht enthalten"
+claude,vorher,dynamisch,bruce,duration_s,104.914,s,result.duration_ms
+claude,vorher,dynamisch,bruce,wandzeit_s,107,s,
+claude,vorher,dynamisch,bruce,files_read,0,dateien,keine Read-Aufrufe unter dem Plugin-Root
+claude,vorher,dynamisch,bruce,skills_vorgeladen,8,anzahl,gs-ingest 5157; gs-lookup 3201; gs-crosswalk 6787; gs-modellierung 6588; gs-dokument 3192; gs-review 8181; gs-cache 4648; gs-krypto 7654 Zeichen
+claude,vorher,dynamisch,bruce,skills_vorgeladen_zeichen,45408,zeichen,
+claude,vorher,dynamisch,bruce,liste_skills_agenten,34598,zeichen,"System-Message mit Environment, Skill- und Agentenliste im ersten Hauptrequest"
+claude,vorher,dynamisch,bruce,skill_liste_eintraege,43,anzahl,Einträge der Skill-Liste im ersten Hauptrequest
+claude,vorher,dynamisch,bruce,command_text,1398,zeichen,expandierter /bruce-Command
+claude,vorher,dynamisch,bruce,hook_aufrufe,11,anzahl,"Agent 1, Bash 9, SubagentHandback 1; 0 Blocks"
+claude,vorher,dynamisch,bruce,watchdog_befunde,0,anzahl,
+claude,nachher,dynamisch,bruce,spawn,1,bool,"Agent subagent_type=it-grundschutz:bruce, Vordergrund, ohne Modell-Override; Lauf bruce-dyn-after"
+claude,nachher,dynamisch,bruce,spawn_prompt,n/a,zeichen,nicht gezählt; Spawn-Prompt ist der User-Text wörtlich
+claude,nachher,dynamisch,bruce,main_first,24997,tokens,input 2 + cache_creation 13547 + cache_read 11448
+claude,nachher,dynamisch,bruce,main_sum,53063,tokens,Spawn + Abschluss
+claude,nachher,dynamisch,bruce,main_n,2,requests,
+claude,nachher,dynamisch,bruce,sub_first,12962,tokens,keine Skills vorgeladen
+claude,nachher,dynamisch,bruce,sub_peak,28299,tokens,letzter Persona-Request
+claude,nachher,dynamisch,bruce,sub_sum,205461,tokens,
+claude,nachher,dynamisch,bruce,sub_n,10,requests,"Confounder: gs-Aufruf vom Klassifikator abgelehnt, Fallback auf direktes Lesen"
+claude,nachher,dynamisch,bruce,helfer_n,0,requests,keine; Haupt + Persona entspricht exakt modelUsage
+claude,nachher,dynamisch,bruce,helfer_sum,0,tokens,
+claude,nachher,dynamisch,bruce,klassifikator_n,8,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,nachher,dynamisch,bruce,klassifikator_sum,368919,tokens,nicht in total_cost_usd
+claude,nachher,dynamisch,bruce,output_main,2165,tokens,
+claude,nachher,dynamisch,bruce,output_sub,4183,tokens,
+claude,nachher,dynamisch,bruce,output_helfer,0,tokens,
+claude,nachher,dynamisch,bruce,output_klassifikator,1356,tokens,davon 1293 im ablehnenden Request
+claude,nachher,dynamisch,bruce,output_sum,6348,tokens,"Haupt + Persona, ohne Klassifikator"
+claude,nachher,dynamisch,bruce,cost_usd,0.58959725,usd,"1 result-Event; nur claude-opus-5, Klassifikator nicht enthalten"
+claude,nachher,dynamisch,bruce,duration_s,116.050,s,result.duration_ms
+claude,nachher,dynamisch,bruce,wandzeit_s,118,s,
+claude,nachher,dynamisch,bruce,files_read,1,dateien,"skills/gs-lookup/SKILL.md; dazu Korpus-Dateien catalog.json, methodik-catalog.json, manifest.json per Read"
+claude,nachher,dynamisch,bruce,skills_vorgeladen,0,anzahl,keine
+claude,nachher,dynamisch,bruce,skills_vorgeladen_zeichen,0,zeichen,
+claude,nachher,dynamisch,bruce,liste_skills_agenten,18826,zeichen,"System-Message mit Environment, Skill- und Agentenliste im ersten Hauptrequest"
+claude,nachher,dynamisch,bruce,skill_liste_eintraege,16,anzahl,Einträge der Skill-Liste im ersten Hauptrequest
+claude,nachher,dynamisch,bruce,command_text,2907,zeichen,expandierter /bruce-Command
+claude,nachher,dynamisch,bruce,hook_aufrufe,11,anzahl,"Agent 1, Bash 5, Read 4, SubagentHandback 1; 0 Blocks; der abgelehnte Bash-Aufruf erreichte den Hook nicht"
+claude,nachher,dynamisch,bruce,watchdog_befunde,0,anzahl,
+claude,differenz,dynamisch,bruce,spawn_prompt,n/a,zeichen,ein Zustand ohne Wert
+claude,differenz,dynamisch,bruce,main_first,-7582,tokens,nachher − vorher; -23.3 %
+claude,differenz,dynamisch,bruce,main_sum,-15713,tokens,nachher − vorher; -22.8 %
+claude,differenz,dynamisch,bruce,main_n,0,requests,nachher − vorher
+claude,differenz,dynamisch,bruce,sub_first,-22431,tokens,nachher − vorher; -63.4 %
+claude,differenz,dynamisch,bruce,sub_peak,-19470,tokens,nachher − vorher; -40.8 %
+claude,differenz,dynamisch,bruce,sub_sum,-123845,tokens,nachher − vorher; -37.6 %
+claude,differenz,dynamisch,bruce,sub_n,2,requests,nachher − vorher
+claude,differenz,dynamisch,bruce,helfer_n,0,requests,nachher − vorher
+claude,differenz,dynamisch,bruce,helfer_sum,0,tokens,nachher − vorher
+claude,differenz,dynamisch,bruce,klassifikator_n,-1,requests,nachher − vorher
+claude,differenz,dynamisch,bruce,klassifikator_sum,-51442,tokens,nachher − vorher; -12.2 %
+claude,differenz,dynamisch,bruce,output_main,218,tokens,nachher − vorher; +11.2 %
+claude,differenz,dynamisch,bruce,output_sub,-813,tokens,nachher − vorher; -16.3 %
+claude,differenz,dynamisch,bruce,output_helfer,0,tokens,nachher − vorher
+claude,differenz,dynamisch,bruce,output_klassifikator,1275,tokens,nachher − vorher; +1574.1 %
+claude,differenz,dynamisch,bruce,output_sum,-595,tokens,nachher − vorher; -8.6 %
+claude,differenz,dynamisch,bruce,cost_usd,-0.4016215,usd,nachher − vorher; -40.5 %
+claude,differenz,dynamisch,bruce,duration_s,11.136,s,nachher − vorher; +10.6 %
+claude,differenz,dynamisch,bruce,wandzeit_s,11,s,nachher − vorher; +10.3 %
+claude,differenz,dynamisch,bruce,files_read,1,dateien,nachher − vorher
+claude,differenz,dynamisch,bruce,skills_vorgeladen,-8,anzahl,nachher − vorher
+claude,differenz,dynamisch,bruce,skills_vorgeladen_zeichen,-45408,zeichen,nachher − vorher; -100.0 %
+claude,differenz,dynamisch,bruce,liste_skills_agenten,-15772,zeichen,nachher − vorher; -45.6 %
+claude,differenz,dynamisch,bruce,skill_liste_eintraege,-27,anzahl,nachher − vorher
+claude,differenz,dynamisch,bruce,command_text,1509,zeichen,nachher − vorher; +107.9 %
+claude,differenz,dynamisch,bruce,hook_aufrufe,0,anzahl,nachher − vorher
+claude,differenz,dynamisch,bruce,watchdog_befunde,0,anzahl,nachher − vorher
+claude,vorher,dynamisch,nixie,spawn,1,bool,"Agent subagent_type=nixie:nixie, Vordergrund; Lauf nixie-dyn-before"
+claude,vorher,dynamisch,nixie,spawn_prompt,n/a,zeichen,nicht gezählt; User-Text plus eigener Block Rahmen mit 6 Punkten
+claude,vorher,dynamisch,nixie,main_first,32525,tokens,cache_creation 32523 / cache_read 0
+claude,vorher,dynamisch,nixie,main_sum,68963,tokens,2 Hauptsitzungs-Requests
+claude,vorher,dynamisch,nixie,main_n,2,requests,
+claude,vorher,dynamisch,nixie,sub_first,26916,tokens,4 Skills vorgeladen; cache_read 0
+claude,vorher,dynamisch,nixie,sub_peak,42350,tokens,letzter Persona-Request
+claude,vorher,dynamisch,nixie,sub_sum,279655,tokens,"nur Persona-Requests (Opus), ohne Haiku-Helfer"
+claude,vorher,dynamisch,nixie,sub_n,8,requests,
+claude,vorher,dynamisch,nixie,helfer_n,4,requests,"Haiku 4.5, WebFetch-Auswertung, Marker ohne Persona"
+claude,vorher,dynamisch,nixie,helfer_sum,57491,tokens,
+claude,vorher,dynamisch,nixie,sub_sum_inkl_helfer,337146,tokens,
+claude,vorher,dynamisch,nixie,klassifikator_n,8,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,vorher,dynamisch,nixie,klassifikator_sum,377242,tokens,davon cache_read 371062; nicht in total_cost_usd
+claude,vorher,dynamisch,nixie,output_main,2751,tokens,
+claude,vorher,dynamisch,nixie,output_sub,8464,tokens,
+claude,vorher,dynamisch,nixie,output_helfer,1822,tokens,
+claude,vorher,dynamisch,nixie,output_klassifikator,72,tokens,
+claude,vorher,dynamisch,nixie,output_sum,13037,tokens,"Haupt + Persona + Helfer, ohne Klassifikator"
+claude,vorher,dynamisch,nixie,cost_usd,1.111018,usd,1 result-Event; ohne Sonnet-Klassifikator
+claude,vorher,dynamisch,nixie,duration_s,135.1,s,duration_ms 135123
+claude,vorher,dynamisch,nixie,wandzeit_s,137.1,s,
+claude,vorher,dynamisch,nixie,files_read,0,dateien,keine Reads unter dem Plugin-Root
+claude,vorher,dynamisch,nixie,skills_vorgeladen,4,anzahl,nixos-config 4553; nix-packaging 2847; nix-deploy 20398; nix-docs 2508 Zeichen
+claude,vorher,dynamisch,nixie,skills_vorgeladen_zeichen,30306,zeichen,"Summe der Einzelwerte, bei Berichtserstellung berechnet"
+claude,vorher,dynamisch,nixie,watchdog_befunde,0,anzahl,
+claude,nachher,dynamisch,nixie,spawn,1,bool,"Agent subagent_type=nixie:nixie, Vordergrund; Lauf nixie-dyn-after"
+claude,nachher,dynamisch,nixie,spawn_prompt,n/a,zeichen,nicht gezählt; Spawn-Prompt ist der User-Text wörtlich
+claude,nachher,dynamisch,nixie,main_first,25039,tokens,cache_creation 13590 / cache_read 11447
+claude,nachher,dynamisch,nixie,main_sum,53451,tokens,2 Hauptsitzungs-Requests
+claude,nachher,dynamisch,nixie,main_n,2,requests,
+claude,nachher,dynamisch,nixie,sub_first,12597,tokens,keine Skills vorgeladen; cache_read 3310
+claude,nachher,dynamisch,nixie,sub_peak,54766,tokens,letzter Persona-Request
+claude,nachher,dynamisch,nixie,sub_sum,314417,tokens,nur Persona-Requests (Opus)
+claude,nachher,dynamisch,nixie,sub_n,9,requests,
+claude,nachher,dynamisch,nixie,helfer_n,0,requests,kein WebFetch
+claude,nachher,dynamisch,nixie,helfer_sum,0,tokens,
+claude,nachher,dynamisch,nixie,sub_sum_inkl_helfer,314417,tokens,
+claude,nachher,dynamisch,nixie,klassifikator_n,9,requests,Auto-Mode-Klassifikator claude-sonnet-5
+claude,nachher,dynamisch,nixie,klassifikator_sum,418858,tokens,davon cache_read 413998; nicht in total_cost_usd
+claude,nachher,dynamisch,nixie,output_main,2146,tokens,
+claude,nachher,dynamisch,nixie,output_sub,5634,tokens,
+claude,nachher,dynamisch,nixie,output_helfer,0,tokens,
+claude,nachher,dynamisch,nixie,output_klassifikator,2203,tokens,
+claude,nachher,dynamisch,nixie,output_sum,7780,tokens,"Haupt + Persona, ohne Klassifikator"
+claude,nachher,dynamisch,nixie,cost_usd,0.835542,usd,1 result-Event; ohne Sonnet-Klassifikator
+claude,nachher,dynamisch,nixie,duration_s,129.0,s,duration_ms 128991
+claude,nachher,dynamisch,nixie,wandzeit_s,130.9,s,
+claude,nachher,dynamisch,nixie,files_read,3,dateien,skills/nix-packaging/SKILL.md > skills/nix-docs/SKILL.md > skills/nix-deploy/SKILL.md
+claude,nachher,dynamisch,nixie,skills_vorgeladen,0,anzahl,keine
+claude,nachher,dynamisch,nixie,skills_vorgeladen_zeichen,0,zeichen,
+claude,nachher,dynamisch,nixie,watchdog_befunde,0,anzahl,
+claude,differenz,dynamisch,nixie,spawn_prompt,n/a,zeichen,ein Zustand ohne Wert
+claude,differenz,dynamisch,nixie,main_first,-7486,tokens,nachher − vorher; -23.0 %
+claude,differenz,dynamisch,nixie,main_sum,-15512,tokens,nachher − vorher; -22.5 %
+claude,differenz,dynamisch,nixie,main_n,0,requests,nachher − vorher
+claude,differenz,dynamisch,nixie,sub_first,-14319,tokens,nachher − vorher; -53.2 %
+claude,differenz,dynamisch,nixie,sub_peak,12416,tokens,nachher − vorher; +29.3 %
+claude,differenz,dynamisch,nixie,sub_sum,34762,tokens,nachher − vorher; +12.4 %
+claude,differenz,dynamisch,nixie,sub_n,1,requests,nachher − vorher
+claude,differenz,dynamisch,nixie,helfer_n,-4,requests,nachher − vorher
+claude,differenz,dynamisch,nixie,helfer_sum,-57491,tokens,nachher − vorher; -100.0 %
+claude,differenz,dynamisch,nixie,sub_sum_inkl_helfer,-22729,tokens,nachher − vorher; -6.7 %
+claude,differenz,dynamisch,nixie,klassifikator_n,1,requests,nachher − vorher
+claude,differenz,dynamisch,nixie,klassifikator_sum,41616,tokens,nachher − vorher; +11.0 %
+claude,differenz,dynamisch,nixie,output_main,-605,tokens,nachher − vorher; -22.0 %
+claude,differenz,dynamisch,nixie,output_sub,-2830,tokens,nachher − vorher; -33.4 %
+claude,differenz,dynamisch,nixie,output_helfer,-1822,tokens,nachher − vorher; -100.0 %
+claude,differenz,dynamisch,nixie,output_klassifikator,2131,tokens,nachher − vorher; +2959.7 %
+claude,differenz,dynamisch,nixie,output_sum,-5257,tokens,nachher − vorher; -40.3 %
+claude,differenz,dynamisch,nixie,cost_usd,-0.275476,usd,nachher − vorher; -24.8 %
+claude,differenz,dynamisch,nixie,duration_s,-6.1,s,nachher − vorher; -4.5 %
+claude,differenz,dynamisch,nixie,wandzeit_s,-6.2,s,nachher − vorher; -4.5 %
+claude,differenz,dynamisch,nixie,files_read,3,dateien,nachher − vorher
+claude,differenz,dynamisch,nixie,skills_vorgeladen,-4,anzahl,nachher − vorher
+claude,differenz,dynamisch,nixie,skills_vorgeladen_zeichen,-30306,zeichen,nachher − vorher; -100.0 %
+claude,differenz,dynamisch,nixie,watchdog_befunde,0,anzahl,nachher − vorher
+codex,vorher,dynamisch-implizit,bertram,main_first,20740,tokens,"Hauptthread 01a0b63e-5ec1-71b2-ba7c-514bce7bc11e; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-implizit,bertram,main_peak,73587,tokens,
+codex,vorher,dynamisch-implizit,bertram,main_sum,361394,tokens,
+codex,vorher,dynamisch-implizit,bertram,main_cached,297856,tokens,
+codex,vorher,dynamisch-implizit,bertram,main_output,5222,tokens,inkl. reasoning
+codex,vorher,dynamisch-implizit,bertram,main_reasoning,3225,tokens,
+codex,vorher,dynamisch-implizit,bertram,main_n,8,requests,
+codex,vorher,dynamisch-implizit,bertram,sub_first,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_peak,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_sum,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_cached,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_output,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_reasoning,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,sub_n,n/a,requests,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bertram,total_sum,361394,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_cached,297856,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_uncached,63538,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_output,5222,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_reasoning,3225,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_n,8,requests,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,total_peak,73587,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,subagents,0,anzahl,
+codex,vorher,dynamisch-implizit,bertram,skill_injiziert,0,anzahl,
+codex,vorher,dynamisch-implizit,bertram,files_read,2,dateien,"Haupt: skills/net-diagnose/SKILL.md, skills/net-reference/SKILL.md; agents/bertram.md nicht gelesen"
+codex,vorher,dynamisch-implizit,bertram,web_calls,6,anzahl,web__run Haupt + Subagent
+codex,vorher,dynamisch-implizit,bertram,duration_s,119.3,s,Wanduhr codex exec; 4 Läufe parallel
+codex,vorher,dynamisch-implizit,bertram,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-implizit,bertram,main_first,16920,tokens,"Hauptthread 01a0b63e-5eca-75c2-adce-ef64cd2513cc; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-implizit,bertram,main_peak,25418,tokens,
+codex,nachher,dynamisch-implizit,bertram,main_sum,97654,tokens,
+codex,nachher,dynamisch-implizit,bertram,main_cached,75648,tokens,
+codex,nachher,dynamisch-implizit,bertram,main_output,2100,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,bertram,main_reasoning,921,tokens,
+codex,nachher,dynamisch-implizit,bertram,main_n,5,requests,
+codex,nachher,dynamisch-implizit,bertram,sub_first,18978,tokens,"Subagent 01a0b63e-8c1a-7f30-88c5-4b5732a89adc /root/bertram_diagnose, fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-implizit,bertram,sub_peak,45745,tokens,
+codex,nachher,dynamisch-implizit,bertram,sub_sum,181629,tokens,
+codex,nachher,dynamisch-implizit,bertram,sub_cached,149248,tokens,
+codex,nachher,dynamisch-implizit,bertram,sub_output,3189,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,bertram,sub_reasoning,1685,tokens,
+codex,nachher,dynamisch-implizit,bertram,sub_n,6,requests,
+codex,nachher,dynamisch-implizit,bertram,total_sum,279283,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_cached,224896,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_uncached,54387,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_output,5289,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_reasoning,2606,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_n,11,requests,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,total_peak,45745,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,subagents,1,anzahl,Hauptthread wählt source-command-bertram implizit
+codex,nachher,dynamisch-implizit,bertram,skill_injiziert,0,anzahl,
+codex,nachher,dynamisch-implizit,bertram,files_read,4,dateien,"Haupt: migrated-command-skills/source-command-bertram/SKILL.md; Sub: agents/bertram.md, skills/net-diagnose/SKILL.md, skills/net-reference/SKILL.md"
+codex,nachher,dynamisch-implizit,bertram,web_calls,4,anzahl,web__run Haupt + Subagent
+codex,nachher,dynamisch-implizit,bertram,duration_s,116.4,s,Wanduhr codex exec; 4 Läufe parallel
+codex,nachher,dynamisch-implizit,bertram,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-implizit,bertram,main_first,-3820,tokens,nachher − vorher; -18.4 %
+codex,differenz,dynamisch-implizit,bertram,main_peak,-48169,tokens,nachher − vorher; -65.5 %
+codex,differenz,dynamisch-implizit,bertram,main_sum,-263740,tokens,nachher − vorher; -73.0 %
+codex,differenz,dynamisch-implizit,bertram,main_cached,-222208,tokens,nachher − vorher; -74.6 %
+codex,differenz,dynamisch-implizit,bertram,main_output,-3122,tokens,nachher − vorher; -59.8 %
+codex,differenz,dynamisch-implizit,bertram,main_reasoning,-2304,tokens,nachher − vorher; -71.4 %
+codex,differenz,dynamisch-implizit,bertram,main_n,-3,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,sub_first,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_peak,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_sum,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_cached,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_output,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_reasoning,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,sub_n,n/a,requests,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bertram,total_sum,-82111,tokens,nachher − vorher; -22.7 %
+codex,differenz,dynamisch-implizit,bertram,total_cached,-72960,tokens,nachher − vorher; -24.5 %
+codex,differenz,dynamisch-implizit,bertram,total_uncached,-9151,tokens,nachher − vorher; -14.4 %
+codex,differenz,dynamisch-implizit,bertram,total_output,67,tokens,nachher − vorher; +1.3 %
+codex,differenz,dynamisch-implizit,bertram,total_reasoning,-619,tokens,nachher − vorher; -19.2 %
+codex,differenz,dynamisch-implizit,bertram,total_n,3,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,total_peak,-27842,tokens,nachher − vorher; -37.8 %
+codex,differenz,dynamisch-implizit,bertram,subagents,1,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,files_read,2,dateien,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,web_calls,-2,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bertram,duration_s,-2.9,s,nachher − vorher; -2.4 %
+codex,vorher,dynamisch-explizit,bertram,main_first,21293,tokens,"Hauptthread 01a0b63e-5ed3-7a60-8d32-8ded7ca53bf4; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-explizit,bertram,main_peak,22389,tokens,
+codex,vorher,dynamisch-explizit,bertram,main_sum,65165,tokens,
+codex,vorher,dynamisch-explizit,bertram,main_cached,53504,tokens,
+codex,vorher,dynamisch-explizit,bertram,main_output,981,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,bertram,main_reasoning,93,tokens,
+codex,vorher,dynamisch-explizit,bertram,main_n,3,requests,
+codex,vorher,dynamisch-explizit,bertram,sub_first,27084,tokens,"Subagent 01a0b63e-7849-79c2-8fb0-fd369a9500d8 /root/bertram, fork_turns=all; enthält Elternkontext"
+codex,vorher,dynamisch-explizit,bertram,sub_peak,81101,tokens,
+codex,vorher,dynamisch-explizit,bertram,sub_sum,466839,tokens,
+codex,vorher,dynamisch-explizit,bertram,sub_cached,402176,tokens,
+codex,vorher,dynamisch-explizit,bertram,sub_output,3777,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,bertram,sub_reasoning,2050,tokens,
+codex,vorher,dynamisch-explizit,bertram,sub_n,9,requests,
+codex,vorher,dynamisch-explizit,bertram,total_sum,532004,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_cached,455680,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_uncached,76324,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_output,4758,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_reasoning,2143,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_n,12,requests,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,total_peak,81101,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,subagents,1,anzahl,
+codex,vorher,dynamisch-explizit,bertram,skill_injiziert,1,anzahl,bertram:source-command-bertram
+codex,vorher,dynamisch-explizit,bertram,skill_injiziert_zeichen,1857,zeichen,
+codex,vorher,dynamisch-explizit,bertram,files_read,2,dateien,"Sub: skills/net-diagnose/SKILL.md, skills/net-reference/SKILL.md; agents/bertram.md nicht gelesen"
+codex,vorher,dynamisch-explizit,bertram,web_calls,7,anzahl,web__run Haupt + Subagent
+codex,vorher,dynamisch-explizit,bertram,duration_s,120.7,s,Wanduhr codex exec; 4 Läufe parallel
+codex,vorher,dynamisch-explizit,bertram,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-explizit,bertram,main_first,17882,tokens,"Hauptthread 01a0b63e-5ed7-7641-a9a8-ecb0b29f361d; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-explizit,bertram,main_peak,19075,tokens,
+codex,nachher,dynamisch-explizit,bertram,main_sum,55118,tokens,
+codex,nachher,dynamisch-explizit,bertram,main_cached,40192,tokens,
+codex,nachher,dynamisch-explizit,bertram,main_output,1268,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,bertram,main_reasoning,257,tokens,
+codex,nachher,dynamisch-explizit,bertram,main_n,3,requests,
+codex,nachher,dynamisch-explizit,bertram,sub_first,19936,tokens,"Subagent 01a0b63e-7db6-7962-aff3-d99580b3e901 /root/bertram_diag, fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-explizit,bertram,sub_peak,67761,tokens,
+codex,nachher,dynamisch-explizit,bertram,sub_sum,326049,tokens,
+codex,nachher,dynamisch-explizit,bertram,sub_cached,271232,tokens,
+codex,nachher,dynamisch-explizit,bertram,sub_output,3954,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,bertram,sub_reasoning,2352,tokens,
+codex,nachher,dynamisch-explizit,bertram,sub_n,8,requests,
+codex,nachher,dynamisch-explizit,bertram,total_sum,381167,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_cached,311424,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_uncached,69743,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_output,5222,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_reasoning,2609,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_n,11,requests,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,total_peak,67761,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,subagents,1,anzahl,
+codex,nachher,dynamisch-explizit,bertram,skill_injiziert,1,anzahl,bertram:source-command-bertram
+codex,nachher,dynamisch-explizit,bertram,skill_injiziert_zeichen,3385,zeichen,
+codex,nachher,dynamisch-explizit,bertram,files_read,3,dateien,"Sub: agents/bertram.md, skills/net-diagnose/SKILL.md, skills/net-reference/SKILL.md"
+codex,nachher,dynamisch-explizit,bertram,web_calls,5,anzahl,web__run Haupt + Subagent
+codex,nachher,dynamisch-explizit,bertram,duration_s,129.0,s,Wanduhr codex exec; 4 Läufe parallel
+codex,nachher,dynamisch-explizit,bertram,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-explizit,bertram,main_first,-3411,tokens,nachher − vorher; -16.0 %
+codex,differenz,dynamisch-explizit,bertram,main_peak,-3314,tokens,nachher − vorher; -14.8 %
+codex,differenz,dynamisch-explizit,bertram,main_sum,-10047,tokens,nachher − vorher; -15.4 %
+codex,differenz,dynamisch-explizit,bertram,main_cached,-13312,tokens,nachher − vorher; -24.9 %
+codex,differenz,dynamisch-explizit,bertram,main_output,287,tokens,nachher − vorher; +29.3 %
+codex,differenz,dynamisch-explizit,bertram,main_reasoning,164,tokens,nachher − vorher; +176.3 %
+codex,differenz,dynamisch-explizit,bertram,main_n,0,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,sub_first,-7148,tokens,nachher − vorher; -26.4 %
+codex,differenz,dynamisch-explizit,bertram,sub_peak,-13340,tokens,nachher − vorher; -16.4 %
+codex,differenz,dynamisch-explizit,bertram,sub_sum,-140790,tokens,nachher − vorher; -30.2 %
+codex,differenz,dynamisch-explizit,bertram,sub_cached,-130944,tokens,nachher − vorher; -32.6 %
+codex,differenz,dynamisch-explizit,bertram,sub_output,177,tokens,nachher − vorher; +4.7 %
+codex,differenz,dynamisch-explizit,bertram,sub_reasoning,302,tokens,nachher − vorher; +14.7 %
+codex,differenz,dynamisch-explizit,bertram,sub_n,-1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,total_sum,-150837,tokens,nachher − vorher; -28.4 %
+codex,differenz,dynamisch-explizit,bertram,total_cached,-144256,tokens,nachher − vorher; -31.7 %
+codex,differenz,dynamisch-explizit,bertram,total_uncached,-6581,tokens,nachher − vorher; -8.6 %
+codex,differenz,dynamisch-explizit,bertram,total_output,464,tokens,nachher − vorher; +9.8 %
+codex,differenz,dynamisch-explizit,bertram,total_reasoning,466,tokens,nachher − vorher; +21.7 %
+codex,differenz,dynamisch-explizit,bertram,total_n,-1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,total_peak,-13340,tokens,nachher − vorher; -16.4 %
+codex,differenz,dynamisch-explizit,bertram,subagents,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,skill_injiziert_zeichen,1528,zeichen,nachher − vorher; +82.3 %
+codex,differenz,dynamisch-explizit,bertram,files_read,1,dateien,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,web_calls,-2,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bertram,duration_s,8.3,s,nachher − vorher; +6.9 %
+codex,vorher,dynamisch-implizit,christian,main_first,20183,tokens,"Hauptthread 01a0b63e-1d6a-7060-a620-4340c4bcdace; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-implizit,christian,main_peak,49710,tokens,
+codex,vorher,dynamisch-implizit,christian,main_sum,142491,tokens,
+codex,vorher,dynamisch-implizit,christian,main_cached,102784,tokens,
+codex,vorher,dynamisch-implizit,christian,main_output,3710,tokens,inkl. reasoning
+codex,vorher,dynamisch-implizit,christian,main_reasoning,1765,tokens,
+codex,vorher,dynamisch-implizit,christian,main_n,4,requests,
+codex,vorher,dynamisch-implizit,christian,sub_first,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_peak,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_sum,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_cached,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_output,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_reasoning,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,sub_n,n/a,requests,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,christian,total_sum,142491,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_cached,102784,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_uncached,39707,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_output,3710,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_reasoning,1765,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_n,4,requests,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,total_peak,49710,tokens,Haupt + Subagent; peak = main_peak
+codex,vorher,dynamisch-implizit,christian,subagents,0,anzahl,
+codex,vorher,dynamisch-implizit,christian,skill_injiziert,0,anzahl,
+codex,vorher,dynamisch-implizit,christian,files_read,4,dateien,"verschiedene Dateien; Haupt: wan-link, vpn-tunnel, router-appliance, vpn-reference (SKILL.md)"
+codex,vorher,dynamisch-implizit,christian,shell_reads_main,4,anzahl,Shell-Aufrufe zum Lesen im Hauptthread
+codex,vorher,dynamisch-implizit,christian,shell_reads_sub,0,anzahl,
+codex,vorher,dynamisch-implizit,christian,duration_s,78.9,s,Wanduhr Watchdog-Lauf; 4 Läufe parallel
+codex,vorher,dynamisch-implizit,christian,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-implizit,christian,main_first,16721,tokens,"Hauptthread 01a0b63e-1d88-7871-a451-73bd2ba9c7ea; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-implizit,christian,main_peak,19725,tokens,
+codex,nachher,dynamisch-implizit,christian,main_sum,91015,tokens,
+codex,nachher,dynamisch-implizit,christian,main_cached,77184,tokens,
+codex,nachher,dynamisch-implizit,christian,main_output,2180,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,christian,main_reasoning,612,tokens,
+codex,nachher,dynamisch-implizit,christian,main_n,5,requests,
+codex,nachher,dynamisch-implizit,christian,sub_first,19049,tokens,"Subagent 01a0b63e-6a63-7de3-8bfd-7e6b0c17b377 task_name=christian, fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-implizit,christian,sub_peak,68764,tokens,
+codex,nachher,dynamisch-implizit,christian,sub_sum,301147,tokens,
+codex,nachher,dynamisch-implizit,christian,sub_cached,242432,tokens,
+codex,nachher,dynamisch-implizit,christian,sub_output,4765,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,christian,sub_reasoning,2925,tokens,
+codex,nachher,dynamisch-implizit,christian,sub_n,7,requests,
+codex,nachher,dynamisch-implizit,christian,total_sum,392162,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_cached,319616,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_uncached,72546,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_output,6945,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_reasoning,3537,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_n,12,requests,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,total_peak,68764,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-implizit,christian,subagents,1,anzahl,Hauptthread wählt source-command-christian implizit
+codex,nachher,dynamisch-implizit,christian,skill_injiziert,0,anzahl,
+codex,nachher,dynamisch-implizit,christian,files_read,6,dateien,"verschiedene Dateien; Haupt: source-command-christian/SKILL.md; Sub: agents/christian.md, vpn-reference, vpn-tunnel, router-appliance, wan-link (SKILL.md)"
+codex,nachher,dynamisch-implizit,christian,shell_reads_main,1,anzahl,zusätzlich test -f agents/christian.md (nicht gezählt)
+codex,nachher,dynamisch-implizit,christian,shell_reads_sub,5,anzahl,
+codex,nachher,dynamisch-implizit,christian,duration_s,151.6,s,Wanduhr Watchdog-Lauf; 4 Läufe parallel
+codex,nachher,dynamisch-implizit,christian,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-implizit,christian,main_first,-3462,tokens,nachher − vorher; -17.2 %
+codex,differenz,dynamisch-implizit,christian,main_peak,-29985,tokens,nachher − vorher; -60.3 %
+codex,differenz,dynamisch-implizit,christian,main_sum,-51476,tokens,nachher − vorher; -36.1 %
+codex,differenz,dynamisch-implizit,christian,main_cached,-25600,tokens,nachher − vorher; -24.9 %
+codex,differenz,dynamisch-implizit,christian,main_output,-1530,tokens,nachher − vorher; -41.2 %
+codex,differenz,dynamisch-implizit,christian,main_reasoning,-1153,tokens,nachher − vorher; -65.3 %
+codex,differenz,dynamisch-implizit,christian,main_n,1,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,sub_first,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_peak,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_sum,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_cached,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_output,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_reasoning,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,sub_n,n/a,requests,vorher kein Subagent
+codex,differenz,dynamisch-implizit,christian,total_sum,249671,tokens,nachher − vorher; +175.2 %
+codex,differenz,dynamisch-implizit,christian,total_cached,216832,tokens,nachher − vorher; +211.0 %
+codex,differenz,dynamisch-implizit,christian,total_uncached,32839,tokens,nachher − vorher; +82.7 %
+codex,differenz,dynamisch-implizit,christian,total_output,3235,tokens,nachher − vorher; +87.2 %
+codex,differenz,dynamisch-implizit,christian,total_reasoning,1772,tokens,nachher − vorher; +100.4 %
+codex,differenz,dynamisch-implizit,christian,total_n,8,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,total_peak,19054,tokens,nachher − vorher; +38.3 %
+codex,differenz,dynamisch-implizit,christian,subagents,1,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,files_read,2,dateien,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,shell_reads_main,-3,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,shell_reads_sub,5,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,christian,duration_s,72.7,s,nachher − vorher; +92.1 %
+codex,vorher,dynamisch-explizit,christian,main_first,21336,tokens,"Hauptthread 01a0b63e-1d8a-7252-b820-325492aa8d38; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-explizit,christian,main_peak,22962,tokens,
+codex,vorher,dynamisch-explizit,christian,main_sum,65896,tokens,
+codex,vorher,dynamisch-explizit,christian,main_cached,53632,tokens,
+codex,vorher,dynamisch-explizit,christian,main_output,1394,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,christian,main_reasoning,192,tokens,
+codex,vorher,dynamisch-explizit,christian,main_n,3,requests,
+codex,vorher,dynamisch-explizit,christian,sub_first,27195,tokens,"Subagent 01a0b63e-3959-7312-a7b6-2203809b3490 task_name=christian, fork_turns=all; enthält Elternkontext"
+codex,vorher,dynamisch-explizit,christian,sub_peak,63299,tokens,
+codex,vorher,dynamisch-explizit,christian,sub_sum,267970,tokens,
+codex,vorher,dynamisch-explizit,christian,sub_cached,221696,tokens,
+codex,vorher,dynamisch-explizit,christian,sub_output,4953,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,christian,sub_reasoning,2862,tokens,
+codex,vorher,dynamisch-explizit,christian,sub_n,6,requests,
+codex,vorher,dynamisch-explizit,christian,total_sum,333866,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_cached,275328,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_uncached,58538,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_output,6347,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_reasoning,3054,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_n,9,requests,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,total_peak,63299,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,vorher,dynamisch-explizit,christian,subagents,1,anzahl,
+codex,vorher,dynamisch-explizit,christian,skill_injiziert,1,anzahl,christian:source-command-christian
+codex,vorher,dynamisch-explizit,christian,skill_injiziert_zeichen,2050,zeichen,
+codex,vorher,dynamisch-explizit,christian,files_read,4,dateien,"verschiedene Dateien; Sub: vpn-tunnel, wan-link, router-appliance, vpn-reference (SKILL.md), router-appliance und vpn-reference zweimal; agents/christian.md nicht gelesen"
+codex,vorher,dynamisch-explizit,christian,shell_reads_main,0,anzahl,source-command-SKILL.md von Codex injiziert
+codex,vorher,dynamisch-explizit,christian,shell_reads_sub,3,anzahl,
+codex,vorher,dynamisch-explizit,christian,duration_s,134.6,s,Wanduhr Watchdog-Lauf; 4 Läufe parallel
+codex,vorher,dynamisch-explizit,christian,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-explizit,christian,main_first,17957,tokens,"Hauptthread 01a0b63e-1d88-7173-b393-f8a3cdccdd8e; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-explizit,christian,main_peak,19566,tokens,
+codex,nachher,dynamisch-explizit,christian,main_sum,55765,tokens,
+codex,nachher,dynamisch-explizit,christian,main_cached,46976,tokens,
+codex,nachher,dynamisch-explizit,christian,main_output,1625,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,christian,main_reasoning,290,tokens,
+codex,nachher,dynamisch-explizit,christian,main_n,3,requests,
+codex,nachher,dynamisch-explizit,christian,sub_first,20025,tokens,"Subagent 01a0b63e-3afb-7c73-bf2c-71acd0d1d3e0 task_name=christian, fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-explizit,christian,sub_peak,70381,tokens,
+codex,nachher,dynamisch-explizit,christian,sub_sum,309221,tokens,
+codex,nachher,dynamisch-explizit,christian,sub_cached,251904,tokens,
+codex,nachher,dynamisch-explizit,christian,sub_output,4774,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,christian,sub_reasoning,2607,tokens,
+codex,nachher,dynamisch-explizit,christian,sub_n,7,requests,
+codex,nachher,dynamisch-explizit,christian,total_sum,364986,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_cached,298880,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_uncached,66106,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_output,6399,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_reasoning,2897,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_n,10,requests,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,total_peak,70381,tokens,"Haupt + Subagent; peak = max(main_peak, sub_peak), bei Berichtserstellung bestimmt"
+codex,nachher,dynamisch-explizit,christian,subagents,1,anzahl,
+codex,nachher,dynamisch-explizit,christian,skill_injiziert,1,anzahl,christian:source-command-christian
+codex,nachher,dynamisch-explizit,christian,skill_injiziert_zeichen,3617,zeichen,
+codex,nachher,dynamisch-explizit,christian,files_read,5,dateien,"verschiedene Dateien; Sub: agents/christian.md, vpn-reference, vpn-tunnel, router-appliance, wan-link (SKILL.md)"
+codex,nachher,dynamisch-explizit,christian,shell_reads_main,0,anzahl,source-command-SKILL.md von Codex injiziert
+codex,nachher,dynamisch-explizit,christian,shell_reads_sub,5,anzahl,
+codex,nachher,dynamisch-explizit,christian,duration_s,138.2,s,Wanduhr Watchdog-Lauf; 4 Läufe parallel
+codex,nachher,dynamisch-explizit,christian,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-explizit,christian,main_first,-3379,tokens,nachher − vorher; -15.8 %
+codex,differenz,dynamisch-explizit,christian,main_peak,-3396,tokens,nachher − vorher; -14.8 %
+codex,differenz,dynamisch-explizit,christian,main_sum,-10131,tokens,nachher − vorher; -15.4 %
+codex,differenz,dynamisch-explizit,christian,main_cached,-6656,tokens,nachher − vorher; -12.4 %
+codex,differenz,dynamisch-explizit,christian,main_output,231,tokens,nachher − vorher; +16.6 %
+codex,differenz,dynamisch-explizit,christian,main_reasoning,98,tokens,nachher − vorher; +51.0 %
+codex,differenz,dynamisch-explizit,christian,main_n,0,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,sub_first,-7170,tokens,nachher − vorher; -26.4 %
+codex,differenz,dynamisch-explizit,christian,sub_peak,7082,tokens,nachher − vorher; +11.2 %
+codex,differenz,dynamisch-explizit,christian,sub_sum,41251,tokens,nachher − vorher; +15.4 %
+codex,differenz,dynamisch-explizit,christian,sub_cached,30208,tokens,nachher − vorher; +13.6 %
+codex,differenz,dynamisch-explizit,christian,sub_output,-179,tokens,nachher − vorher; -3.6 %
+codex,differenz,dynamisch-explizit,christian,sub_reasoning,-255,tokens,nachher − vorher; -8.9 %
+codex,differenz,dynamisch-explizit,christian,sub_n,1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,total_sum,31120,tokens,nachher − vorher; +9.3 %
+codex,differenz,dynamisch-explizit,christian,total_cached,23552,tokens,nachher − vorher; +8.6 %
+codex,differenz,dynamisch-explizit,christian,total_uncached,7568,tokens,nachher − vorher; +12.9 %
+codex,differenz,dynamisch-explizit,christian,total_output,52,tokens,nachher − vorher; +0.8 %
+codex,differenz,dynamisch-explizit,christian,total_reasoning,-157,tokens,nachher − vorher; -5.1 %
+codex,differenz,dynamisch-explizit,christian,total_n,1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,total_peak,7082,tokens,nachher − vorher; +11.2 %
+codex,differenz,dynamisch-explizit,christian,subagents,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,skill_injiziert_zeichen,1567,zeichen,nachher − vorher; +76.4 %
+codex,differenz,dynamisch-explizit,christian,files_read,1,dateien,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,shell_reads_main,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,shell_reads_sub,2,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,christian,duration_s,3.6,s,nachher − vorher; +2.7 %
+codex,vorher,dynamisch-implizit,bruce,main_first,20711,tokens,"Hauptthread 01a0b63e-8179-7e40-95fb-ed60e37d3d1c; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-implizit,bruce,main_peak,29652,tokens,
+codex,vorher,dynamisch-implizit,bruce,main_sum,197682,tokens,
+codex,vorher,dynamisch-implizit,bruce,main_cached,177792,tokens,
+codex,vorher,dynamisch-implizit,bruce,main_output,1602,tokens,inkl. reasoning
+codex,vorher,dynamisch-implizit,bruce,main_reasoning,411,tokens,
+codex,vorher,dynamisch-implizit,bruce,main_n,8,requests,
+codex,vorher,dynamisch-implizit,bruce,sub_first,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_peak,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_sum,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_cached,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_output,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_reasoning,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,sub_n,n/a,requests,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,bruce,guardian_sum,11784,tokens,"Guardian 01a0b63e-81b1-7702-8617-b2fd2498e02a; codex-auto-review, Effort low"
+codex,vorher,dynamisch-implizit,bruce,guardian_cached,4864,tokens,"Guardian 01a0b63e-81b1-7702-8617-b2fd2498e02a; codex-auto-review, Effort low"
+codex,vorher,dynamisch-implizit,bruce,guardian_output,205,tokens,"Guardian 01a0b63e-81b1-7702-8617-b2fd2498e02a; codex-auto-review, Effort low; inkl. reasoning"
+codex,vorher,dynamisch-implizit,bruce,guardian_reasoning,126,tokens,"Guardian 01a0b63e-81b1-7702-8617-b2fd2498e02a; codex-auto-review, Effort low"
+codex,vorher,dynamisch-implizit,bruce,guardian_n,1,requests,"Guardian 01a0b63e-81b1-7702-8617-b2fd2498e02a; codex-auto-review, Effort low"
+codex,vorher,dynamisch-implizit,bruce,total_sum,209466,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_cached,182656,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_uncached,26810,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_output,1807,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_reasoning,537,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_n,9,requests,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,total_peak,29652,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-implizit,bruce,subagents,0,anzahl,
+codex,vorher,dynamisch-implizit,bruce,skill_injiziert,0,anzahl,
+codex,vorher,dynamisch-implizit,bruce,files_read,1,dateien,"skills/gs-lookup/SKILL.md; zusätzlich flake.nix, build.md, scripts/gs.py Z. 1-260, rg --files"
+codex,vorher,dynamisch-implizit,bruce,shell_calls,7,anzahl,alle im Hauptthread
+codex,vorher,dynamisch-implizit,bruce,eskalationen,1,anzahl,"nix run, per auto_review genehmigt"
+codex,vorher,dynamisch-implizit,bruce,duration_s,50.8,s,Wanduhr inkl. CLI-Start; parallel zu Läufen anderer Agenten
+codex,vorher,dynamisch-implizit,bruce,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-implizit,bruce,main_first,16898,tokens,"Hauptthread 01a0b63e-816f-7103-902c-3068f88a5040; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-implizit,bruce,main_peak,18778,tokens,
+codex,nachher,dynamisch-implizit,bruce,main_sum,90315,tokens,
+codex,nachher,dynamisch-implizit,bruce,main_cached,81920,tokens,
+codex,nachher,dynamisch-implizit,bruce,main_output,920,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,bruce,main_reasoning,275,tokens,
+codex,nachher,dynamisch-implizit,bruce,main_n,5,requests,
+codex,nachher,dynamisch-implizit,bruce,sub_first,18909,tokens,"Subagent 01a0b63e-bcb4-7672-9ed9-ed22f32e9762 (Persona-Lader), fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-implizit,bruce,sub_peak,26175,tokens,
+codex,nachher,dynamisch-implizit,bruce,sub_sum,118238,tokens,
+codex,nachher,dynamisch-implizit,bruce,sub_cached,105472,tokens,
+codex,nachher,dynamisch-implizit,bruce,sub_output,1520,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,bruce,sub_reasoning,441,tokens,
+codex,nachher,dynamisch-implizit,bruce,sub_n,5,requests,
+codex,nachher,dynamisch-implizit,bruce,guardian_sum,22458,tokens,"Guardian 01a0b63e-bcd1-7283-b836-398ba1d6286e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-implizit,bruce,guardian_cached,14848,tokens,"Guardian 01a0b63e-bcd1-7283-b836-398ba1d6286e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-implizit,bruce,guardian_output,310,tokens,"Guardian 01a0b63e-bcd1-7283-b836-398ba1d6286e; codex-auto-review, Effort low; inkl. reasoning"
+codex,nachher,dynamisch-implizit,bruce,guardian_reasoning,172,tokens,"Guardian 01a0b63e-bcd1-7283-b836-398ba1d6286e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-implizit,bruce,guardian_n,2,requests,"Guardian 01a0b63e-bcd1-7283-b836-398ba1d6286e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-implizit,bruce,total_sum,231011,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_cached,202240,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_uncached,28771,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_output,2750,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_reasoning,888,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_n,12,requests,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,total_peak,26175,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-implizit,bruce,subagents,1,anzahl,Hauptthread wählt source-command-bruce implizit
+codex,nachher,dynamisch-implizit,bruce,skill_injiziert,0,anzahl,
+codex,nachher,dynamisch-implizit,bruce,files_read,4,dateien,"Lesevorgänge; Haupt: source-command-bruce/SKILL.md; Sub: source-command-bruce/SKILL.md erneut, agents/bruce.md, skills/gs-lookup/SKILL.md"
+codex,nachher,dynamisch-implizit,bruce,shell_calls,7,anzahl,"Haupt 2, Sub 5"
+codex,nachher,dynamisch-implizit,bruce,eskalationen,2,anzahl,"nix run, per auto_review genehmigt"
+codex,nachher,dynamisch-implizit,bruce,duration_s,69.3,s,Wanduhr inkl. CLI-Start; parallel zu Läufen anderer Agenten
+codex,nachher,dynamisch-implizit,bruce,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-implizit,bruce,main_first,-3813,tokens,nachher − vorher; -18.4 %
+codex,differenz,dynamisch-implizit,bruce,main_peak,-10874,tokens,nachher − vorher; -36.7 %
+codex,differenz,dynamisch-implizit,bruce,main_sum,-107367,tokens,nachher − vorher; -54.3 %
+codex,differenz,dynamisch-implizit,bruce,main_cached,-95872,tokens,nachher − vorher; -53.9 %
+codex,differenz,dynamisch-implizit,bruce,main_output,-682,tokens,nachher − vorher; -42.6 %
+codex,differenz,dynamisch-implizit,bruce,main_reasoning,-136,tokens,nachher − vorher; -33.1 %
+codex,differenz,dynamisch-implizit,bruce,main_n,-3,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,sub_first,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_peak,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_sum,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_cached,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_output,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_reasoning,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,sub_n,n/a,requests,vorher kein Subagent
+codex,differenz,dynamisch-implizit,bruce,guardian_sum,10674,tokens,nachher − vorher; +90.6 %
+codex,differenz,dynamisch-implizit,bruce,guardian_cached,9984,tokens,nachher − vorher; +205.3 %
+codex,differenz,dynamisch-implizit,bruce,guardian_output,105,tokens,nachher − vorher; +51.2 %
+codex,differenz,dynamisch-implizit,bruce,guardian_reasoning,46,tokens,nachher − vorher; +36.5 %
+codex,differenz,dynamisch-implizit,bruce,guardian_n,1,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,total_sum,21545,tokens,nachher − vorher; +10.3 %
+codex,differenz,dynamisch-implizit,bruce,total_cached,19584,tokens,nachher − vorher; +10.7 %
+codex,differenz,dynamisch-implizit,bruce,total_uncached,1961,tokens,nachher − vorher; +7.3 %
+codex,differenz,dynamisch-implizit,bruce,total_output,943,tokens,nachher − vorher; +52.2 %
+codex,differenz,dynamisch-implizit,bruce,total_reasoning,351,tokens,nachher − vorher; +65.4 %
+codex,differenz,dynamisch-implizit,bruce,total_n,3,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,total_peak,-3477,tokens,nachher − vorher; -11.7 %
+codex,differenz,dynamisch-implizit,bruce,subagents,1,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,files_read,3,dateien,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,shell_calls,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,eskalationen,1,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,bruce,duration_s,18.5,s,nachher − vorher; +36.4 %
+codex,vorher,dynamisch-explizit,bruce,main_first,21221,tokens,"Hauptthread 01a0b63e-816e-7571-abb8-9ea19239791b; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-explizit,bruce,main_peak,22280,tokens,
+codex,vorher,dynamisch-explizit,bruce,main_sum,64943,tokens,
+codex,vorher,dynamisch-explizit,bruce,main_cached,53376,tokens,
+codex,vorher,dynamisch-explizit,bruce,main_output,787,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,bruce,main_reasoning,98,tokens,
+codex,vorher,dynamisch-explizit,bruce,main_n,3,requests,
+codex,vorher,dynamisch-explizit,bruce,sub_first,27041,tokens,"Subagent 01a0b63e-9ab1-7e51-b695-40e1958715e9 (generisch), fork_turns=all; enthält Elternkontext"
+codex,vorher,dynamisch-explizit,bruce,sub_peak,40203,tokens,
+codex,vorher,dynamisch-explizit,bruce,sub_sum,407517,tokens,
+codex,vorher,dynamisch-explizit,bruce,sub_cached,360192,tokens,
+codex,vorher,dynamisch-explizit,bruce,sub_output,3160,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,bruce,sub_reasoning,1056,tokens,
+codex,vorher,dynamisch-explizit,bruce,sub_n,12,requests,
+codex,vorher,dynamisch-explizit,bruce,guardian_sum,39184,tokens,"Guardian 01a0b63e-9acc-7f32-9ed6-6673d4631636; codex-auto-review, Effort low"
+codex,vorher,dynamisch-explizit,bruce,guardian_cached,27904,tokens,"Guardian 01a0b63e-9acc-7f32-9ed6-6673d4631636; codex-auto-review, Effort low"
+codex,vorher,dynamisch-explizit,bruce,guardian_output,307,tokens,"Guardian 01a0b63e-9acc-7f32-9ed6-6673d4631636; codex-auto-review, Effort low; inkl. reasoning"
+codex,vorher,dynamisch-explizit,bruce,guardian_reasoning,115,tokens,"Guardian 01a0b63e-9acc-7f32-9ed6-6673d4631636; codex-auto-review, Effort low"
+codex,vorher,dynamisch-explizit,bruce,guardian_n,3,requests,"Guardian 01a0b63e-9acc-7f32-9ed6-6673d4631636; codex-auto-review, Effort low"
+codex,vorher,dynamisch-explizit,bruce,total_sum,511644,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_cached,441472,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_uncached,70172,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_output,4254,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_reasoning,1269,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_n,18,requests,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,total_peak,40203,tokens,Haupt + Subagent + Guardian
+codex,vorher,dynamisch-explizit,bruce,subagents,1,anzahl,generischer Subagent
+codex,vorher,dynamisch-explizit,bruce,skill_injiziert,1,anzahl,it-grundschutz:source-command-bruce
+codex,vorher,dynamisch-explizit,bruce,skill_injiziert_zeichen,n/a,zeichen,nicht gemessen
+codex,vorher,dynamisch-explizit,bruce,files_read,2,dateien,"Sub: skills/gs-lookup/SKILL.md, agents/bruce.md (dazu README.md und Korpus-JSON direkt)"
+codex,vorher,dynamisch-explizit,bruce,shell_calls,11,anzahl,alle im Subagent
+codex,vorher,dynamisch-explizit,bruce,eskalationen,3,anzahl,"nix run, per auto_review genehmigt"
+codex,vorher,dynamisch-explizit,bruce,duration_s,103.0,s,Wanduhr inkl. CLI-Start; parallel zu Läufen anderer Agenten
+codex,vorher,dynamisch-explizit,bruce,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-explizit,bruce,main_first,17906,tokens,"Hauptthread 01a0b63e-816f-7bc1-9ddb-80891e4a274c; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-explizit,bruce,main_peak,19151,tokens,
+codex,nachher,dynamisch-explizit,bruce,main_sum,73720,tokens,
+codex,nachher,dynamisch-explizit,bruce,main_cached,65024,tokens,
+codex,nachher,dynamisch-explizit,bruce,main_output,678,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,bruce,main_reasoning,136,tokens,
+codex,nachher,dynamisch-explizit,bruce,main_n,4,requests,
+codex,nachher,dynamisch-explizit,bruce,sub_first,19918,tokens,"Subagent 01a0b63e-994c-7a20-8059-5d68eb1d06a8 (Persona-Lader), fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-explizit,bruce,sub_peak,26803,tokens,
+codex,nachher,dynamisch-explizit,bruce,sub_sum,170360,tokens,
+codex,nachher,dynamisch-explizit,bruce,sub_cached,156672,tokens,
+codex,nachher,dynamisch-explizit,bruce,sub_output,2178,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,bruce,sub_reasoning,574,tokens,
+codex,nachher,dynamisch-explizit,bruce,sub_n,7,requests,
+codex,nachher,dynamisch-explizit,bruce,guardian_sum,22619,tokens,"Guardian 01a0b63e-996d-7311-805f-1a8ae1c8cd8e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-explizit,bruce,guardian_cached,14848,tokens,"Guardian 01a0b63e-996d-7311-805f-1a8ae1c8cd8e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-explizit,bruce,guardian_output,236,tokens,"Guardian 01a0b63e-996d-7311-805f-1a8ae1c8cd8e; codex-auto-review, Effort low; inkl. reasoning"
+codex,nachher,dynamisch-explizit,bruce,guardian_reasoning,113,tokens,"Guardian 01a0b63e-996d-7311-805f-1a8ae1c8cd8e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-explizit,bruce,guardian_n,2,requests,"Guardian 01a0b63e-996d-7311-805f-1a8ae1c8cd8e; codex-auto-review, Effort low"
+codex,nachher,dynamisch-explizit,bruce,total_sum,266699,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_cached,236544,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_uncached,30155,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_output,3092,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_reasoning,823,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_n,13,requests,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,total_peak,26803,tokens,Haupt + Subagent + Guardian
+codex,nachher,dynamisch-explizit,bruce,subagents,1,anzahl,Persona-Lader
+codex,nachher,dynamisch-explizit,bruce,skill_injiziert,1,anzahl,it-grundschutz:source-command-bruce
+codex,nachher,dynamisch-explizit,bruce,skill_injiziert_zeichen,n/a,zeichen,nicht gemessen
+codex,nachher,dynamisch-explizit,bruce,files_read,2,dateien,"Sub: agents/bruce.md, skills/gs-lookup/SKILL.md"
+codex,nachher,dynamisch-explizit,bruce,shell_calls,5,anzahl,alle im Subagent
+codex,nachher,dynamisch-explizit,bruce,eskalationen,2,anzahl,"nix run, per auto_review genehmigt"
+codex,nachher,dynamisch-explizit,bruce,duration_s,73.0,s,Wanduhr inkl. CLI-Start; parallel zu Läufen anderer Agenten
+codex,nachher,dynamisch-explizit,bruce,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-explizit,bruce,main_first,-3315,tokens,nachher − vorher; -15.6 %
+codex,differenz,dynamisch-explizit,bruce,main_peak,-3129,tokens,nachher − vorher; -14.0 %
+codex,differenz,dynamisch-explizit,bruce,main_sum,8777,tokens,nachher − vorher; +13.5 %
+codex,differenz,dynamisch-explizit,bruce,main_cached,11648,tokens,nachher − vorher; +21.8 %
+codex,differenz,dynamisch-explizit,bruce,main_output,-109,tokens,nachher − vorher; -13.9 %
+codex,differenz,dynamisch-explizit,bruce,main_reasoning,38,tokens,nachher − vorher; +38.8 %
+codex,differenz,dynamisch-explizit,bruce,main_n,1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,sub_first,-7123,tokens,nachher − vorher; -26.3 %
+codex,differenz,dynamisch-explizit,bruce,sub_peak,-13400,tokens,nachher − vorher; -33.3 %
+codex,differenz,dynamisch-explizit,bruce,sub_sum,-237157,tokens,nachher − vorher; -58.2 %
+codex,differenz,dynamisch-explizit,bruce,sub_cached,-203520,tokens,nachher − vorher; -56.5 %
+codex,differenz,dynamisch-explizit,bruce,sub_output,-982,tokens,nachher − vorher; -31.1 %
+codex,differenz,dynamisch-explizit,bruce,sub_reasoning,-482,tokens,nachher − vorher; -45.6 %
+codex,differenz,dynamisch-explizit,bruce,sub_n,-5,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,guardian_sum,-16565,tokens,nachher − vorher; -42.3 %
+codex,differenz,dynamisch-explizit,bruce,guardian_cached,-13056,tokens,nachher − vorher; -46.8 %
+codex,differenz,dynamisch-explizit,bruce,guardian_output,-71,tokens,nachher − vorher; -23.1 %
+codex,differenz,dynamisch-explizit,bruce,guardian_reasoning,-2,tokens,nachher − vorher; -1.7 %
+codex,differenz,dynamisch-explizit,bruce,guardian_n,-1,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,total_sum,-244945,tokens,nachher − vorher; -47.9 %
+codex,differenz,dynamisch-explizit,bruce,total_cached,-204928,tokens,nachher − vorher; -46.4 %
+codex,differenz,dynamisch-explizit,bruce,total_uncached,-40017,tokens,nachher − vorher; -57.0 %
+codex,differenz,dynamisch-explizit,bruce,total_output,-1162,tokens,nachher − vorher; -27.3 %
+codex,differenz,dynamisch-explizit,bruce,total_reasoning,-446,tokens,nachher − vorher; -35.1 %
+codex,differenz,dynamisch-explizit,bruce,total_n,-5,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,total_peak,-13400,tokens,nachher − vorher; -33.3 %
+codex,differenz,dynamisch-explizit,bruce,subagents,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,skill_injiziert_zeichen,n/a,zeichen,nicht gemessen
+codex,differenz,dynamisch-explizit,bruce,files_read,0,dateien,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,shell_calls,-6,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,eskalationen,-1,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,bruce,duration_s,-30,s,nachher − vorher; -29.1 %
+codex,vorher,dynamisch-implizit,nixie,main_first,20744,tokens,"Hauptthread 01a0b63e-3396-7350-bd0e-75a5a31267a6; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-implizit,nixie,main_peak,21888,tokens,
+codex,vorher,dynamisch-implizit,nixie,main_sum,42632,tokens,
+codex,vorher,dynamisch-implizit,nixie,main_cached,22272,tokens,
+codex,vorher,dynamisch-implizit,nixie,main_output,989,tokens,inkl. reasoning
+codex,vorher,dynamisch-implizit,nixie,main_reasoning,579,tokens,
+codex,vorher,dynamisch-implizit,nixie,main_n,2,requests,
+codex,vorher,dynamisch-implizit,nixie,sub_first,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_peak,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_sum,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_cached,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_output,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_reasoning,n/a,tokens,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,sub_n,n/a,requests,kein Subagent gestartet
+codex,vorher,dynamisch-implizit,nixie,total_sum,42632,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_cached,22272,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_uncached,20360,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_output,989,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_reasoning,579,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_n,2,requests,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,total_peak,21888,tokens,Haupt + Subagent
+codex,vorher,dynamisch-implizit,nixie,subagents,0,anzahl,
+codex,vorher,dynamisch-implizit,nixie,skill_injiziert,0,anzahl,
+codex,vorher,dynamisch-implizit,nixie,files_read,1,dateien,Haupt: skills/nix-packaging/SKILL.md (Skill implizit gewählt)
+codex,vorher,dynamisch-implizit,nixie,duration_s,22.4,s,Wanduhr; 4 Läufe parallel
+codex,vorher,dynamisch-implizit,nixie,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-implizit,nixie,main_first,16931,tokens,"Hauptthread 01a0b63e-3b61-7942-9d8a-68ddf873de7a; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-implizit,nixie,main_peak,18726,tokens,
+codex,nachher,dynamisch-implizit,nixie,main_sum,72023,tokens,
+codex,nachher,dynamisch-implizit,nixie,main_cached,56960,tokens,
+codex,nachher,dynamisch-implizit,nixie,main_output,806,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,nixie,main_reasoning,186,tokens,
+codex,nachher,dynamisch-implizit,nixie,main_n,4,requests,
+codex,nachher,dynamisch-implizit,nixie,sub_first,17158,tokens,"Subagent 01a0b63e-6b1d-7943-9de2-80c1f2b453c3 /root/nixie, fork_turns none"
+codex,nachher,dynamisch-implizit,nixie,sub_peak,32154,tokens,
+codex,nachher,dynamisch-implizit,nixie,sub_sum,116107,tokens,
+codex,nachher,dynamisch-implizit,nixie,sub_cached,94464,tokens,
+codex,nachher,dynamisch-implizit,nixie,sub_output,2101,tokens,inkl. reasoning
+codex,nachher,dynamisch-implizit,nixie,sub_reasoning,901,tokens,
+codex,nachher,dynamisch-implizit,nixie,sub_n,5,requests,
+codex,nachher,dynamisch-implizit,nixie,total_sum,188130,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_cached,151424,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_uncached,36706,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_output,2907,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_reasoning,1087,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_n,9,requests,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,total_peak,32154,tokens,Haupt + Subagent
+codex,nachher,dynamisch-implizit,nixie,subagents,1,anzahl,Hauptthread wählt source-command-nixie implizit
+codex,nachher,dynamisch-implizit,nixie,skill_injiziert,0,anzahl,
+codex,nachher,dynamisch-implizit,nixie,files_read,5,dateien,"Lesevorgänge; Haupt: source-command SKILL.md; Sub: source-command SKILL.md, agents/nixie.md, nix-packaging, nix-docs; dazu 1 Websuche"
+codex,nachher,dynamisch-implizit,nixie,duration_s,70.4,s,Wanduhr; 4 Läufe parallel
+codex,nachher,dynamisch-implizit,nixie,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-implizit,nixie,main_first,-3813,tokens,nachher − vorher; -18.4 %
+codex,differenz,dynamisch-implizit,nixie,main_peak,-3162,tokens,nachher − vorher; -14.4 %
+codex,differenz,dynamisch-implizit,nixie,main_sum,29391,tokens,nachher − vorher; +68.9 %
+codex,differenz,dynamisch-implizit,nixie,main_cached,34688,tokens,nachher − vorher; +155.7 %
+codex,differenz,dynamisch-implizit,nixie,main_output,-183,tokens,nachher − vorher; -18.5 %
+codex,differenz,dynamisch-implizit,nixie,main_reasoning,-393,tokens,nachher − vorher; -67.9 %
+codex,differenz,dynamisch-implizit,nixie,main_n,2,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,nixie,sub_first,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_peak,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_sum,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_cached,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_output,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_reasoning,n/a,tokens,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,sub_n,n/a,requests,vorher kein Subagent
+codex,differenz,dynamisch-implizit,nixie,total_sum,145498,tokens,nachher − vorher; +341.3 %
+codex,differenz,dynamisch-implizit,nixie,total_cached,129152,tokens,nachher − vorher; +579.9 %
+codex,differenz,dynamisch-implizit,nixie,total_uncached,16346,tokens,nachher − vorher; +80.3 %
+codex,differenz,dynamisch-implizit,nixie,total_output,1918,tokens,nachher − vorher; +193.9 %
+codex,differenz,dynamisch-implizit,nixie,total_reasoning,508,tokens,nachher − vorher; +87.7 %
+codex,differenz,dynamisch-implizit,nixie,total_n,7,requests,nachher − vorher
+codex,differenz,dynamisch-implizit,nixie,total_peak,10266,tokens,nachher − vorher; +46.9 %
+codex,differenz,dynamisch-implizit,nixie,subagents,1,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,nixie,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-implizit,nixie,files_read,4,dateien,nachher − vorher
+codex,differenz,dynamisch-implizit,nixie,duration_s,48,s,nachher − vorher; +214.3 %
+codex,vorher,dynamisch-explizit,nixie,main_first,21182,tokens,"Hauptthread 01a0b63e-3777-7072-bdce-a3cbaa8c9547; gpt-5.6-sol, Effort high"
+codex,vorher,dynamisch-explizit,nixie,main_peak,21646,tokens,
+codex,vorher,dynamisch-explizit,nixie,main_sum,64144,tokens,
+codex,vorher,dynamisch-explizit,nixie,main_cached,53248,tokens,
+codex,vorher,dynamisch-explizit,nixie,main_output,452,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,nixie,main_reasoning,63,tokens,
+codex,vorher,dynamisch-explizit,nixie,main_n,3,requests,
+codex,vorher,dynamisch-explizit,nixie,sub_first,26914,tokens,"Subagent 01a0b63e-57ea-7ef3-af1d-e59b6a077858 /root/nixie, fork_turns=all; enthält Elternkontext"
+codex,vorher,dynamisch-explizit,nixie,sub_peak,28036,tokens,
+codex,vorher,dynamisch-explizit,nixie,sub_sum,54950,tokens,
+codex,vorher,dynamisch-explizit,nixie,sub_cached,44672,tokens,
+codex,vorher,dynamisch-explizit,nixie,sub_output,784,tokens,inkl. reasoning
+codex,vorher,dynamisch-explizit,nixie,sub_reasoning,374,tokens,
+codex,vorher,dynamisch-explizit,nixie,sub_n,2,requests,
+codex,vorher,dynamisch-explizit,nixie,total_sum,119094,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_cached,97920,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_uncached,21174,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_output,1236,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_reasoning,437,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_n,5,requests,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,total_peak,28036,tokens,Haupt + Subagent
+codex,vorher,dynamisch-explizit,nixie,subagents,1,anzahl,agents/nixie.md nie gelesen
+codex,vorher,dynamisch-explizit,nixie,skill_injiziert,1,anzahl,nixie:source-command-nixie
+codex,vorher,dynamisch-explizit,nixie,skill_injiziert_zeichen,1530,zeichen,
+codex,vorher,dynamisch-explizit,nixie,files_read,1,dateien,Sub: nix-packaging/SKILL.md
+codex,vorher,dynamisch-explizit,nixie,duration_s,34.1,s,Wanduhr; 4 Läufe parallel
+codex,vorher,dynamisch-explizit,nixie,cost_usd,n/a,usd,Codex meldet keine USD
+codex,nachher,dynamisch-explizit,nixie,main_first,17925,tokens,"Hauptthread 01a0b63e-3f38-79e2-84a8-51239170e030; gpt-5.6-sol, Effort high"
+codex,nachher,dynamisch-explizit,nixie,main_peak,18523,tokens,
+codex,nachher,dynamisch-explizit,nixie,main_sum,54637,tokens,
+codex,nachher,dynamisch-explizit,nixie,main_cached,46976,tokens,
+codex,nachher,dynamisch-explizit,nixie,main_output,556,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,nixie,main_reasoning,55,tokens,
+codex,nachher,dynamisch-explizit,nixie,main_n,3,requests,
+codex,nachher,dynamisch-explizit,nixie,sub_first,19973,tokens,"Subagent 01a0b63e-5a37-7b40-84a0-6b5635e31b7c /root/nixie_entwurf, fork_turns=all; enthält Elternkontext"
+codex,nachher,dynamisch-explizit,nixie,sub_peak,25567,tokens,
+codex,nachher,dynamisch-explizit,nixie,sub_sum,92233,tokens,
+codex,nachher,dynamisch-explizit,nixie,sub_cached,80384,tokens,
+codex,nachher,dynamisch-explizit,nixie,sub_output,2106,tokens,inkl. reasoning
+codex,nachher,dynamisch-explizit,nixie,sub_reasoning,1354,tokens,
+codex,nachher,dynamisch-explizit,nixie,sub_n,4,requests,
+codex,nachher,dynamisch-explizit,nixie,total_sum,146870,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_cached,127360,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_uncached,19510,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_output,2662,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_reasoning,1409,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_n,7,requests,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,total_peak,25567,tokens,Haupt + Subagent
+codex,nachher,dynamisch-explizit,nixie,subagents,1,anzahl,Persona-Lader über agents/nixie.md
+codex,nachher,dynamisch-explizit,nixie,skill_injiziert,1,anzahl,nixie:source-command-nixie
+codex,nachher,dynamisch-explizit,nixie,skill_injiziert_zeichen,3585,zeichen,
+codex,nachher,dynamisch-explizit,nixie,files_read,3,dateien,"Sub: agents/nixie.md, nix-packaging, nix-docs"
+codex,nachher,dynamisch-explizit,nixie,duration_s,58.8,s,Wanduhr; 4 Läufe parallel
+codex,nachher,dynamisch-explizit,nixie,cost_usd,n/a,usd,Codex meldet keine USD
+codex,differenz,dynamisch-explizit,nixie,main_first,-3257,tokens,nachher − vorher; -15.4 %
+codex,differenz,dynamisch-explizit,nixie,main_peak,-3123,tokens,nachher − vorher; -14.4 %
+codex,differenz,dynamisch-explizit,nixie,main_sum,-9507,tokens,nachher − vorher; -14.8 %
+codex,differenz,dynamisch-explizit,nixie,main_cached,-6272,tokens,nachher − vorher; -11.8 %
+codex,differenz,dynamisch-explizit,nixie,main_output,104,tokens,nachher − vorher; +23.0 %
+codex,differenz,dynamisch-explizit,nixie,main_reasoning,-8,tokens,nachher − vorher; -12.7 %
+codex,differenz,dynamisch-explizit,nixie,main_n,0,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,sub_first,-6941,tokens,nachher − vorher; -25.8 %
+codex,differenz,dynamisch-explizit,nixie,sub_peak,-2469,tokens,nachher − vorher; -8.8 %
+codex,differenz,dynamisch-explizit,nixie,sub_sum,37283,tokens,nachher − vorher; +67.8 %
+codex,differenz,dynamisch-explizit,nixie,sub_cached,35712,tokens,nachher − vorher; +79.9 %
+codex,differenz,dynamisch-explizit,nixie,sub_output,1322,tokens,nachher − vorher; +168.6 %
+codex,differenz,dynamisch-explizit,nixie,sub_reasoning,980,tokens,nachher − vorher; +262.0 %
+codex,differenz,dynamisch-explizit,nixie,sub_n,2,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,total_sum,27776,tokens,nachher − vorher; +23.3 %
+codex,differenz,dynamisch-explizit,nixie,total_cached,29440,tokens,nachher − vorher; +30.1 %
+codex,differenz,dynamisch-explizit,nixie,total_uncached,-1664,tokens,nachher − vorher; -7.9 %
+codex,differenz,dynamisch-explizit,nixie,total_output,1426,tokens,nachher − vorher; +115.4 %
+codex,differenz,dynamisch-explizit,nixie,total_reasoning,972,tokens,nachher − vorher; +222.4 %
+codex,differenz,dynamisch-explizit,nixie,total_n,2,requests,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,total_peak,-2469,tokens,nachher − vorher; -8.8 %
+codex,differenz,dynamisch-explizit,nixie,subagents,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,skill_injiziert,0,anzahl,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,skill_injiziert_zeichen,2055,zeichen,nachher − vorher; +134.3 %
+codex,differenz,dynamisch-explizit,nixie,files_read,2,dateien,nachher − vorher
+codex,differenz,dynamisch-explizit,nixie,duration_s,24.7,s,nachher − vorher; +72.4 %

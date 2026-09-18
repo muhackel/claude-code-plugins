@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# python3 aus nixpkgs; der Store-Pfad wird einmal aufgelöst und unter $LAZY_MESS gecacht,
+# weil der Watchdog-Hook bei jedem Tool-Call startet.
+set -euo pipefail
+cache=${LAZY_MESS:-/tmp/lazy-mess}/.python3-store-path
+if [[ -r "$cache" ]]; then
+  out=$(<"$cache")
+  [[ -x "$out/bin/python3" ]] && exec "$out/bin/python3" "$@"
+fi
+out=$(nix build nixpkgs#python3 --no-link --print-out-paths)
+mkdir -p "$(dirname "$cache")"
+printf '%s' "$out" > "$cache"
+exec "$out/bin/python3" "$@"
