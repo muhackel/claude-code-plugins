@@ -1,0 +1,6 @@
+interface:
+  display_name: "Nixie: Nix-Deploy"
+  short_description: "NixOS bauen und deployen, Build-Host wählen, Builds drosseln"
+  default_prompt: "Nutze $nixie:nix-deploy, um den gedrosselten Build-Befehl für diesen Host vorzubereiten."
+policy:
+  allow_implicit_invocation: false

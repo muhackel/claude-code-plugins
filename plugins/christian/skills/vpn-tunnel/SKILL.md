@@ -1,6 +1,7 @@
 ---
 name: vpn-tunnel
 description: "Breite VPN-Landkarte jenseits OpenVPN: WireGuard (wg/wg-quick, AllowedIPs-Routing, PSK, Kill-Switch, PersistentKeepalive), IPsec (strongSwan swanctl / Libreswan, IKEv2, Site-to-Site vs. Transport, AEAD/PFS/NAT-T), L2-über-L3 (EtherIP, GRETAP, L2TPv3, VXLAN) mit MTU-Overhead und wann L2 wirklich nötig ist, Mesh-Overlays self-hosted (Headscale, NetBird, Netmaker, ZeroTier, Nebula) und SSL-VPN (OpenConnect/ocserv, SoftEther). Je Technik: wann/Aufbau-Kern/Krypto-Härtung/Fallstricke mit Quellen-Anker. Nutzen, wenn eine VPN-Technik auszuwählen oder aufzubauen ist. Krypto-Härtung über bruce/TR-02102; OpenVPN-Details im openvpn-Skill; Optionen per Projekt-Doku/Manpage verifizieren."
+disable-model-invocation: true
 ---
 
 # VPN-Tunnel — die breite Palette

@@ -1,6 +1,7 @@
 ---
 name: gs-cache
 description: "Projekt-lokalen Baustein-Vorrat erzeugen, rebuilden und nachziehen: die Volltexte ausgewählter Bausteine (Übersicht/Gefährdungslage + alle Anforderungen mit aufgelösten Parametern, zitierfähig wie 'gs get') in eine Markdown-Datei neben den Projektdateien materialisieren. Damit liest der Agent die Bausteintexte direkt aus dem Vorrat statt sie für jede ID neu aus dem Korpus zu parsen — beschleunigt Modellierungs-, Soll-Ist- und Dokument-Läufe erheblich. Rebuild ist idempotent (sha256 der catalog.json), zusätzliche IDs werden nachgezogen. Nutzen, wenn für ein Projekt ein fester Satz Bausteine wiederholt gebraucht wird."
+disable-model-invocation: true
 ---
 
 # gs-cache — projekt-lokaler Baustein-Vorrat
@@ -8,8 +9,11 @@ description: "Projekt-lokalen Baustein-Vorrat erzeugen, rebuilden und nachziehen
 Jeder `gs get <ID>` startet einen Prozess und parst die volle `catalog.json` (~4 MB) neu. Für viele
 Anforderungen (Modellierung, Soll-Ist, Dokument) summiert sich das. Dieser Skill **materialisiert** die
 Volltexte eines für ein Projekt ausgewählten Baustein-Satzes **einmal** in eine Markdown-Datei neben den
-Projektdateien. Der Agent liest danach direkt aus dem Vorrat (Read-Tool) statt den Korpus erneut zu
-befragen.
+Projektdateien. Der Agent liest danach die Vorrat-Datei direkt, statt den Korpus erneut zu befragen.
+
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-cache/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`; so läuft es aus
+jedem Arbeitsverzeichnis. Relative Pfade bei `--out` gelten dagegen vom Arbeitsverzeichnis aus.
 
 Der Vorrat ist die **Volltext-Ergänzung** zu einer kuratierten, begründeten Auswahl-/Modellierungs-Note
 des Projekts. Die Auswahl (welche Bausteine) kommt aus `gs-modellierung`
@@ -30,7 +34,7 @@ Anforderungen darunter. Einzelne Anforderungs-IDs (`CON.1.A4`) sind ebenfalls er
 ## Erzeugen (Szenario)
 
 ```bash
-nix run .#gs -- --edition edition-2023 cache \
+nix run "path:<root>#gs" -- --edition edition-2023 cache \
   --out <projektpfad>/<Name>-Bausteine-Vorrat.md \
   --title "IAM-Stack" \
   --targets "Server,Netz,Verzeichnisdienst,Virtualisierung" \
@@ -56,29 +60,31 @@ Idempotenz über den `sha256` der `catalog.json` + unveränderte `targets`/Pins.
 
 ```bash
 # Komponente ergänzen (z.B. Windows-Server -> Asset-Typ "Server" liefert SYS.1.2.2; neuer Typ -> dessen Bausteine):
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz,Verzeichnisdienst,Datenbank"
+nix run "path:<root>#gs" -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz,Verzeichnisdienst,Datenbank"
 #   -> meldet: nachgezogen: APP.4.3 …
 
 # Komponente entfällt -> targets reduzieren -> deren Bausteine werden gepruned (Hand-Pins bleiben):
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz"
+nix run "path:<root>#gs" -- --edition edition-2023 cache --out <datei>.md --targets "Server,Netz"
 #   -> meldet: entfernt (pruned): …
 
 # Hand-Pin entfernen:
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md --unpin APP.2.3
+nix run "path:<root>#gs" -- --edition edition-2023 cache --out <datei>.md --unpin APP.2.3
 
 # unverändert -> nichts zu tun;  --force erzwingt Re-Render;  --status zeigt Frische + targets + Pins
-nix run .#gs -- --edition edition-2023 cache --out <datei>.md --status
+nix run "path:<root>#gs" -- --edition edition-2023 cache --out <datei>.md --status
 ```
 
 - Wird `--targets` beim Rebuild weggelassen, gelten die **gespeicherten** `targets` (nur auffrischen).
 - **Manuell-Modus** (keine `targets` gespeichert/übergeben): neue IDs werden additiv **nachgezogen**,
   ohne Pruning; `--unpin` gibt es dort nicht.
 - Änderte sich der Korpus (`gs-ingest`), meldet `--status` „VERALTET" → einmal neu bauen frischt alle Texte auf.
+- Der Rebuild-Hinweis im Kopf eines Vorrats nennt `nix run .#gs`; das gilt nur im Plugin-Verzeichnis. Von
+  anderswo die Befehle oben nehmen.
 
 ## Nutzung durch den Agenten
 
-- Bausteintext/Anforderung für ein Projekt zitieren → **zuerst aus dem Vorrat lesen** (Read-Tool auf die
-  `…-Bausteine-Vorrat.md`), nur bei fehlendem/veraltetem Vorrat auf `gs get` zurückfallen.
+- Bausteintext/Anforderung für ein Projekt zitieren → **zuerst aus dem Vorrat lesen** (die
+  `…-Bausteine-Vorrat.md` direkt), nur bei fehlendem/veraltetem Vorrat auf `gs get` zurückfallen.
 - Der Vorrat ist ein **generiertes Artefakt** („nicht händisch editieren") — die kuratierte Auswahl-Note
   mit Begründung bleibt getrennt und wird vom Agenten/Karin gepflegt.
 - Liegt der Vorrat im Vault: Frontmatter minimal halten; Schreiben in den Vault nur auf Projektauftrag.

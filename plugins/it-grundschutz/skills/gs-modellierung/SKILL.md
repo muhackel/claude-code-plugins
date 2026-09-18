@@ -1,12 +1,17 @@
 ---
 name: gs-modellierung
 description: "Für ein Szenario die zutreffenden Grundschutz-Bausteine und Anforderungen ermitteln: Beschreibung (Komponenten, Prozesse, Schutzbedarf) auf die Schichten/Gruppen und Zielobjektkategorien des Katalogs abbilden (Grundschutz++ via 'gs list --target' und 'gs coverage' mit Vererbung; Edition 2023 via 'gs coverage' über eine heuristische Komponente->Baustein-Hinttabelle) und eine begründete, zitierfähige Anforderungsliste erzeugen. Nutzen, wenn 'welche Anforderungen treffen auf X zu' gefragt ist. Nur generisch — keine vertraulichen Verbundsdaten."
+disable-model-invocation: true
 ---
 
 # gs-modellierung — Bausteine für ein Szenario
 
 Übersetzt ein generisches Szenario in eine nachvollziehbare Liste zutreffender Anforderungen. Arbeitet
 gegen den lokalen Katalog (`gs-lookup`), erfindet nichts.
+
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-modellierung/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` bzw. `gs.py <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`;
+so läuft es aus jedem Arbeitsverzeichnis.
 
 ## Wichtig: nur generisch
 
@@ -45,11 +50,11 @@ In Grundschutz++ hängen Anforderungen nicht mehr an Bausteinen (wie `SYS.1.1` i
 Modellierungs-Mechanismus und der Ersatz für die alte Baustein-Navigation:
 
 ```bash
-nix run .#gs -- targets                               # alle Kategorien + Häufigkeit + Vererbung + Synonyme
-nix run .#gs -- list --target Hostsysteme             # Anforderungen direkt an "Server" (Synonym Hostsysteme)
-nix run .#gs -- list --target Hostsysteme --inherit   # + vererbte Anforderungen der Oberkategorie IT-Systeme
-nix run .#gs -- list --target Webanwendungen --inherit    # erbt über Webserver -> Anwendungen
-nix run .#gs -- list KONF BER --target Hostsysteme --inherit  # nur diese Schichten, auf das Asset gefiltert
+nix run "path:<root>#gs" -- targets                               # alle Kategorien + Häufigkeit + Vererbung + Synonyme
+nix run "path:<root>#gs" -- list --target Hostsysteme             # Anforderungen direkt an "Server" (Synonym Hostsysteme)
+nix run "path:<root>#gs" -- list --target Hostsysteme --inherit   # + vererbte Anforderungen der Oberkategorie IT-Systeme
+nix run "path:<root>#gs" -- list --target Webanwendungen --inherit    # erbt über Webserver -> Anwendungen
+nix run "path:<root>#gs" -- list KONF BER --target Hostsysteme --inherit  # nur diese Schichten, auf das Asset gefiltert
 ```
 
 **Mehrere Assets auf einmal — `coverage` (der Vollständigkeits-Schritt):** Ein realer Verbund hat *viele*
@@ -57,7 +62,7 @@ Zielobjekte. Statt jede Kategorie einzeln zu ziehen, liefert `coverage` das **Ve
 gesamte Asset-Landschaft — und weist explizit aus, was leicht vergessen wird:
 
 ```bash
-nix run .#gs -- coverage --targets "Hostsysteme,Externe Netzanschlüsse,Dateiserver,Administrierende"
+nix run "path:<root>#gs" -- coverage --targets "Hostsysteme,Externe Netzanschlüsse,Dateiserver,Administrierende"
 ```
 
 - **Vereinigungs-Soll:** alle Anforderungen über alle genannten Assets (inkl. Vererbung, default an;
@@ -83,12 +88,12 @@ nicht über `--target` — die kommen über die Prozess-Schichten (`GC`/`STM`/`U
 
 Edition 2023 kennt keine Zielobjektkategorien, sondern **Bausteine**. `coverage` funktioniert dort über eine
 **plugin-eigene, heuristische** Komponente→Baustein-Hinttabelle (MIT,
-`data/edition-2023-baustein-komponenten.csv` — NICHT der BSI-Korpus, **kein** offizielles Mapping). Eingabe
-sind generische Asset-Typen statt Kategorien:
+`<root>/data/edition-2023-baustein-komponenten.csv` — NICHT der BSI-Korpus, **kein** offizielles Mapping).
+Eingabe sind generische Asset-Typen statt Kategorien:
 
 ```bash
-nix run .#gs -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz,Client,Gebäude/Raum"
-nix run .#gs -- --edition edition-2023 coverage      # ohne Argument: listet die verfügbaren Asset-Typen
+nix run "path:<root>#gs" -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz,Client,Gebäude/Raum"
+nix run "path:<root>#gs" -- --edition edition-2023 coverage      # ohne Argument: listet die verfügbaren Asset-Typen
 ```
 
 - **Vereinigungs-Soll:** alle komponentengebundenen Bausteine, deren Asset-Typ in der Liste vorkommt.

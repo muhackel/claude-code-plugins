@@ -5,6 +5,22 @@ Skill-Sektion, die sie encodiert.
 
 ---
 
+## ✅ UMGESETZT (2026-09-18): 0.5.0 — Fachwissen nur im Agenten
+
+Die vier Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex
+`allow_implicit_invocation: false`) und stehen nicht mehr im Kontext der Hauptsitzung. Kein `skills:`
+mehr im Agenten: Nixie liest die `SKILL.md` erst, wenn ein Auftrag sie braucht (Tabelle im Agent-Body).
+Von Hand per `/nixie:<skill>` bzw. `$nixie:<skill>` geladen wirkt ein Skill allein, seine Verweise auf
+andere Skills werden nicht nachgeladen. Agent- und Command-Beschreibung gekürzt und mit „Proaktiv
+nutzen“ versehen, sonst delegierte die Hauptsitzung Nix-Aufgaben ohne `/nixie` nicht (Funktionstest).
+`/nixie` trennt die CLIs: Unter Claude Code bekommt der Agent nur den User-Text, unter Codex lädt der
+Command die Rollenanweisung selbst. Die Regel gegen eine zweite Nixie steht auch im Command, weil er in
+der Hauptsitzung läuft. Long-Runner-Regel und Bootloader/NVRAM als Sicherheitsregeln in den
+Agent-Body, weil sie gelten müssen, bevor `nix-deploy` gelesen ist. Offline-Skripte in `nix-deploy`
+relativ zur `SKILL.md` statt zum Arbeitsverzeichnis. STARTUP holt nur den Nixie-Block aus der globalen
+Datei der eigenen CLI (`~/.claude/CLAUDE.md` bzw. `~/.codex/AGENTS.md`); der Zero-Config-Bootstrap läuft
+erst, wenn ein Auftrag einen Build-Host braucht.
+
 ## ✅ UMGESETZT (2026-07-18): Generischer Offline-Closure-Deploy (USB, TUI)
 
 Die handgeschriebene BFG9000-Blaupause (Single-Host, Toplevel + Archiv hart verdrahtet) zu einem

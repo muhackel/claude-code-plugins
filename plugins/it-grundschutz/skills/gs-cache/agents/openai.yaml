@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Cache"
+  short_description: "Projekt-lokalen Baustein-Vorrat erzeugen und nachziehen"
+  default_prompt: "Nutze $it-grundschutz:gs-cache, um den Baustein-Vorrat des Projekts neu zu bauen."
+policy:
+  allow_implicit_invocation: false

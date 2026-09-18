@@ -1,6 +1,7 @@
 ---
 name: gs-krypto
 description: "Kryptographische Verfahren, Schlüssellängen und Cipher-Suiten zitierfähig bewerten — Primärquelle BSI TR-02102 (Teile -1 bis -4) mit internationaler Gegenprobe (NIST SP 800-57, FIPS 140-3/197/186, RFCs). Liefert ein belegtes Urteil (konform / abzulösen / verboten) mit Quelle, Teil, Tabelle/Abschnitt und Stand/Jahr. Nutzen für die Bewertung von symmetrischen/asymmetrischen Verfahren, Hashfunktionen, PFS, Protokoll-Versionen (TLS/IPsec/SSH) und ganzen Cipher-Suiten — besonders als Zulieferung an Christian bei der VPN-Config-Härtung (OpenVPN/WireGuard/IPsec)."
+disable-model-invocation: true
 ---
 
 # gs-krypto — zitierfähige Krypto-Bewertung nach BSI TR-02102
@@ -14,9 +15,9 @@ Tabelle/Abschnitt und Stand/Jahr — nicht eine Bauchmeinung.
 
 Bruce liest Grundschutz-Inhalte **ausschließlich** aus dem lokalen OSCAL-Korpus. **Krypto-Empfehlungen
 sind die eine bewusste Ausnahme davon:** Sie kommen **weder** aus dem OSCAL-Korpus **noch** aus dem
-Modellgedächtnis, sondern **live** aus den offiziellen Krypto-Quellen (WebFetch). Grund: TR-02102 wird
-**jährlich** revidiert, Schlüssellängen und Gültigkeitszeiträume verschieben sich; Trainingswissen dazu
-ist stale und fliegt im Audit auf. Grundschutz-Inhalte (Anforderungen, Bausteine, Gefährdungen) bleiben
+Modellgedächtnis, sondern **live** aus den offiziellen Krypto-Quellen (siehe „Beschaffung“). Grund:
+TR-02102 wird **jährlich** revidiert, Schlüssellängen und Gültigkeitszeiträume verschieben sich;
+Trainingswissen dazu ist stale und fliegt im Audit auf. Grundschutz-Inhalte (Anforderungen, Bausteine, Gefährdungen) bleiben
 davon unberührt **strikt korpus-first**.
 
 ## Quellen
@@ -51,10 +52,19 @@ sonst lehnt man eine dort zulässige NIST-Kurve fälschlich ab oder gibt curve25
 
 TR-02102 und die NIST-SPs liegen als **PDF** vor. WebFetch liefert diese oft nur als
 unbrauchbaren Binärstream — die Tabellenwerte gehen dabei verloren, und man landet doch beim
-Raten aus dem Gedächtnis. **Zuverlässiger Weg:** das PDF laden und lokal mit `pdftotext` zu Text
-wandeln, dann die Tabellen/Abschnitte auswerten:
+Raten aus dem Gedächtnis. **Zuverlässiger Weg:** einmal je Auftrag ein Verzeichnis mit `mktemp -d`
+anlegen und den ausgegebenen Pfad ab da ausgeschrieben verwenden (`<tmp>` unten). Die benötigten PDFs mit
+`curl` dorthin laden, mit `pdftotext -layout` zu Text wandeln und die Textdateien gezielt durchsuchen
+(grep, Zeilenbereiche), nicht interaktiv. `curl` und `pdftotext` immer über
+`nix-shell -p curl poppler-utils` aufrufen, auch wenn sie systemweit vorhanden sind. Nie ins
+Arbeitsverzeichnis oder an einen selbst gewählten festen Pfad schreiben. `<tmp>` nach dem Urteil löschen; Beleg ist die URL, nie ein lokaler Pfad.
 
-    nix-shell -p poppler-utils --run 'pdftotext -layout TR02102-1.pdf - | less'
+    mktemp -d
+    nix-shell -p curl poppler-utils --run 'cd <tmp> && for f in BSI-TR-02102.pdf BSI-TR-02102-3.pdf; do curl -fsSL -o "$f" "<Basis-URL>$f?__blob=publicationFile" && pdftotext -layout "$f"; done'
+    rm -rf <tmp>
+
+`pdftotext` schreibt `<name>.txt` neben das PDF. Alle Teile in einem Aufruf laden, das spart
+Nix-Auswertungen.
 
 - **BSI TR-02102** — Basis-URL `https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR02102/`,
   je Teil ein PDF (Stand geprüft 2026-07-18), Query `?__blob=publicationFile` anhängen:
@@ -67,7 +77,7 @@ wandeln, dann die Tabellen/Abschnitte auswerten:
   | **-4** | `BSI-TR-02102-4.pdf` | SSH |
 
   Vor dem Zitieren die **Versions-/Stand-Angabe im PDF-Kopf** (z.B. „Version 2026-01") ablesen und mitzitieren.
-- **NIST SP 800-57 Part 1:** nvlpubs.nist.gov (Rev. 5). Ebenfalls PDF → `pdftotext`.
+- **NIST SP 800-57 Part 1:** nvlpubs.nist.gov (Rev. 5). Ebenfalls PDF, gleicher Weg über `<tmp>`.
 
 `-layout` erhält die Tabellenstruktur — ohne das Flag verrutschen die Spalten der Schlüssellängen-Tabellen.
 
@@ -89,12 +99,13 @@ wandeln, dann die Tabellen/Abschnitte auswerten:
 1. **Frage präzisieren:** Welches Verfahren / welche Suite, in welchem Kontext (TLS / IPsec / SSH / VPN)?
    Ohne Kontext lässt sich der richtige TR-02102-Teil nicht wählen.
 2. **Quellen holen:** den passenden **TR-02102-Teil** (-1 als Basis + -2/-3/-4 je nach Kontext) **und** das
-   **NIST-Pendant** per **WebFetch** ziehen — aktuelle Fassung, Stand/Jahr notieren.
+   **NIST-Pendant** holen (PDF wie unter „Beschaffung“, HTML-Seiten wie RFCs per WebFetch) — aktuelle
+   Fassung; Stand/Jahr, URL und Abrufdatum notieren.
 3. **Verifizieren, dann zitieren:** erst den tatsächlichen Inhalt lesen, dann die Tabelle/den Abschnitt als
    Beleg heranziehen — nie einen Wert aus dem Gedächtnis „erinnern".
 4. **Urteil fällen:** **konform** / **abzulösen (Migrationsfrist beachten)** / **verboten**, jeweils mit
-   **Quelle + Teil + Tabelle/Abschnitt + Stand/Jahr**. **„belegt"** (aus TR/NIST/RFC) und **„Erfahrung"**
-   (eigene Einordnung) sauber trennen.
+   **Quelle (URL + Abrufdatum) + Teil + Tabelle/Abschnitt + Stand/Jahr**. **„belegt"** (aus TR/NIST/RFC)
+   und **„Erfahrung"** (eigene Einordnung) sauber trennen.
 
 ## Anwendung auf VPN-Configs (Anknüpfpunkt für Christian)
 
@@ -116,8 +127,8 @@ markieren und die konforme Alternative nennen.
 
 ## Optional — Belege im Vault ablegen
 
-Kernaussagen/Belege (Tabellenwerte, Migrationsfristen) unter `recherche/<slug>.md` ablegen (globale
-Nutzer-Regel: Defuddle, Frontmatter mit **URL + Abrufdatum**) — über **Karin**, falls vorhanden. So bleibt
+Kernaussagen/Belege (Tabellenwerte, Migrationsfristen) unter `recherche/<slug>.md` ablegen, je Quelle mit
+**URL + Abrufdatum** im Frontmatter — über **Karin**, falls vorhanden (dem Hauptagenten empfehlen). So bleibt
 die Bewertung nachvollziehbar und die Quelle bei der nächsten TR-02102-Revision vergleichbar.
 
 ## Kooperation

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bertram: Net-Design"
+  short_description: "Netz entwerfen: Segmentierung, Adressplan, Routing, Resilienz"
+  default_prompt: "Nutze $bertram:net-design, um das Segmentierungskonzept zu bewerten."
+policy:
+  allow_implicit_invocation: false

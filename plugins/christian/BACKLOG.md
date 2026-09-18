@@ -17,6 +17,19 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ---
 
+## ✅ UMGESETZT (2026-09-18): 0.3.0 — Fachwissen nur im Agenten
+
+Die sechs Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex
+`allow_implicit_invocation: false`) und stehen nicht mehr im Kontext der Hauptsitzung. Kein `skills:`
+mehr im Agenten: Christian liest die `SKILL.md` erst, wenn ein Auftrag sie braucht (Tabelle im
+Agent-Body). Die Change-Regeln, die vor jedem Lesen gelten müssen (transient testen, erst nach
+verifizierter Erreichbarkeit persistieren, Management-Verbindung nie zuerst, sperrgefährdete Changes
+auf pfSense/OPNsense nur mit Konsole oder Out-of-Band), stehen jetzt in den Sicherheitsregeln des
+Agenten. Agent- und Command-Beschreibung gekürzt, `/christian` lädt unter Codex die Rollenanweisung
+selbst.
+
+---
+
 ## ✅ UMGESETZT (2026-07-19): pfSense/OPNsense-Plattform-Zweig (Skill `bsd-firewall`)
 
 Neuer Skill `bsd-firewall` als zweite Plattform-Achse neben `router-appliance`: die BSD-Firewall-

@@ -15,6 +15,13 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ---
 
+## ✅ UMGESETZT (2026-09-18): 0.2.0 — Fachwissen nur im Agenten
+
+Die fünf Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex
+`allow_implicit_invocation: false`) und stehen nicht mehr im Kontext der Hauptsitzung. Kein `skills:`
+mehr im Agenten: Bertram liest die `SKILL.md` erst, wenn ein Auftrag sie braucht (Tabelle im Agent-Body).
+Agent- und Command-Beschreibung gekürzt, `/bertram` lädt unter Codex die Rollenanweisung selbst.
+
 ## ✅ UMGESETZT (2026-07-18): `net-design` — Architektur-Ebene
 
 Vorgezogen aus den späteren Erweiterungen. Skill für Netzarchitektur/-bewertung: Segmentierung

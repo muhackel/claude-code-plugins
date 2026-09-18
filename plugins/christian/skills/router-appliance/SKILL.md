@@ -1,6 +1,7 @@
 ---
 name: router-appliance
 description: "Linux-Router-Stack als Kernkompetenz: nftables (Tabellen/Ketten/Hooks, stateful ct-state, Zonen WAN/LAN/DMZ/MGMT, NAT masquerade/dnat/snat, default-drop, MSS-Clamping, Anti-Spoofing/rp_filter, iptables→nftables-Migration); Routing mit FRR/BIRD (OSPF/BGP/statisch, Kernel-FIB, ECMP, wann welcher Daemon); iproute2/systemd-networkd (Adressen/Routen, Policy-Routing mit ip rule + mehreren Tabellen, VRF, IP-Forwarding-sysctls, Bridges/VLANs); OpenWrt/DD-WRT (UCI/opkg) als sekundäre Plattform. Appliance-Denke: minimal, dienstgetrennt, reproduzierbar (NixOS-Umsetzung → nixie). Syntax reference-first aus offizieller Doku, nicht aus dem Gedächtnis. Nutzen beim Bauen, Prüfen oder Umsetzen eines Linux-Routers/Firewall-Gateways."
+disable-model-invocation: true
 ---
 
 # Router-Appliance — der Linux-Router-Stack

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bertram: Net-Diagnose"
+  short_description: "Netzwerk-Fehlersuche strukturiert von L1 bis L7"
+  default_prompt: "Nutze $bertram:net-diagnose, um das Störungsbild Schicht für Schicht einzugrenzen."
+policy:
+  allow_implicit_invocation: false

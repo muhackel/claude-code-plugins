@@ -13,8 +13,8 @@
         default = pkgs.mkShell {
           packages = [ pkgs.python3 pkgs.curl pkgs.jq pkgs.coreutils ];
           shellHook = ''
-            echo "it-grundschutz devShell — scripts/ingest.sh, scripts/gs.py"
-            echo "Korpus-Verzeichnis via GS_CORPUS_DIR (default ~/.local/share/it-grundschutz/corpus)"
+            echo "it-grundschutz devShell — scripts/ingest.sh, scripts/gs.py" >&2
+            echo "Korpus-Verzeichnis via GS_CORPUS_DIR (default ~/.local/share/it-grundschutz/corpus)" >&2
           '';
         };
       });

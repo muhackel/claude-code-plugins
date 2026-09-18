@@ -1,0 +1,6 @@
+interface:
+  display_name: "Christian: WAN-Link"
+  short_description: "WAN-Kopplung: Tech-Wahl, L2/L3, Krypto, Failover, MTU, Rollback"
+  default_prompt: "Nutze $christian:wan-link, um die Kopplung zweier Standorte hinter CGNAT zu planen."
+policy:
+  allow_implicit_invocation: false

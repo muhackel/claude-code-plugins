@@ -1,0 +1,6 @@
+interface:
+  display_name: "Christian: VPN-Reference"
+  short_description: "VPN-/Router-Optionen aus Manpage und Doku belegen statt raten"
+  default_prompt: "Nutze $christian:vpn-reference, um diese OpenVPN-Option in openvpn(8) der Zielversion zu belegen."
+policy:
+  allow_implicit_invocation: false

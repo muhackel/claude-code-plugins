@@ -17,13 +17,19 @@ Practices kommen aus der Vendor-Befehlsreferenz, nicht aus dem Gedächtnis. Anal
 
 | Typ | Name | Zweck |
 |-----|------|-------|
-| Agent | `bertram:bertram` | Netzwerk-Engineer-Persona, orchestriert die Skills |
+| Agent | `bertram:bertram` | Netzwerk-Engineer-Persona, liest die Skills bei Bedarf |
 | Command | `/bertram` | Bertram direkt aufrufen (mit optionalem Auftrag) |
 | Skill | `net-reference` | Befehlsreferenz/Best Practices zitierfähig nachschlagen (Reference-first) |
 | Skill | `net-diagnose` | L1–L7-Fehlersuche mit geordneten Diagnose-Sequenzen |
 | Skill | `net-config` | Config erzeugen, validieren, zwischen Vendor-Dialekten übersetzen |
 | Skill | `net-operate` | Gestufter Live-Zugriff (SSH) mit vendor-spezifischer Change-Safety |
 | Skill | `net-design` | Netzarchitektur entwerfen/bewerten — Segmentierung, Adressplan, Routing, Resilienz |
+
+Die Skills sind Bertrams Fachwissen und für den automatischen Aufruf gesperrt: Sie stehen weder im
+Kontext der Hauptsitzung noch in dem anderer Agenten. Bertram liest die jeweilige `SKILL.md` erst, wenn
+ein Auftrag sie braucht. Von Hand holst du einen Skill mit `/bertram:net-diagnose` (Claude Code) bzw.
+`$bertram:net-diagnose` (Codex) in die laufende Sitzung. So geladen wirkt er allein: Seine Verweise auf
+andere Skills werden nicht nachgeladen. Für Live-Zugriff Bertram nutzen, nicht `net-operate` von Hand.
 
 Weitere geplante Erweiterungen (MikroMCP-Integration, Offline-Referenz-Cache, weitere Vendor-Packs) in
 [BACKLOG.md](./BACKLOG.md).
@@ -35,7 +41,8 @@ Weitere geplante Erweiterungen (MikroMCP-Integration, Offline-Referenz-Cache, we
 /bertram übersetze diese Cisco-VLAN-Config nach RouterOS
 ```
 
-Ohne Text spawnt der Command Bertram, der dann nach Vendor/Gerät und Symptom/Ziel fragt.
+Ohne Text startet der Command Bertram, der dann nach Vendor/Gerät und Symptom/Ziel fragt. Unter Codex,
+das keine Plugin-Agenten kennt, lädt der Command die Rollenanweisung aus `agents/bertram.md`.
 
 ## Installation (lokal)
 

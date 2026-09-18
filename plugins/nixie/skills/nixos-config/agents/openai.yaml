@@ -1,0 +1,6 @@
+interface:
+  display_name: "Nixie: NixOS-Config"
+  short_description: "Multi-Host-Flake: mkHost, Feature-Flags, Modul-Layout"
+  default_prompt: "Nutze $nixie:nixos-config, um ein neues Feature-Flag samt Modul anzulegen."
+policy:
+  allow_implicit_invocation: false

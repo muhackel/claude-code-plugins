@@ -1,6 +1,7 @@
 ---
 name: net-operate
 description: "Gestufter Live-Zugriff auf Netzwerkgeräte per SSH — nur auf explizite Anforderung. Stufe 0 read-only (show/monitor/ping), Stufe 1 Config-Change mit Rollback-Netz und Bestätigung. Vendor-spezifische Change-Safety: Cisco reload-in/configure-replace, MikroTik RouterOS safe-mode, Palo Alto PAN-OS commit/revert, Juniper commit-confirmed, Aruba CX checkpoint. Remote-Lockout-Vermeidung als harte Checkliste. Nutzen, wenn der User Bertram explizit an ein echtes Gerät lässt."
+disable-model-invocation: true
 ---
 
 # Net-Operate — gestufter Live-Zugriff

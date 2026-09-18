@@ -1,6 +1,7 @@
 ---
 name: nix-deploy
 description: "Bauen und Deployen von NixOS: Build-Host dynamisch wählen (Host-Config aus CLAUDE.md oder ~/.config/nixie/hosts.conf, schnellste erreichbare Kiste), resource-aware Drosselung von --max-jobs/--cores gegen OOM bei schweren Builds, nix flake check ohne Truncation, Eskalationsstufen check → build → switch → Remote-Deploy. Nutzen bei nix flake check, nixos-rebuild, Remote-Builds oder Deploy auf andere Hosts."
+disable-model-invocation: true
 ---
 
 # Nix-Deploy — Bauen, Build-Hosts, Deploy
@@ -113,9 +114,12 @@ Die erlaubte Stufe ergibt sich aus der **konkreten Anfrage** des Users — nicht
 ## Offline-Closure-Deploy (USB, generisch)
 
 Für Ziele ohne Netz/Cache: System-Closure auf der Build-Kiste exportieren, per USB zum Ziel tragen,
-dort importieren + aktivieren. Zwei Skripte unter `skills/nix-deploy/assets/` (aus der handgeschriebenen
-BFG9000-Blaupause verallgemeinert). Konvention: **ein** Zielverzeichnis `<medium>/nix-offline-deploy` für
-alle Hosts — der Hostname steckt im Dateinamen/Manifest, das Deploy-TUI wählt am Ziel aus.
+dort importieren + aktivieren. Zwei Skripte im Unterverzeichnis `assets/` neben dieser Datei (aus der
+handgeschriebenen BFG9000-Blaupause verallgemeinert); diesen Pfad ab dem Verzeichnis dieser Datei
+auflösen, nicht ab dem Arbeitsverzeichnis, und beim Aufruf absolut ausschreiben. Den Export aus der
+Config-Root starten: `-r` nimmt per Default deren `git rev-parse`. Konvention: **ein** Zielverzeichnis
+`<medium>/nix-offline-deploy` für alle Hosts — der Hostname steckt im Dateinamen/Manifest, das Deploy-TUI
+wählt am Ziel aus.
 
 - **`nixos-offline-export.sh`** (Build-Kiste): baut **erst lokal** (`$TMPDIR`/`-w`, schnelle Disk),
   verifiziert dort, kopiert dann aufs Medium und prüft die **Stick-Kopie** per sha256 gegen. Ablauf:
@@ -177,7 +181,8 @@ gegen `-19` ~34 min. Für ein Langzeit-Archiv `-l` hochsetzen.
 ## Build-Host-Auswahl
 
 ### Config-Auflösung (Reihenfolge)
-1. **Globale `~/.claude/CLAUDE.md`** — Nixie-Block (Sektion `## Nixie` oder Fence `<!-- nixie:hosts -->`).
+1. **Globale `~/.claude/CLAUDE.md`** (unter Codex `~/.codex/AGENTS.md`) — Nixie-Block (Sektion `## Nixie`
+   oder Fence `<!-- nixie:hosts -->`).
 2. **Lokale/Projekt-`CLAUDE.md`** — gleicher Block.
 3. **Fallback `~/.config/nixie/hosts.conf`** — Format mit `#`-Kommentaren, je Zeile:
    ```

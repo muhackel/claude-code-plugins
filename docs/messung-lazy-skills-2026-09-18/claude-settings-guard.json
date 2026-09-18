@@ -1,0 +1,20 @@
+{
+  "enabledPlugins": {
+    "bibliothekarin@muhackel-plugins": false,
+    "nixie@muhackel-plugins": false,
+    "it-grundschutz@muhackel-plugins": false,
+    "bertram@muhackel-plugins": false,
+    "christian@muhackel-plugins": false,
+    "tools@muhackel-plugins": false
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "__WATCHDOG_HOOK_CMD__" }
+        ]
+      }
+    ]
+  }
+}

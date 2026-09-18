@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Crosswalk"
+  short_description: "Anforderungen 2023 und Grundschutz++ heuristisch abgleichen"
+  default_prompt: "Nutze $it-grundschutz:gs-crosswalk, um Kandidaten in Grundschutz++ für SYS.1.1.A5 zu finden."
+policy:
+  allow_implicit_invocation: false

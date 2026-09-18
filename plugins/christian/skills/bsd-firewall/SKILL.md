@@ -1,6 +1,7 @@
 ---
 name: bsd-firewall
 description: "BSD-Firewall-/Router-Distributionen als Plattform-Achse: pfSense (Netgate; CE vs. Plus) und OPNsense (Deciso) auf gemeinsamer FreeBSD/pf-DNA. pf-Paketfilter (pass/block/match, quick, letzte-Regel-gewinnt, Interface=Zone, stateful, Aliase/Tabellen, NAT outbound automatic/hybrid/manual + Port-Forward/1:1 mit Filter-Rule-Association, Floating Rules, Anti-Lockout); VPN als GUI-Instanzen (OpenVPN/IPsec/WireGuard, interner CA-Manager); Routing & Multi-WAN (statisch, Gateway-Groups mit Tier/Trigger, FRR-Paket OSPF/BGP/BFD); Pakete/Plugins (pfBlockerNG, Suricata/Snort, HAProxy, FRR, ACME, ntopng, Zenarmor/Sensei); config.xml als Single-Source, Backup/Restore/Revert. Design kommt aus wan-link/vpn-tunnel/openvpn/router-appliance, hier die BSD-Umsetzung. Syntax/Defaults/Paketnamen reference-first aus docs.netgate.com/docs.opnsense.org/pf.conf(5), nicht aus dem Gedächtnis. Nutzen beim Bauen, Prüfen oder Umsetzen einer pfSense-/OPNsense-Appliance; Abgrenzung: kommerzielle Hardware → bertram, pfSense/OPNsense sind Open Source und bleiben hier."
+disable-model-invocation: true
 ---
 
 # BSD-Firewall — pfSense & OPNsense

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Krypto"
+  short_description: "Krypto und Cipher-Suiten nach BSI TR-02102 zitierfähig bewerten"
+  default_prompt: "Nutze $it-grundschutz:gs-krypto, um die Cipher-Suiten dieser OpenVPN-Config nach TR-02102 zu bewerten."
+policy:
+  allow_implicit_invocation: false

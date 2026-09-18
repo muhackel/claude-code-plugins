@@ -1,6 +1,7 @@
 ---
 name: net-design
 description: "Netzarchitektur entwerfen und bewerten: Segmentierung (VLANs/Zonen/VRFs), IP-/Subnetting-Plan, Routing-Design (OSPF-Areas, BGP, Redundanz, Multicast/RP), Firewall-Zonen und Zero-Trust, Resilienz (Stacking, LACP über Chassis, STP-Root-Design, First-Hop-Redundanz). Design-Prinzipien: Hierarchie, Fehlerdomänen, Blast-Radius. Nutzen, wenn ein Netz oder Segment geplant, umgebaut oder gegen Best-Practice-Architektur bewertet wird — die Ebene 'wie soll es aussehen', bevor net-config das 'wie schreibe ich es' liefert."
+disable-model-invocation: true
 ---
 
 # Net-Design — wie das Netz aussehen soll

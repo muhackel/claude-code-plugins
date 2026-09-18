@@ -52,7 +52,7 @@ git submodule update --init --recursive
 1. `plugins/_template/` nach `plugins/<mein-plugin>/` kopieren
 2. **Beide** Manifeste anpassen: `.claude-plugin/plugin.json` und `.codex-plugin/plugin.json` (Name, Beschreibung, Version, Keywords)
 3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen (geteilt zwischen beiden Systemen)
-4. Bei echtem Agenten: `agents/openai.yaml.template` → `openai.yaml` umbenennen und ausfüllen (Codex-Agent-Registry)
+4. Bei einem Agenten mit eigenem Fachwissen: dessen Skills sperren und bei Bedarf lesen lassen (siehe CLAUDE.md, „Persona-Plugins“)
 5. Plugin in **beide** Marketplaces eintragen: `.claude-plugin/marketplace.json` und `.agents/plugins/marketplace.json`
 6. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
 
@@ -105,28 +105,32 @@ Skill von [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (M
 
 ### it-grundschutz
 
-IT-Grundschutz-Berater (Persona **Bruce**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**.
-Schlägt BSI-Anforderungen zitierfähig nach (per ID wie `GC.1.1` oder Thema), modelliert Bausteine für
-Szenarien und begleitet Editionswechsel (Crosswalk). Quelle und Logik sind strikt getrennt: der Agent
-arbeitet nur gegen ein internes OSCAL-Schema, neue Editionen brauchen nur einen neuen Adapter.
+IT-Grundschutz-Berater (Persona **Bruce**) auf Basis eines **lokal vorgehaltenen OSCAL-Korpus**
+(Grundschutz++ und Edition 2023). Schlägt BSI-Anforderungen zitierfähig nach (per ID wie `GC.1.1` oder
+Thema), modelliert Bausteine für Szenarien, führt den IT-Grundschutz-Check (Soll-Ist) durch, erstellt und
+prüft Sicherheitsdokumente nach der Methodik und begleitet Editionswechsel (Crosswalk). Quelle und Logik
+sind strikt getrennt: der Agent arbeitet nur gegen ein internes OSCAL-Schema, neue Editionen brauchen nur
+einen neuen Adapter.
 
 Quelle: BSI Stand-der-Technik-Bibliothek (`BSI-Bund/Stand-der-Technik-Bibliothek`), Grundschutz++ als
-OSCAL-Katalog. Der Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgehalten und **nicht** ins
-Repo eingecheckt.
+OSCAL-Katalog; Edition 2023 (DocBook-XML, bsi.bund.de) wird per Adapter nach OSCAL normalisiert. Der
+Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgehalten und **nicht** ins Repo eingecheckt.
 
 Slash Command:
 - `/bruce` — Bruce direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills:
-- `gs-ingest` — Korpus laden/cachen/aktualisieren: Anwenderkatalog + Methodik + Profile (Manifest je Datei mit sha256)
+Enthaltene Skills (für den automatischen Aufruf gesperrt, Bruce liest sie bei Bedarf):
+- `gs-ingest` — Korpus laden/cachen/aktualisieren: Grundschutz++ (Anwenderkatalog + Methodik + Profile + Zielobjektkategorien) und Edition 2023 per DocBook→OSCAL-Adapter (Manifest je Datei mit sha256)
 - `gs-lookup` — Anforderungen zitierfähig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
 - `gs-review` — IT-Grundschutz-Check (Soll-Ist): Umsetzungsstatus je Anforderung erheben/auswerten, Erfüllungsgrad + offene Punkte, Audit-Readiness
 - `gs-crosswalk` — Editionen abgleichen (Edition 2023 ↔ Grundschutz++): innerhalb einer Edition per stabilem `alt-identifier`-Diff, editionsübergreifend heuristischer Inhaltsvergleich via `gs crosswalk <ID>` (Token-Überlappung, kein offizielles BSI-Mapping)
 - `gs-modellierung` — zutreffende Bausteine/Anforderungen für ein Szenario ermitteln (Grundschutz++ zielobjektbasiert via `gs list --target`/`gs coverage` mit STM-Vererbung; Edition 2023 via `gs coverage` über eine heuristische Komponente→Baustein-Hinttabelle)
+- `gs-cache` — projekt-lokaler Baustein-Vorrat: Volltexte ausgewählter Bausteine einmal materialisieren, Rebuild idempotent mit Pruning
 - `gs-krypto` — kryptographische Verfahren/Schlüssellängen/Cipher-Suiten zitierfähig nach **BSI TR-02102** (Teile -1 bis -4) bewerten, mit NIST/FIPS-Gegenprobe. Kommt **live** aus der offiziellen Quelle (bewusste Ausnahme von der Korpus-first-Regel — Krypto-Fristen verschieben sich jährlich); typischer Zulieferfall ist die VPN-Config-Härtung für `christian`
 
-Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): `nix run .#ingest`, `nix run .#gs -- <cmd>`.
+Build-Umgebung via Nix (`flake.nix`, Details in `build.md`): im Plugin-Verzeichnis `nix run .#ingest` und
+`nix run .#gs -- <cmd>`; Agent und Skills adressieren das Flake absolut per `nix run "path:<plugin>#gs"`.
 
 ```bash
 /plugin install it-grundschutz@muhackel-plugins --scope user
@@ -144,7 +148,7 @@ einen generischen Offline-Closure-Deploy (Export auf USB, geführtes TUI am Ziel
 Slash Command:
 - `/nixie` — Nixie direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills:
+Enthaltene Skills (für den automatischen Aufruf gesperrt, Nixie liest sie bei Bedarf):
 - `nixos-config` — Konventionen der NixOS-Config (mkHost, Feature-Flags, Modul-Layout)
 - `nix-packaging` — Derivations, Overlays, Paket-Pinning
 - `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check, Offline-Closure-Deploy (USB/TUI)
@@ -153,7 +157,7 @@ Enthaltene Skills:
 Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein
 Wissensmanagement-Agent installiert (z.B. `bibliothekarin`), kann Nixie längere Recherche oder das
 Dokumentieren in einer Knowledge Base als Briefing dahin weiterreichen (Orchestrierung über den
-Hauptagenten).
+Hauptagenten). VPN-/Router-Design gehört zu `christian`, dessen NixOS-Umsetzung macht Nixie.
 
 ```bash
 /plugin install nixie@muhackel-plugins --scope user
@@ -170,7 +174,7 @@ Default, schreibende Eingriffe nur auf explizite Anforderung mit Rollback-Netz (
 Slash Command:
 - `/bertram` — Bertram direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills:
+Enthaltene Skills (für den automatischen Aufruf gesperrt, Bertram liest sie bei Bedarf):
 - `net-reference` — Reference-first-Disziplin: Quellen je Vendor, Workflow präzisieren→holen→verifizieren→zitierfähig→anwenden
 - `net-diagnose` — L1→L7-Diagnosesequenzen mit Show-Kommandos, Output-Deutung und Anti-Patterns
 - `net-config` — Config erzeugen mit Pre-Deployment-Validierung, Dialekt-Übersetzung über die Konzept-Ebene, Best-Practice-Templates
@@ -191,14 +195,13 @@ WAN-Verbindungen zwischen Netzen**, ebenfalls **Reference-first** (Config-Syntax
 Manpage/Projekt-Doku, nie geraten). OpenVPN als Kern-Expertise, dazu WireGuard, IPsec (strongSwan/
 Libreswan), Mesh-Overlays und L2-Tunnel; voller Linux-Router-Stack (nftables/FRR/BIRD/NAT); dazu
 BSD-Firewall-Appliances pfSense/OPNsense (pf, config.xml, VPN über die GUI-Instanzen). Live-Deploy
-gestuft mit Rollback (ein WAN-Link-Change kappt den Standort). Delegiert NixOS-Umsetzung an `nixie` und
-Krypto-Freigaben an `bruce` (`it-grundschutz`/`gs-krypto`, TR-02102).
+gestuft mit Rollback (ein WAN-Link-Change kappt den Standort).
 
 Slash Command:
 - `/christian` — Christian direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills:
-- `vpn-reference` — Reference-first-Herzstück: Quellen je Technik (OpenVPN/WireGuard/strongSwan/FRR/nftables/Mesh-Projekte)
+Enthaltene Skills (für den automatischen Aufruf gesperrt, Christian liest sie bei Bedarf):
+- `vpn-reference` — Reference-first-Herzstück: Quellen je Technik (OpenVPN/WireGuard/strongSwan/Libreswan/FRR/BIRD/nftables/pf, pfSense/OPNsense, Mesh-Projekte, OpenWrt/UCI)
 - `openvpn` — Kern-Expertise: PKI (easy-rsa 3), tls-crypt, topology subnet, iroute/push-Routing, Krypto-Härtung, Troubleshooting, Anti-Patterns
 - `vpn-tunnel` — die breite Palette: WireGuard, IPsec/IKEv2, L2-Suite (EtherIP/GRETAP/L2TPv3/VXLAN), Mesh-Overlays, SSL-VPN
 - `router-appliance` — Linux-Router-Stack: nftables (Zonen/NAT), FRR/BIRD, iproute2/systemd-networkd, Policy-Routing; OpenWrt/DD-WRT sekundär
