@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Lookup"
+  short_description: "Anforderungen und Bausteine zitierfähig im Korpus nachschlagen"
+  default_prompt: "Nutze $it-grundschutz:gs-lookup, um die Anforderung GC.1.1 zitierfähig nachzuschlagen."
+policy:
+  allow_implicit_invocation: false

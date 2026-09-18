@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Ingest"
+  short_description: "BSI-Korpus (Grundschutz++, Edition 2023) laden und aktualisieren"
+  default_prompt: "Nutze $it-grundschutz:gs-ingest, um den Grundschutz++-Korpus zu aktualisieren."
+policy:
+  allow_implicit_invocation: false

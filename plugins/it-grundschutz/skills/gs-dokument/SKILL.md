@@ -1,6 +1,7 @@
 ---
 name: gs-dokument
 description: "Sicherheitsdokumente nach der Grundschutz++-Methodik erstellen, führen oder prüfen. Drei Modi: (1) geführter Prozess entlang der Methodik-Schichten; (2) Dokument-Gerüst erzeugen (Template mit eingesetzten Anforderungen + Methodik-Verweisen); (3) bestehendes Dokument gegen Methodik/Anforderungen prüfen (Gap-Analyse). Stützt sich auf die Methodik-Ebene des Korpus und die BSI-Komponenten-Vorlagen. Nutzen, wenn ein Sicherheitskonzept/ISMS-Dokument erstellt, strukturiert oder geprüft werden soll. Generisch — ausgefüllte, firmenspezifische Dokumente gehören in ein vertrauliches Repo."
+disable-model-invocation: true
 ---
 
 # gs-dokument — Dokumente nach der Methodik
@@ -9,14 +10,18 @@ Erstellt, führt oder prüft Sicherheitsdokumente **entlang der Grundschutz++-Me
 das **Vorgehen** (das Warum/Wie), der Anwenderkatalog liefert die **konkreten Anforderungen**. Beide stehen
 im Korpus — dieser Skill kodiert nur die *Disziplin*, sie zu einem Dokument zu verbinden.
 
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-dokument/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` bzw. `gs.py <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`;
+so läuft es aus jedem Arbeitsverzeichnis.
+
 ## Korpus-first (Pflicht)
 
 Die Methodik wird **nie aus dem Gedächtnis** wiedergegeben — immer aus dem Korpus:
 
 ```bash
-nix run .#gs -- prozess            # Vorgehensweise als Schrittfolge (Methodik-Ebene)
-nix run .#gs -- get GC.5.1         # ein Schritt: Anforderung + Methodik-Ebene (das Warum)
-nix run .#gs -- list STM           # Anforderungen einer Schicht
+nix run "path:<root>#gs" -- prozess            # Vorgehensweise als Schrittfolge (Methodik-Ebene)
+nix run "path:<root>#gs" -- get GC.5.1         # ein Schritt: Anforderung + Methodik-Ebene (das Warum)
+nix run "path:<root>#gs" -- list STM           # Anforderungen einer Schicht
 ```
 
 Als Vorlagen dienen zusätzlich die **Implementierungsbeschreibungen/Komponenten** im BSI-Repo

@@ -1,6 +1,7 @@
 ---
 name: gs-ingest
 description: "Den BSI-Korpus lokal vorhalten: die Grundschutz++-OSCAL-Dateien (Anwenderkatalog, Methodik-Quellkatalog, Profile) von der BSI-Stand-der-Technik-Bibliothek (GitHub) laden sowie das IT-Grundschutz-Kompendium Edition 2023 (DocBook-XML) per Adapter nach OSCAL normalisieren, ins lokale Datenverzeichnis cachen, mit Manifest (Quelle, Version, sha256, Abrufdatum je Datei) versehen und aktuell halten. Nutzen, bevor nachgeschlagen/modelliert/dokumentiert wird, wenn kein Korpus vorliegt oder ein Update ansteht."
+disable-model-invocation: true
 ---
 
 # gs-ingest — Korpus laden und aktuell halten
@@ -45,19 +46,23 @@ $GS_CORPUS_DIR            (default: ~/.local/share/it-grundschutz/corpus)
 
 ## Nix-Umgebung zuerst
 
-Skripte brauchen `python3`, `curl`, `jq`, `coreutils` — über das Flake bereitstellen:
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-ingest/SKILL.md`),
+immer absolut eingesetzt. Skripte brauchen `python3`, `curl`, `jq`, `coreutils` — das Flake in `<root>`
+stellt sie bereit, über `path:` aus jedem Arbeitsverzeichnis:
 
 ```bash
-nix run .#ingest            # Grundschutz++: alle vier Quellen laden/aktualisieren
-nix run .#ingest -- --force # Neuladen erzwingen (sonst sha-basiert übersprungen)
-nix run .#ingest-2023       # Edition 2023: DocBook-XML laden + nach OSCAL normalisieren
-nix develop                 # Shell mit den Tools, dann scripts/ direkt
+nix run "path:<root>#ingest"            # Grundschutz++: alle vier Quellen laden/aktualisieren
+nix run "path:<root>#ingest" -- --force # Neuladen erzwingen (sonst sha-basiert übersprungen)
+nix run "path:<root>#ingest-2023"       # Edition 2023: DocBook-XML laden + nach OSCAL normalisieren
+nix develop "path:<root>"               # Shell mit den Tools, dann <root>/scripts/ direkt
 ```
+
+`gs <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`.
 
 ## Workflow Grundschutz++
 
-1. **Status:** `nix run .#gs -- status` — welche Ebenen liegen vor, welcher Stand, wie viele Anforderungen?
-2. **Laden/Aktualisieren:** `nix run .#ingest` zieht je Ebene die Datei, validiert das OSCAL-JSON
+1. **Status:** `nix run "path:<root>#gs" -- status` — welche Ebenen liegen vor, welcher Stand, wie viele Anforderungen?
+2. **Laden/Aktualisieren:** `nix run "path:<root>#ingest"` zieht je Ebene die Datei, validiert das OSCAL-JSON
    (Katalog vs. Profile), schreibt sie und baut das `manifest.json` neu. Je Datei wird per **sha256**
    entschieden, ob sich etwas geändert hat — unveränderte Dateien werden übersprungen.
 3. **Verifizieren:** nach dem Ingest `status` erneut — Zahlen plausibel, `last-modified` aktuell?
@@ -66,11 +71,11 @@ nix develop                 # Shell mit den Tools, dann scripts/ direkt
 ## Edition 2023 (DocBook-XML → OSCAL)
 
 Edition 2023 liegt als **DocBook-XML** vor (`bsi.bund.de`, `XML_Kompendium_2023.xml`). Der Adapter
-`scripts/adapter-2023.py` normalisiert sie strukturgleich zum Grundschutz++-Katalog nach `edition-2023/`.
+`<root>/scripts/adapter-2023.py` normalisiert sie strukturgleich zum Grundschutz++-Katalog nach `edition-2023/`.
 
 ```bash
-nix run .#ingest-2023                       # lädt das XML von der BSI-Quelle + erzeugt OSCAL
-nix run .#ingest-2023 -- --file pfad.xml    # offline: lokale XML-Datei statt Download
+nix run "path:<root>#ingest-2023"                       # lädt das XML von der BSI-Quelle + erzeugt OSCAL
+nix run "path:<root>#ingest-2023" -- --file pfad.xml    # offline: lokale XML-Datei statt Download
 ```
 
 **Mapping DocBook → OSCAL** (vom Adapter erzeugt):

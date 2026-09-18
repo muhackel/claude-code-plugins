@@ -1,6 +1,7 @@
 ---
 name: gs-review
 description: "IT-Grundschutz-Check / Soll-Ist-Umsetzungsprüfung: je zutreffender Anforderung den Umsetzungsstatus erheben und auswerten — Schema entbehrlich/ja/teilweise/nein (Grundschutz++ Umsetzung kennt nur ja/nein, siehe UMS.1.1), plus status=entfallen (Edition 2023). Baut auf der Soll-Liste aus gs-modellierung auf, zieht Anforderungstexte zitierfähig via gs-lookup. Liefert Erfüllungsgrad je Schicht/Schutzbedarf, offene Punkte, Realisierungsliste und Audit-/Zertifizierungs-Readiness. Nutzen, wenn 'wie weit ist X umgesetzt' / 'Soll-Ist-Check' / 'Grundschutz-Check' gefragt ist. Nur generisch — der ausgefüllte Check mit realen Statuswerten gehört in ein vertrauliches Repo."
+disable-model-invocation: true
 ---
 
 # gs-review — IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung)
@@ -9,15 +10,19 @@ Erhebt und wertet je zutreffender Anforderung den **Umsetzungsstatus** aus: das 
 gegen den lokalen Korpus (`gs-lookup`/`gs.py`), erfindet nichts. Die Methodik des Checks selbst steht im
 Korpus (Schicht **UMS** „Umsetzung", flankiert von **PERF**/**VRB**) — nicht aus dem Gedächtnis ableiten.
 
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-review/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` bzw. `gs.py <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`;
+so läuft es aus jedem Arbeitsverzeichnis.
+
 ## Korpus-first: wo der Check verortet ist (Pflicht)
 
 Das Vorgehen wird **nie aus dem Gedächtnis** wiedergegeben — es kommt aus der Methodik-Ebene des Korpus:
 
 ```bash
-nix run .#gs -- get UMS.1.1     # Ermittlung des Umsetzungsstatus (Kern des Checks)
-nix run .#gs -- list UMS        # ganze Umsetzungs-Schicht (Status->Restrisiko->Plan->Termine->Nachverfolgung)
-nix run .#gs -- get VRB.6.1     # Wirksamkeitsprüfung (umgesetzt ist nicht gleich wirksam)
-nix run .#gs -- get PERF.3.1    # Auditprogramm (intern/extern, Basis für Zertifizierung)
+nix run "path:<root>#gs" -- get UMS.1.1     # Ermittlung des Umsetzungsstatus (Kern des Checks)
+nix run "path:<root>#gs" -- list UMS        # ganze Umsetzungs-Schicht (Status->Restrisiko->Plan->Termine->Nachverfolgung)
+nix run "path:<root>#gs" -- get VRB.6.1     # Wirksamkeitsprüfung (umgesetzt ist nicht gleich wirksam)
+nix run "path:<root>#gs" -- get PERF.3.1    # Auditprogramm (intern/extern, Basis für Zertifizierung)
 ```
 
 Tragende Anforderungen (Grundschutz++, zitierfähig nachschlagen statt zitieren-aus-dem-Kopf):
@@ -70,8 +75,8 @@ Liegt keine Modellierung vor: erst dorthin (`gs-modellierung`), nicht den ganzen
 Funktioniert für beide Editionen über `gs.py --edition …`:
 
 ```bash
-nix run .#gs -- --edition grundschutz-pp list SYS         # Grundschutz++ (Default)
-nix run .#gs -- --edition edition-2023 list SYS.1.1       # Edition 2023, inkl. entfallen-Markierung
+nix run "path:<root>#gs" -- --edition grundschutz-pp list KONF        # Grundschutz++ (Default)
+nix run "path:<root>#gs" -- --edition edition-2023 list SYS.1.1       # Edition 2023, inkl. entfallen-Markierung
 ```
 
 - **Priorisierung** über die Norm-Props: Grundschutz++ `sec_level` (`normal-SdT`/`erhöht`) und
@@ -88,10 +93,10 @@ dedupliziert), sodass die Soll-Liste aus `gs-modellierung` direkt in **eine** ko
 statt pro Gruppe einzeln:
 
 ```bash
-nix run .#gs -- checklist UMS                              # eine ganze Schicht (Grundschutz++)
-nix run .#gs -- checklist KONF.2 KONF.8.1 BER.3            # modellierte Soll-Liste: Gruppen + exakte IDs
-nix run .#gs -- checklist KONF BER --target Hostsysteme --inherit   # Soll-Ist-Vorlage für ein Asset (Server)
-nix run .#gs -- --edition edition-2023 checklist SYS.1.1   # Edition 2023 (entfallen wird vorbelegt)
+nix run "path:<root>#gs" -- checklist UMS                              # eine ganze Schicht (Grundschutz++)
+nix run "path:<root>#gs" -- checklist KONF.2 KONF.8.1 BER.3            # modellierte Soll-Liste: Gruppen + exakte IDs
+nix run "path:<root>#gs" -- checklist KONF BER --target Hostsysteme --inherit   # Soll-Ist-Vorlage für ein Asset (Server)
+nix run "path:<root>#gs" -- --edition edition-2023 checklist SYS.1.1   # Edition 2023 (entfallen wird vorbelegt)
 ```
 
 In Grundschutz++ erscheint der Hinweis auf das binäre Status-Schema (UMS.1.1); in Edition 2023 werden

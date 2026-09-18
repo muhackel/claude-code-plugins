@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Review"
+  short_description: "IT-Grundschutz-Check: Umsetzungsstatus erheben und auswerten"
+  default_prompt: "Nutze $it-grundschutz:gs-review, um eine leere Check-Vorlage für die Soll-Liste zu erzeugen."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Modellierung"
+  short_description: "Bausteine und Anforderungen für generische Szenarien ermitteln"
+  default_prompt: "Nutze $it-grundschutz:gs-modellierung, um die Anforderungen für eine Webanwendung mit Datenbank zu ermitteln."
+policy:
+  allow_implicit_invocation: false

@@ -1,11 +1,16 @@
 ---
 name: gs-lookup
 description: "Anforderungen und Bausteine zitierfähig nachschlagen — per ID (z.B. GC.1.1) oder Volltext-/Themensuche im lokalen OSCAL-Katalog. Liefert Wortlaut (statement/guidance, Parameter aufgelöst), Pfad (Schicht/Gruppe), sec_level und effort_level, mit Edition und Quelle — und bei vorhandener Methodik-Ebene zusätzlich das Vorgehen/Warum dahinter. Nutzen, sobald konkrete Grundschutz-Inhalte gebraucht werden."
+disable-model-invocation: true
 ---
 
 # gs-lookup — Zitierfähig nachschlagen
 
 Liest **ausschließlich** aus dem lokalen Korpus. Nie Inhalte aus dem Modellgedächtnis erfinden.
+
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-lookup/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` bzw. `gs.py <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`;
+so läuft es aus jedem Arbeitsverzeichnis.
 
 ## Datenmodell (OSCAL Catalog, zwei Ebenen)
 
@@ -24,18 +29,18 @@ Liest **ausschließlich** aus dem lokalen Korpus. Nie Inhalte aus dem Modellged�
 ## Kommandos
 
 ```bash
-nix run .#gs -- status            # Ebenen, Stand, Anzahl Anforderungen
-nix run .#gs -- groups            # Schichten/Gruppen-Baum (Anwenderkatalog)
-nix run .#gs -- targets           # Zielobjektkategorien + Häufigkeit/Vererbung (nur Grundschutz++)
-nix run .#gs -- list GC KONF.2    # Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs
-nix run .#gs -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
-nix run .#gs -- get GC.1.1        # Anforderung volltext + Methodik-Ebene (falls abweichend)
-nix run .#gs -- search "ISMS"     # Suche in title/statement/guidance, nach Token-Überlappung (Score) sortiert
-nix run .#gs -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene) -> gs-dokument
-nix run .#gs -- json GC.1.1       # rohes OSCAL-Control (für crosswalk/debug)
+nix run "path:<root>#gs" -- status            # Ebenen, Stand, Anzahl Anforderungen
+nix run "path:<root>#gs" -- groups            # Schichten/Gruppen-Baum (Anwenderkatalog)
+nix run "path:<root>#gs" -- targets           # Zielobjektkategorien + Häufigkeit/Vererbung (nur Grundschutz++)
+nix run "path:<root>#gs" -- list GC KONF.2    # Anforderungen einer/mehrerer Schichten/Gruppen oder exakter IDs
+nix run "path:<root>#gs" -- list --target Hostsysteme --inherit   # zielobjektbasiert (Synonyme + STM-Vererbung)
+nix run "path:<root>#gs" -- get GC.1.1        # Anforderung volltext + Methodik-Ebene (falls abweichend)
+nix run "path:<root>#gs" -- search "ISMS"     # Suche in title/statement/guidance, nach Token-Überlappung (Score) sortiert
+nix run "path:<root>#gs" -- prozess           # Vorgehensweise als Schrittfolge (Methodik-Ebene) -> gs-dokument
+nix run "path:<root>#gs" -- json GC.1.1       # rohes OSCAL-Control (für crosswalk/debug)
 ```
 
-(In einer `nix develop`-Shell direkt `scripts/gs.py <cmd>`.)
+(In einer Shell aus `nix develop "path:<root>"` direkt `<root>/scripts/gs.py <cmd>`.)
 
 ## Zitierdisziplin (Pflicht)
 

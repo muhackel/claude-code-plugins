@@ -48,6 +48,10 @@ nix run .#gs -- --edition edition-2023 get SYS.1.1.A5
 nix run .#gs -- --edition edition-2023 coverage --targets "Server,Webanwendung,Netz"  # Bausteinabdeckung (Hinttabelle)
 ```
 
+`.#` gilt nur im Plugin-Verzeichnis. Agent und Skills rufen aus dem Projekt des Users auf und adressieren
+das Flake darum absolut per `path:`, z.B. `nix run "path:/pfad/zum/plugin#gs" -- status`. `path:` statt
+Git-Flake, weil Nix bei einem Git-Flake nur getrackte Dateien sieht.
+
 ## Testen
 
 ```bash

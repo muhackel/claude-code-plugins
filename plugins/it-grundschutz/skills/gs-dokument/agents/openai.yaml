@@ -1,0 +1,6 @@
+interface:
+  display_name: "Bruce: GS-Dokument"
+  short_description: "ISMS-Dokumente nach Grundschutz++ erstellen, führen, prüfen"
+  default_prompt: "Nutze $it-grundschutz:gs-dokument, um ein Gerüst für die Sicherheitsleitlinie zu erzeugen."
+policy:
+  allow_implicit_invocation: false

@@ -1,6 +1,7 @@
 ---
 name: gs-crosswalk
 description: "Editionswechsel begleiten: Anforderungen zwischen Edition 2023 und Grundschutz++ abgleichen — was kam hinzu, entfiel, wurde zusammengelegt oder umbenannt. Wichtig: editionsübergreifend gibt es KEINE maschinell nutzbare Brücke (keine gemeinsame Kennung, kein offizielles BSI-Mapping) — das ist ein heuristischer Inhalts-/Wortlautvergleich. Dafür liefert 'gs crosswalk <ID>' heuristische Top-Kandidaten (Token-Überlappung). Der alt-identifier-Diff funktioniert nur zwischen zwei Ständen DERSELBEN Edition. Nutzen bei Migration, Delta-Analyse oder Mapping auf andere Standards (z.B. ISO 27001)."
+disable-model-invocation: true
 ---
 
 # gs-crosswalk — Editionen und Standards abgleichen
@@ -9,6 +10,10 @@ Der Migrations-Skill. Grund: Quellformat **und** Struktur wechseln zwischen den 
 (Edition 2023 = DocBook-XML, klassische Schichten ISMS/ORP/CON/OPS/… mit **Bausteinen**; Grundschutz++ =
 OSCAL, prozessorientiert GC/STM/UMS/PERF/VRB, **ohne Bausteine** — Anforderungen hängen an
 Zielobjektkategorien). Ein direkter ID-Vergleich genügt nicht.
+
+`<root>` ist das Plugin-Verzeichnis, zwei Ebenen über dieser Datei (`<root>/skills/gs-crosswalk/SKILL.md`),
+immer absolut eingesetzt. `gs <kommando>` bzw. `gs.py <kommando>` meint `nix run "path:<root>#gs" -- <kommando>`;
+so läuft es aus jedem Arbeitsverzeichnis.
 
 ## Zwei verschiedene Crosswalks — nicht verwechseln
 
@@ -35,8 +40,8 @@ Beide Editionen liegen strukturgleich als OSCAL-Katalog vor (per `gs-ingest` gel
 `gs.py --edition <…>` getrennt abfragbar:
 
 ```bash
-nix run .#gs -- --edition edition-2023 get SYS.1.1.A5   # Edition 2023
-nix run .#gs -- --edition grundschutz-pp get GC.1.1     # Grundschutz++ (Default)
+nix run "path:<root>#gs" -- --edition edition-2023 get SYS.1.1.A5   # Edition 2023
+nix run "path:<root>#gs" -- --edition grundschutz-pp get GC.1.1     # Grundschutz++ (Default)
 ```
 
 ## Brücken (OSCAL) — und ihre Reichweite
@@ -51,8 +56,11 @@ nix run .#gs -- --edition grundschutz-pp get GC.1.1     # Grundschutz++ (Default
 
 Funktioniert sauber, weil der `alt-identifier` einen gemeinsamen Schlüssel liefert:
 
-1. Beide Stände lokal vorhalten (`gs-ingest`: ältere Kopie sichern, dann `nix run .#ingest`).
-2. Anforderungsmengen ziehen: `gs.py list <gruppe>` / `gs.py json <id>` je Stand.
+1. Beide Stände lokal vorhalten: vor dem Ingest den alten Stand kopieren,
+   `cp -a "${GS_CORPUS_DIR:-$HOME/.local/share/it-grundschutz/corpus}" <sicherung>` (Ort gibt der User vor),
+   dann `nix run "path:<root>#ingest"`.
+2. Anforderungsmengen ziehen: `gs list <gruppe>` / `gs json <id>` je Stand; den alten Stand mit
+   vorangestelltem `GS_CORPUS_DIR=<sicherung>` abfragen.
 3. Diff über **`alt-identifier`** (stabil) statt über die Anzeige-ID (kann wandern):
    - in beiden, alt-identifier gleich → unverändert / leicht geändert (Texte vergleichen)
    - in beiden, ID verschieden, alt-identifier gleich → **umbenannt/verschoben**
@@ -72,8 +80,8 @@ Kein gemeinsamer Schlüssel, also **inhaltlich** abbilden — und das Ergebnis e
    `Hostsysteme`; „APP.3.1 Webanwendungen" → `Webanwendungen`. Dann die ++-Anforderungen zielobjektbasiert
    ziehen — siehe `gs-modellierung`:
    ```bash
-   nix run .#gs -- targets                                  # Kategorien-Inventar (für die Zuordnung)
-   nix run .#gs -- list --target Hostsysteme --inherit      # ++-Anforderungen zum Ziel "Server"
+   nix run "path:<root>#gs" -- targets                                  # Kategorien-Inventar (für die Zuordnung)
+   nix run "path:<root>#gs" -- list --target Hostsysteme --inherit      # ++-Anforderungen zum Ziel "Server"
    ```
 3. **Inhaltlich zuordnen — assistiert via `gs.py crosswalk <ID>`:** nimmt die Quell-Anforderung der
    *anderen* Edition, tokenisiert Titel + Statement und rankt die Anforderungen der aktiven Edition nach
@@ -82,8 +90,8 @@ Kein gemeinsamer Schlüssel, also **inhaltlich** abbilden — und das Ergebnis e
    Schlüssel, kein BSI-Mapping) und ersetzt die Prüfung nicht — Kandidaten per `gs.py get <ID>` verifizieren.
    Entfallene Quell-Anforderungen werden erkannt und ausgewiesen (kein Mapping erzwungen).
    ```bash
-   nix run .#gs -- crosswalk SYS.1.1.A5            # Edition-2023-ID → Top-Kandidaten in ++ (heuristisch)
-   nix run .#gs -- --edition edition-2023 crosswalk GC.1.1   # umgekehrt: ++-ID → Kandidaten in 2023
+   nix run "path:<root>#gs" -- crosswalk SYS.1.1.A5            # Edition-2023-ID → Top-Kandidaten in ++ (heuristisch)
+   nix run "path:<root>#gs" -- --edition edition-2023 crosswalk GC.1.1   # umgekehrt: ++-ID → Kandidaten in 2023
    ```
    Status je Anforderung vergeben: `1:1` / `verschoben` / `aufgelöst` (ein Baustein → mehrere
    Kategorien/Schichten) / `neu` / `entfallen` / `kein Mapping`.
