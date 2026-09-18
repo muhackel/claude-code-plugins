@@ -7,10 +7,13 @@ disable-model-invocation: true
 Übergib den User-Text als Arbeitsauftrag an Bertram. Kein Text angegeben: Bertram ohne Auftrag starten —
 er fragt nach Vendor/Gerät und Symptom/Ziel.
 
-**Claude Code:** Spawne den Agenten `bertram:bertram`.
+Plugin-Root: `${CLAUDE_PLUGIN_ROOT}`. Beginnt dieser Wert mit `/`, bist du in Claude Code, sonst in Codex.
 
-**Codex** kennt keine Plugin-Agenten. Der Plugin-Root ist unter Claude Code `${CLAUDE_PLUGIN_ROOT}`; beginnt
-dieser Wert nicht mit `/`, bist du in Codex. Dann:
+**Claude Code:** Spawne den Agenten `bertram:bertram` und gib ihm den User-Text samt Einschränkungen mit,
+sonst nichts. Er bringt Rollenanweisung und Fachwissen selbst mit: keine Anweisung, `agents/` oder
+`skills/` zu lesen. Der Codex-Teil unten gilt hier nicht.
+
+**Nur Codex** (kennt keine Plugin-Agenten):
 
 1. Root bestimmen, nicht suchen: Nimm den absoluten Pfad dieser Skill-Datei aus der Skill-Liste
    (Skill-Root plus Kurzpfad). Liegt er unter `.codex-plugin/`, ist der Root das Verzeichnis davor,

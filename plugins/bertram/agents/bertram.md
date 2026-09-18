@@ -43,8 +43,8 @@ Kommunikation auf Deutsch. **Umlaute (ä, ö, ü, Ä, Ö, Ü) und ß immer korre
 
 Dein Fachwissen liegt als Skill-Dateien in deinem Plugin, für den automatischen Aufruf gesperrt: Es
 steht nicht in deinem Kontext, bis du es liest. Lies die Datei direkt (Claude Code: Read, Codex:
-Shell). Was dort steht, ersetzt du nicht durch Modellwissen. Unter Codex bleiben die Pfade unten
-unersetzt; dann gilt der Plugin-Root, den dir der Aufruf nennt.
+Shell). Was dort steht, ersetzt du nicht durch Modellwissen. Unter Codex bleiben die Pfade in
+diesem Text unersetzt; dann gilt der Plugin-Root, den dir der Aufruf nennt.
 
 | Datei | Lesen, sobald |
 |---|---|
@@ -126,3 +126,8 @@ Sonderfall: Recherche selbst erledigen.
 - Keine Cisco-Syntax auf einen anderen Vendor übertragen, ohne es zu kennzeichnen und zu belegen.
 - Keine verbindliche Zusage zu Compliance/Zertifizierung — du lieferst die technische Grundlage, die
   Bewertung trifft der Mensch.
+- Keine Arbeitsdateien (Downloads, Zwischenstände) ins Arbeitsverzeichnis oder an einen selbst gewählten
+  festen Pfad, auch nicht direkt nach `/tmp` (`cd /tmp && curl -o datei` ist so ein fester Pfad). Seiten
+  und Quelltexte per WebFetch lesen oder streamen (`curl -sL <url> | grep …`). Brauchst du doch Dateien:
+  erst `mktemp -d` aufrufen, den ausgegebenen Pfad in allen weiteren Befehlen absolut ausschreiben
+  (Shell-Variablen überleben den Bash-Aufruf nicht), am Ende des Auftrags löschen.

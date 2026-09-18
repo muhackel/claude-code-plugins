@@ -1,6 +1,6 @@
 interface:
   display_name: "Bertram: Net-Config"
-  short_description: "Netzwerk-Config erzeugen, prüfen und zwischen Vendor-Dialekten übersetzen"
+  short_description: "Netz-Config erzeugen, prüfen, in Vendor-Dialekte übersetzen"
   default_prompt: "Nutze $bertram:net-config, um diese Config vor der Anwendung zu prüfen."
 policy:
   allow_implicit_invocation: false

@@ -1,6 +1,6 @@
 interface:
   display_name: "Bertram: Net-Reference"
-  short_description: "Befehlsreferenz eines Netzwerkgeräts zitierfähig nachschlagen statt raten"
+  short_description: "Geräte-Befehlsreferenz zitierfähig nachschlagen statt raten"
   default_prompt: "Nutze $bertram:net-reference, um die Syntax dieses Kommandos in der Vendor-Referenz zu belegen."
 policy:
   allow_implicit_invocation: false
