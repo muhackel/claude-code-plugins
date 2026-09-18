@@ -168,7 +168,8 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
 
 ## Persona-Plugins: Fachwissen nur im Agenten
 
-Umgesetzt in `bertram`, die übrigen Personas folgen. Jede Datei unter `skills/` steht sonst mit ihrer
+Umgesetzt in `bertram`, `christian`, `it-grundschutz` und `nixie`; `bibliothekarin` folgt mit der
+Ausnahme unten. Jede Datei unter `skills/` steht sonst mit ihrer
 Beschreibung im Kontext der Hauptsitzung und jedes Subagenten, und `skills:` im Agent-Frontmatter lädt
 zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am 2026-09-18 getestet).
 
@@ -179,15 +180,24 @@ zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am
   Subagenten. Stattdessen führt der Agent-Body eine Tabelle „Datei → lesen, sobald“ mit Pfaden der Form
   `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` (im Agent-Body ersetzt) und liest sie direkt. Die
   Auslöser hängen an der Handlung („bevor du auf ein Gerät zugreifst“), nicht nur am Auftrag.
-- In Claude Code bleibt die Agent-`description` als einziger Eintrag im Hauptkontext: ~300–450 Zeichen,
-  Trigger und Abgrenzung zu den anderen Personas.
+- In Claude Code bleibt die Agent-`description` als einziger Eintrag im Hauptkontext: ~300–470 Zeichen,
+  Trigger und Abgrenzung zu den anderen Personas. Delegiert die Hauptsitzung nicht von selbst, hilft ein
+  Einstieg „Proaktiv nutzen bei jeder konkreten …-Aufgabe, auch wenn nur ein Vorschlag gefragt ist“
+  (bei `nixie` von 0/3 auf 3/3 Delegationen).
+- Arbeitsdateien einer Persona (Downloads, Zwischenstände) nur in einem Verzeichnis aus `mktemp -d`, am
+  Ende des Auftrags löschen; nie ins Arbeitsverzeichnis des Users oder an einen selbst gewählten Pfad.
 - Persona-Commands tragen `disable-model-invocation: true`, der Hauptagent delegiert über das Agent-Tool.
   Codex kennt keine Plugin-Agenten (kein Code in 0.154.0 liest `agents/` im Plugin-Root, auch nicht
   `agents/openai.yaml`); dort lädt der migrierte Command `agents/<name>.md` als Rollenanweisung. Die
   Migration verwirft `disable-model-invocation`, der migrierte Command ist in Codex also der sichtbare
   Einstieg. Darum trägt seine `description` dieselben Trigger und Abgrenzungen wie die des Agenten.
   Eine `agents/openai.yaml` im Plugin-Root entfällt beim Umbau.
+- Der Claude-Teil des Commands sagt ausdrücklich: nur den User-Text weitergeben, keine Anweisung,
+  `agents/` oder `skills/` zu lesen; der Codex-Teil ist als „Nur Codex“ markiert. Ohne diese Trennung
+  hat die Hauptsitzung die Codex-Schritte an den Subagenten weitergereicht, der dann alles vorab las.
 - Skills, die der Hauptagent selbst braucht (etwa `obsidian-cli`), bleiben ungesperrt.
+- **Ausnahme `bibliothekarin`:** Vault-Zugriff ist kritisch, Karin muss aus jeder Sitzung erreichbar
+  bleiben. `/karin` und `/vault` bekommen keine Sperre, der Hauptagent darf sie selbst aufrufen.
 
 ## Externe Quellen
 
