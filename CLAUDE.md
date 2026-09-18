@@ -25,8 +25,7 @@ plugins/
     .codex-plugin/plugin.json     # Codex-Manifest (eigenes Schema, siehe unten)
     skills/                       # SKILL.md Dateien — GETEILT (oder Symlinks nach vendors/)
     commands/                     # Slash Commands (.md) — GETEILT
-    agents/                       # Agent-Definitionen (.md) — GETEILT
-      openai.yaml                 # Codex-Agent-Registry (nur Codex; nur bei echten Agents)
+    agents/                       # Agent-Definitionen (.md) — nur Claude; Codex lädt sie über den Command
     hooks/hooks.json              # Claude-Hooks
     hooks.json                    # Codex-Hooks (Symlink → hooks/hooks.json; nur falls Hooks)
 ```
@@ -35,7 +34,7 @@ plugins/
 
 - **Plugin-Namen:** kebab-case, beschreibend, global eindeutig
 - **Versionierung:** Semantic Versioning (MAJOR.MINOR.PATCH)
-- **Namespace:** Skills werden als `muhackel-plugins:skill-name` referenziert
+- **Namespace:** Skills werden als `<plugin>:<skill>` referenziert (z.B. `bertram:net-diagnose`)
 - **Neues Plugin:** `_template/` kopieren, umbenennen, in **beide** Marketplaces eintragen
 - **Marketplace-Eintrag:** Jedes fertige Plugin braucht einen Eintrag in `.claude-plugin/marketplace.json` **und** in `.agents/plugins/marketplace.json`
 
@@ -48,7 +47,7 @@ plugins/
 | Plugin-Manifest | `plugins/<n>/.claude-plugin/plugin.json` | `plugins/<n>/.codex-plugin/plugin.json` |
 | Marketplace | `.claude-plugin/marketplace.json` | `.agents/plugins/marketplace.json` |
 | Skills / Commands / Agent-`.md` | **geteilt** — beide Manifeste zeigen auf dieselben Verzeichnisse | |
-| Agent-Registry | Frontmatter in `agents/*.md` | zusätzlich `agents/openai.yaml` |
+| Agenten | Frontmatter in `agents/*.md` | keine Plugin-Agenten; der Persona-Command lädt `agents/<n>.md` |
 | Hooks | `hooks/hooks.json` | `hooks.json` im Plugin-Root (Symlink → `hooks/hooks.json`) |
 
 **Commands unter Codex:** Codex migriert `commands/<name>.md` beim Install automatisch zu einem Skill
@@ -60,7 +59,7 @@ Plugins (`skills/ask/` würde `/ask` verdecken).
 **Checkliste bei jeder Plugin-Änderung** (Version-Bump, neue Skills/Commands, Beschreibung):
 1. `.claude-plugin/plugin.json` **und** `.codex-plugin/plugin.json` angleichen (mind. `version`, `description`, `keywords`).
 2. Beide Marketplace-Indizes prüfen (neuer Eintrag / geänderte Beschreibung).
-3. Bei neuem/geändertem Agenten: `agents/openai.yaml` nachziehen.
+3. Bei gesperrten Skills: `skills/<name>/agents/openai.yaml` mit `allow_implicit_invocation: false` anlegen.
 4. Bei neuen Hooks: `hooks.json`-Symlink im Plugin-Root anlegen.
 
 ### Claude-Manifest (`.claude-plugin/plugin.json`)
@@ -86,7 +85,7 @@ Plugins (`skills/ask/` würde `/ask` verdecken).
 
 ### Codex-Manifest (`.codex-plugin/plugin.json`)
 
-Eigenes Schema (belegt aus `openai/plugins`): `interface`-Objekt mit Präsentations-Metadaten, `skills` als Pfad-String. `commands`/`agents`/`hooks` werden per Konvention auto-discovered und stehen NICHT im Manifest.
+Eigenes Schema (belegt aus `openai/plugins`): `interface`-Objekt mit Präsentations-Metadaten, `skills` als Pfad-String. `commands`/`hooks` werden per Konvention gefunden und stehen NICHT im Manifest (Commands als migrierte Skills). `agents/` liest Codex nicht.
 
 ```json
 {
@@ -122,13 +121,15 @@ Eigenes Schema (belegt aus `openai/plugins`): `interface`-Objekt mit Präsentati
 }
 ```
 
-### Codex-Agent-Registry (`agents/openai.yaml`, nur bei echtem Agenten)
+### Codex-Skill-Sperre (`skills/<name>/agents/openai.yaml`, nur bei gesperrten Skills)
 
 ```yaml
 interface:
-  display_name: "Mein Plugin"
+  display_name: "Mein Plugin: Skill"
   short_description: "Kurz, ein Satz"
-  default_prompt: "Typischer Nutzer-Prompt an dieses Plugin."
+  default_prompt: "Nutze $mein-plugin:skill, um …"
+policy:
+  allow_implicit_invocation: false
 ```
 
 ## Testen
@@ -164,6 +165,29 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
   Modell-Aufruf keine Ausnahme für Rollen kennt.
 - Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
   lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
+
+## Persona-Plugins: Fachwissen nur im Agenten
+
+Umgesetzt in `bertram`, die übrigen Personas folgen. Jede Datei unter `skills/` steht sonst mit ihrer
+Beschreibung im Kontext der Hauptsitzung und jedes Subagenten, und `skills:` im Agent-Frontmatter lädt
+zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am 2026-09-18 getestet).
+
+- Fachwissens-Skills tragen `disable-model-invocation: true` und `skills/<name>/agents/openai.yaml` mit
+  `policy.allow_implicit_invocation: false`. In beiden CLIs fehlen sie damit im Modellkontext; von Hand
+  holt man sie per `/<plugin>:<skill>` bzw. `$<plugin>:<skill>`.
+- Kein `skills:` im Agenten: Vorladen scheitert an der Sperre still, das Skill-Tool blockt auch im
+  Subagenten. Stattdessen führt der Agent-Body eine Tabelle „Datei → lesen, sobald“ mit Pfaden der Form
+  `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` (im Agent-Body ersetzt) und liest sie direkt. Die
+  Auslöser hängen an der Handlung („bevor du auf ein Gerät zugreifst“), nicht nur am Auftrag.
+- In Claude Code bleibt die Agent-`description` als einziger Eintrag im Hauptkontext: ~300–450 Zeichen,
+  Trigger und Abgrenzung zu den anderen Personas.
+- Persona-Commands tragen `disable-model-invocation: true`, der Hauptagent delegiert über das Agent-Tool.
+  Codex kennt keine Plugin-Agenten (kein Code in 0.154.0 liest `agents/` im Plugin-Root, auch nicht
+  `agents/openai.yaml`); dort lädt der migrierte Command `agents/<name>.md` als Rollenanweisung. Die
+  Migration verwirft `disable-model-invocation`, der migrierte Command ist in Codex also der sichtbare
+  Einstieg. Darum trägt seine `description` dieselben Trigger und Abgrenzungen wie die des Agenten.
+  Eine `agents/openai.yaml` im Plugin-Root entfällt beim Umbau.
+- Skills, die der Hauptagent selbst braucht (etwa `obsidian-cli`), bleiben ungesperrt.
 
 ## Externe Quellen
 

@@ -52,7 +52,7 @@ git submodule update --init --recursive
 1. `plugins/_template/` nach `plugins/<mein-plugin>/` kopieren
 2. **Beide** Manifeste anpassen: `.claude-plugin/plugin.json` und `.codex-plugin/plugin.json` (Name, Beschreibung, Version, Keywords)
 3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen (geteilt zwischen beiden Systemen)
-4. Bei echtem Agenten: `agents/openai.yaml.template` → `openai.yaml` umbenennen und ausfüllen (Codex-Agent-Registry)
+4. Bei einem Agenten mit eigenem Fachwissen: dessen Skills sperren und bei Bedarf lesen lassen (siehe CLAUDE.md, „Persona-Plugins“)
 5. Plugin in **beide** Marketplaces eintragen: `.claude-plugin/marketplace.json` und `.agents/plugins/marketplace.json`
 6. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
 
@@ -170,7 +170,7 @@ Default, schreibende Eingriffe nur auf explizite Anforderung mit Rollback-Netz (
 Slash Command:
 - `/bertram` — Bertram direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills:
+Enthaltene Skills (für den automatischen Aufruf gesperrt, Bertram liest sie bei Bedarf):
 - `net-reference` — Reference-first-Disziplin: Quellen je Vendor, Workflow präzisieren→holen→verifizieren→zitierfähig→anwenden
 - `net-diagnose` — L1→L7-Diagnosesequenzen mit Show-Kommandos, Output-Deutung und Anti-Patterns
 - `net-config` — Config erzeugen mit Pre-Deployment-Validierung, Dialekt-Übersetzung über die Konzept-Ebene, Best-Practice-Templates
