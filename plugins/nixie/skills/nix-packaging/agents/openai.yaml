@@ -1,0 +1,6 @@
+interface:
+  display_name: "Nixie: Nix-Packaging"
+  short_description: "Derivations und Overlays schreiben, lang bauende Pakete pinnen"
+  default_prompt: "Nutze $nixie:nix-packaging, um für dieses Programm eine Derivation zu schreiben."
+policy:
+  allow_implicit_invocation: false

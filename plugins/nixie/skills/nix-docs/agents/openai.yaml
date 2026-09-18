@@ -1,0 +1,6 @@
+interface:
+  display_name: "Nixie: Nix-Docs"
+  short_description: "NixOS-Optionen, lib-Funktionen, Pakete nachschlagen statt raten"
+  default_prompt: "Nutze $nixie:nix-docs, um diese NixOS-Option vor der Verwendung nachzuschlagen."
+policy:
+  allow_implicit_invocation: false

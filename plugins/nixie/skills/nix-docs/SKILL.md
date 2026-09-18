@@ -1,6 +1,7 @@
 ---
 name: nix-docs
 description: "Doku-Lookup-Disziplin für Nix/NixOS: NixOS-Optionen (search.nixos.org), lib-Funktionen (noogle.dev), Pakete (nix search), Manpages (man configuration.nix / home-configuration.nix) und nixpkgs-Source lesen — statt zu raten. Nutzen, bevor eine unbekannte Option/Funktion/ein Paket verwendet wird. Recherche macht Nixie selbst; ein Wissensmanagement-Agent ist optional."
+disable-model-invocation: true
 ---
 
 # Nix-Docs — Nachschlagen statt raten

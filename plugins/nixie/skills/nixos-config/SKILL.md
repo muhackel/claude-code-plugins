@@ -1,6 +1,7 @@
 ---
 name: nixos-config
 description: "Konventionen und Patterns der NixOS-Konfiguration des Users (Multi-Host-Flake): mkHost-Helper, Feature-Flags unter local.features, Modul-Layout (host/hardware/software), userExtraGroups-Sammelpattern, Home-Manager. Nutzen, wenn an dieser oder einer ähnlich strukturierten NixOS-Config gearbeitet wird — Host/Modul/Feature-Flag hinzufügen, Option setzen, Paket einbauen."
+disable-model-invocation: true
 ---
 
 # NixOS-Config — Konventionen & Patterns
