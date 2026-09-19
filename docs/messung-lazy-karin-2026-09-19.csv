@@ -1,0 +1,180 @@
+# Messreihe Lazy Karin 2026-09-19 (Bericht docs/messung-lazy-karin-2026-09-19.md, Aufbau und Metriken wie docs/messung-lazy-skills-2026-09-18.md). CSV, UTF-8, Komma, Textfelder mit Komma in doppelten Anführungszeichen. Spalten: cli=claude|codex; zustand=vorher (main 90c3510, bibliothekarin 0.6.1)|nachher (feature/lazy-karin 99d7504, bibliothekarin 0.7.0)|differenz (nachher − vorher); messung=context (Claude /context)|baseline (Claude-Agent mit Auftrag OK)|prompt-input (Codex-Startprompt); persona=bibliothekarin (Agent bibliothekarin:bibliothekarin)|bibliothekarin-search (Agent bibliothekarin:bibliothekarin-search), sonst Plugin (bibliothekarin), builtin oder gesamt; metrik=Name laut Abschnitt Metriken im Bericht der Vorlage; wert=Zahl mit Punkt als Dezimaltrenner ohne Tausendertrenner oder n/a; einheit=tokens|zeichen|bytes|requests|anzahl|dateien|usd|s; anmerkung=Quelle, Zusammensetzung, Einschränkung. Baseline-Werte sind Einzelläufe (n=1) ohne Streuung.
+cli,zustand,messung,persona,metrik,wert,einheit,anmerkung
+claude,vorher,context,gesamt,system_prompt,2100,tokens,Anzeige 2.1k; Läufe context-before-1 bis -4 identisch
+claude,nachher,context,gesamt,system_prompt,2100,tokens,Anzeige 2.1k; Läufe context-after-1 bis -4 identisch
+claude,differenz,context,gesamt,system_prompt,0,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,system_tools,6400,tokens,Anzeige 6.4k; Artefakt: /context zieht die Skills-Schätzung von 9545 (count_tokens der System-Tools) ab
+claude,nachher,context,gesamt,system_tools,7000,tokens,Anzeige 7k; Artefakt wie vorher
+claude,differenz,context,gesamt,system_tools,600,tokens,"nachher − vorher; Artefakt, Spiegelbild der Skills-Differenz"
+claude,vorher,context,gesamt,mcp_tools,627,tokens,Anzeige 627
+claude,nachher,context,gesamt,mcp_tools,627,tokens,Anzeige 627
+claude,vorher,context,gesamt,mcp_tools_deferred,7300,tokens,Anzeige 7.3k
+claude,nachher,context,gesamt,mcp_tools_deferred,7300,tokens,Anzeige 7.3k
+claude,vorher,context,gesamt,system_tools_deferred,13400,tokens,Anzeige 13.4k
+claude,nachher,context,gesamt,system_tools_deferred,13400,tokens,Anzeige 13.4k
+claude,vorher,context,gesamt,custom_agents,1500,tokens,Anzeige 1.5k
+claude,nachher,context,gesamt,custom_agents,1400,tokens,Anzeige 1.4k
+claude,differenz,context,gesamt,custom_agents,-100,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,memory_files,2800,tokens,Anzeige 2.8k
+claude,nachher,context,gesamt,memory_files,2800,tokens,Anzeige 2.8k
+claude,vorher,context,gesamt,skills,3100,tokens,Anzeige 3.1k
+claude,nachher,context,gesamt,skills,2500,tokens,Anzeige 2.5k
+claude,differenz,context,gesamt,skills,-600,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,vorher,context,gesamt,messages,8,tokens,Anzeige 8
+claude,nachher,context,gesamt,messages,8,tokens,Anzeige 8
+claude,vorher,context,gesamt,summe,16600,tokens,"Anzeige 16.6k; Tokens-Zeile, enthält die Skill-Ersparnis wegen des System-tools-Artefakts nicht"
+claude,nachher,context,gesamt,summe,16500,tokens,"Anzeige 16.5k; Tokens-Zeile, enthält die Skill-Ersparnis wegen des System-tools-Artefakts nicht"
+claude,differenz,context,gesamt,summe,-100,tokens,"nachher − vorher, aus gerundeten Anzeigewerten"
+claude,nachher,context,gesamt,count_tokens_system_tools,9545,tokens,"count_tokens-Request von /context, per Proxy mitgeschnitten (context-after-proxy); /context über Proxy textgleich mit direktem Lauf"
+claude,vorher,context,bibliothekarin,agent:bibliothekarin,362,tokens,/context Custom Agents (exakt)
+claude,nachher,context,bibliothekarin,agent:bibliothekarin,231,tokens,/context Custom Agents (exakt)
+claude,differenz,context,bibliothekarin,agent:bibliothekarin,-131,tokens,nachher − vorher (-36.2 %)
+claude,vorher,context,bibliothekarin,agent:bibliothekarin-search,99,tokens,/context Custom Agents (exakt)
+claude,nachher,context,bibliothekarin,agent:bibliothekarin-search,99,tokens,/context Custom Agents (exakt)
+claude,differenz,context,bibliothekarin,agent:bibliothekarin-search,0,tokens,nachher − vorher
+claude,vorher,context,bibliothekarin,agents_plugin,461,tokens,Summe der beiden Agenten
+claude,nachher,context,bibliothekarin,agents_plugin,330,tokens,Summe der beiden Agenten
+claude,differenz,context,bibliothekarin,agents_plugin,-131,tokens,nachher − vorher (-28.4 %)
+claude,vorher,context,gesamt,custom_agents_exakt,1499,tokens,Summe der Detailzeilen (6 Agenten)
+claude,nachher,context,gesamt,custom_agents_exakt,1368,tokens,Summe der Detailzeilen (6 Agenten)
+claude,vorher,context,bibliothekarin,skill:karin,30,tokens,/context-Schätzwert ~30
+claude,nachher,context,bibliothekarin,skill:karin,30,tokens,/context-Schätzwert ~30
+claude,vorher,context,bibliothekarin,skill:vault,30,tokens,/context-Schätzwert ~30
+claude,nachher,context,bibliothekarin,skill:vault,30,tokens,/context-Schätzwert ~30
+claude,vorher,context,bibliothekarin,skill:defuddle,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:defuddle,130,tokens,/context-Schätzwert ~130
+claude,vorher,context,bibliothekarin,skill:diagramm-auswahl,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:diagramm-auswahl,0,tokens,nicht mehr im Listing (disable-model-invocation: true)
+claude,vorher,context,bibliothekarin,skill:json-canvas,90,tokens,/context-Schätzwert ~90
+claude,nachher,context,bibliothekarin,skill:json-canvas,0,tokens,nicht mehr im Listing (nach references/ verschoben)
+claude,vorher,context,bibliothekarin,skill:mermaid,130,tokens,/context-Schätzwert ~130
+claude,nachher,context,bibliothekarin,skill:mermaid,0,tokens,nicht mehr im Listing (disable-model-invocation: true)
+claude,vorher,context,bibliothekarin,skill:obsidian-bases,100,tokens,/context-Schätzwert ~100
+claude,nachher,context,bibliothekarin,skill:obsidian-bases,0,tokens,nicht mehr im Listing (nach references/ verschoben)
+claude,vorher,context,bibliothekarin,skill:obsidian-cli,170,tokens,/context-Schätzwert ~170
+claude,nachher,context,bibliothekarin,skill:obsidian-cli,170,tokens,/context-Schätzwert ~170
+claude,vorher,context,bibliothekarin,skill:obsidian-markdown,100,tokens,/context-Schätzwert ~100
+claude,nachher,context,bibliothekarin,skill:obsidian-markdown,100,tokens,/context-Schätzwert ~100
+claude,vorher,context,bibliothekarin,skill:plantuml,160,tokens,/context-Schätzwert ~160
+claude,nachher,context,bibliothekarin,skill:plantuml,0,tokens,nicht mehr im Listing (disable-model-invocation: true)
+claude,vorher,context,bibliothekarin,skills_eintraege,10,anzahl,Einträge im Skills-Listing inkl. Commands karin und vault
+claude,nachher,context,bibliothekarin,skills_eintraege,5,anzahl,Einträge im Skills-Listing inkl. Commands karin und vault
+claude,vorher,context,bibliothekarin,skills_plugin,1070,tokens,Summe der ~-Schätzwerte
+claude,nachher,context,bibliothekarin,skills_plugin,460,tokens,Summe der ~-Schätzwerte
+claude,differenz,context,bibliothekarin,skills_plugin,-610,tokens,nachher − vorher (-57.0 %)
+claude,vorher,baseline,bibliothekarin,main_first,35400,tokens,"--model sonnet, ohne Proxy, usage der ersten Haupt-Antwort in stream-json (bl-before-karin-direct); über Proxy 35398"
+claude,nachher,baseline,bibliothekarin,main_first,34459,tokens,"--model sonnet, ohne Proxy (bl-after-karin-direct); über Proxy 34460"
+claude,differenz,baseline,bibliothekarin,main_first,-941,tokens,nachher − vorher (-2.7 %)
+claude,vorher,baseline,bibliothekarin,sub_first,30318,tokens,"Agent claude-opus-5, Proxy (bl-before-karin-proxy); input 2 + cache_creation 21581 + cache_read 8735"
+claude,nachher,baseline,bibliothekarin,sub_first,13463,tokens,"Agent claude-opus-5, Proxy (bl-after-karin-proxy); input 2 + cache_creation 4906 + cache_read 8555"
+claude,differenz,baseline,bibliothekarin,sub_first,-16855,tokens,nachher − vorher (-55.6 %)
+claude,vorher,baseline,bibliothekarin,sub_n,3,requests,Proxy (bl-before-karin-proxy)
+claude,nachher,baseline,bibliothekarin,sub_n,2,requests,Proxy (bl-after-karin-proxy)
+claude,vorher,baseline,bibliothekarin,sub_sum,92001,tokens,Proxy (bl-before-karin-proxy)
+claude,nachher,baseline,bibliothekarin,sub_sum,27754,tokens,Proxy (bl-after-karin-proxy)
+claude,differenz,baseline,bibliothekarin,sub_sum,-64247,tokens,nachher − vorher (-69.8 %)
+claude,vorher,baseline,bibliothekarin,sub_peak,31311,tokens,Proxy (bl-before-karin-proxy)
+claude,nachher,baseline,bibliothekarin,sub_peak,14291,tokens,Proxy (bl-after-karin-proxy)
+claude,vorher,baseline,bibliothekarin,output_sum,414,tokens,"Haupt- + Subagent-Requests, Proxy (bl-before-karin-proxy); ohne Titel/Klassifikator"
+claude,nachher,baseline,bibliothekarin,output_sum,220,tokens,"Haupt- + Subagent-Requests, Proxy (bl-after-karin-proxy); ohne Titel/Klassifikator"
+claude,vorher,baseline,bibliothekarin,vorgeladene_skills,8,anzahl,"obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle, mermaid, plantuml, diagramm-auswahl als Messages im ersten Sub-Request"
+claude,vorher,baseline,bibliothekarin,vorgeladene_skills,40724,zeichen,"8 Skill-Texte 39746 + 8 command-message-Köpfe 978, erster Sub-Request"
+claude,nachher,baseline,bibliothekarin,vorgeladene_skills,1,anzahl,obsidian-cli
+claude,nachher,baseline,bibliothekarin,vorgeladene_skills,2889,zeichen,"Skill-Text 2766 + Kopf 123, erster Sub-Request"
+claude,vorher,baseline,bibliothekarin,systemprompt_sub,12525,zeichen,System-Blöcke des ersten Sub-Requests
+claude,nachher,baseline,bibliothekarin,systemprompt_sub,12242,zeichen,System-Blöcke des ersten Sub-Requests
+claude,vorher,baseline,bibliothekarin,files_read,0,dateien,"keine Read-/Bash-Aufrufe in beiden Läufen, einziges Tool des Agenten: SubagentHandback (Hook-Trace)"
+claude,nachher,baseline,bibliothekarin,files_read,0,dateien,"keine Read-/Bash-Aufrufe in beiden Läufen, einziges Tool des Agenten: SubagentHandback (Hook-Trace)"
+claude,vorher,baseline,bibliothekarin,cost_usd,0.38375885,usd,"total_cost_usd, Lauf ohne Proxy (bl-before-karin-direct); Proxy-Lauf 0.2454213"
+claude,nachher,baseline,bibliothekarin,cost_usd,0.157507,usd,"total_cost_usd, Lauf ohne Proxy (bl-after-karin-direct); Proxy-Lauf 0.1081187"
+claude,differenz,baseline,bibliothekarin,cost_usd,-0.22625185,usd,nachher − vorher (-59.0 %); cache-abhängig
+claude,vorher,baseline,bibliothekarin,duration_s,13.1,s,"result.duration_ms, Lauf ohne Proxy (bl-before-karin-direct)"
+claude,nachher,baseline,bibliothekarin,duration_s,14.5,s,"result.duration_ms, Lauf ohne Proxy (bl-after-karin-direct)"
+claude,vorher,baseline,bibliothekarin-search,main_first,35401,tokens,"--model sonnet, ohne Proxy (bl-before-search-direct); über Proxy 35401"
+claude,nachher,baseline,bibliothekarin-search,main_first,34462,tokens,"--model sonnet, ohne Proxy (bl-after-search-direct); über Proxy 34462"
+claude,differenz,baseline,bibliothekarin-search,main_first,-939,tokens,nachher − vorher (-2.7 %)
+claude,vorher,baseline,bibliothekarin-search,sub_first,8455,tokens,"Agent claude-opus-5, Proxy (bl-before-search-proxy); input 2 + cache_creation 4906 + cache_read 3547"
+claude,nachher,baseline,bibliothekarin-search,sub_first,7344,tokens,"Agent claude-opus-5, Proxy (bl-after-search-proxy); input 2 + cache_creation 3795 + cache_read 3547"
+claude,differenz,baseline,bibliothekarin-search,sub_first,-1111,tokens,nachher − vorher (-13.1 %)
+claude,vorher,baseline,bibliothekarin-search,sub_n,3,requests,Proxy (bl-before-search-proxy)
+claude,nachher,baseline,bibliothekarin-search,sub_n,2,requests,Proxy (bl-after-search-proxy)
+claude,vorher,baseline,bibliothekarin-search,sub_sum,26625,tokens,Proxy (bl-before-search-proxy)
+claude,nachher,baseline,bibliothekarin-search,sub_sum,15513,tokens,Proxy (bl-after-search-proxy)
+claude,differenz,baseline,bibliothekarin-search,sub_sum,-11112,tokens,nachher − vorher (-41.7 %)
+claude,vorher,baseline,bibliothekarin-search,sub_peak,9664,tokens,Proxy (bl-before-search-proxy)
+claude,nachher,baseline,bibliothekarin-search,sub_peak,8169,tokens,Proxy (bl-after-search-proxy)
+claude,vorher,baseline,bibliothekarin-search,output_sum,610,tokens,"Haupt- + Subagent-Requests, Proxy (bl-before-search-proxy); ohne Titel/Klassifikator"
+claude,nachher,baseline,bibliothekarin-search,output_sum,279,tokens,"Haupt- + Subagent-Requests, Proxy (bl-after-search-proxy); ohne Titel/Klassifikator"
+claude,vorher,baseline,bibliothekarin-search,vorgeladene_skills,1,anzahl,obsidian-cli
+claude,vorher,baseline,bibliothekarin-search,vorgeladene_skills,2890,zeichen,"Skill-Text 2767 + Kopf 123, erster Sub-Request"
+claude,nachher,baseline,bibliothekarin-search,vorgeladene_skills,0,anzahl,
+claude,vorher,baseline,bibliothekarin-search,systemprompt_sub,3409,zeichen,System-Blöcke des ersten Sub-Requests
+claude,nachher,baseline,bibliothekarin-search,systemprompt_sub,3409,zeichen,System-Blöcke des ersten Sub-Requests
+claude,vorher,baseline,bibliothekarin-search,files_read,0,dateien,"keine Read-/Bash-Aufrufe, einziges Tool des Agenten: SubagentHandback"
+claude,nachher,baseline,bibliothekarin-search,files_read,0,dateien,"keine Read-/Bash-Aufrufe, einziges Tool des Agenten: SubagentHandback"
+claude,vorher,baseline,bibliothekarin-search,cost_usd,0.13905515,usd,"total_cost_usd, Lauf ohne Proxy (bl-before-search-direct); Proxy-Lauf 0.12436215"
+claude,nachher,baseline,bibliothekarin-search,cost_usd,0.0955801,usd,"total_cost_usd, Lauf ohne Proxy (bl-after-search-direct); Proxy-Lauf 0.0963711"
+claude,differenz,baseline,bibliothekarin-search,cost_usd,-0.04347505,usd,nachher − vorher (-31.3 %); cache-abhängig
+claude,vorher,baseline,bibliothekarin-search,duration_s,17.7,s,"result.duration_ms, Lauf ohne Proxy (bl-before-search-direct)"
+claude,nachher,baseline,bibliothekarin-search,duration_s,9.8,s,"result.duration_ms, Lauf ohne Proxy (bl-after-search-direct)"
+claude,vorher,baseline,gesamt,titel_request,932,tokens,"claude-haiku-4-5-20251001, je Lauf 932–934, in beiden Zuständen gleich"
+claude,vorher,baseline,gesamt,klassifikator_n,2,requests,"claude-sonnet-5, max_tokens 64, je Request 45.658–45.998 Tokens, in beiden Zuständen gleich; nicht in modelUsage"
+codex,vorher,prompt-input,gesamt,prompt_gesamt,22022,zeichen,Summe aller 10 input_text; Unicode-Codepoints
+codex,nachher,prompt-input,gesamt,prompt_gesamt,20597,zeichen,Summe aller 10 input_text; Unicode-Codepoints
+codex,differenz,prompt-input,gesamt,prompt_gesamt,-1425,zeichen,nachher − vorher (-6.5 %)
+codex,vorher,prompt-input,gesamt,prompt_gesamt,5322,tokens,o200k_base; ohne Base-Instructions/Tool-Schemas/Message-Framing
+codex,nachher,prompt-input,gesamt,prompt_gesamt,4932,tokens,o200k_base; ohne Base-Instructions/Tool-Schemas/Message-Framing
+codex,differenz,prompt-input,gesamt,prompt_gesamt,-390,tokens,nachher − vorher (-7.3 %)
+codex,vorher,prompt-input,gesamt,prompt_gesamt,22127,bytes,UTF-8 der input_text
+codex,nachher,prompt-input,gesamt,prompt_gesamt,20690,bytes,UTF-8 der input_text
+codex,vorher,prompt-input,gesamt,prompt_json,24931,bytes,Dateigröße Ausgabe debug prompt-input
+codex,nachher,prompt-input,gesamt,prompt_json,23490,bytes,Dateigröße Ausgabe debug prompt-input
+codex,vorher,prompt-input,gesamt,skills_instructions,6587,zeichen,Block <skills_instructions>
+codex,nachher,prompt-input,gesamt,skills_instructions,5162,zeichen,Block <skills_instructions>
+codex,vorher,prompt-input,gesamt,skills_instructions,1749,tokens,Block <skills_instructions>
+codex,nachher,prompt-input,gesamt,skills_instructions,1357,tokens,Block <skills_instructions>
+codex,differenz,prompt-input,gesamt,skills_instructions,-392,tokens,nachher − vorher
+codex,vorher,prompt-input,gesamt,katalog_eintraege,14,anzahl,inkl. 5 System-Skills
+codex,nachher,prompt-input,gesamt,katalog_eintraege,11,anzahl,inkl. 5 System-Skills
+codex,vorher,prompt-input,gesamt,skill_roots,4,anzahl,Tabelle ### Skill roots
+codex,nachher,prompt-input,gesamt,skill_roots,3,anzahl,Tabelle ### Skill roots
+codex,vorher,prompt-input,gesamt,skill_roots,355,zeichen,inkl. Zeilenumbruch
+codex,nachher,prompt-input,gesamt,skill_roots,253,zeichen,inkl. Zeilenumbruch
+codex,vorher,prompt-input,gesamt,skill_roots,130,tokens,
+codex,nachher,prompt-input,gesamt,skill_roots,92,tokens,
+codex,vorher,prompt-input,gesamt,rest_ausserhalb_skills,15435,zeichen,9 übrige input_text-Items
+codex,nachher,prompt-input,gesamt,rest_ausserhalb_skills,15435,zeichen,9 übrige input_text-Items
+codex,vorher,prompt-input,gesamt,rest_ausserhalb_skills,3573,tokens,9 übrige input_text-Items
+codex,nachher,prompt-input,gesamt,rest_ausserhalb_skills,3575,tokens,"9 übrige input_text-Items; +2 durch den cwd-Pfad (mktemp)"
+codex,vorher,prompt-input,bibliothekarin,eintraege,5,anzahl,
+codex,nachher,prompt-input,bibliothekarin,eintraege,2,anzahl,nur noch source-command-karin und source-command-vault
+codex,differenz,prompt-input,bibliothekarin,eintraege,-3,anzahl,nachher − vorher
+codex,vorher,prompt-input,bibliothekarin,eintraege,1618,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintraege,295,zeichen,
+codex,differenz,prompt-input,bibliothekarin,eintraege,-1323,zeichen,nachher − vorher (-81.8 %)
+codex,vorher,prompt-input,bibliothekarin,eintraege,436,tokens,Summe isoliert kodierter Zeilen
+codex,nachher,prompt-input,bibliothekarin,eintraege,82,tokens,Summe isoliert kodierter Zeilen
+codex,differenz,prompt-input,bibliothekarin,eintraege,-354,tokens,nachher − vorher (-81.2 %)
+codex,vorher,prompt-input,bibliothekarin,skill_roots,2,anzahl,migrated-command-skills und skills
+codex,nachher,prompt-input,bibliothekarin,skill_roots,1,anzahl,nur migrated-command-skills
+codex,vorher,prompt-input,bibliothekarin,skill_roots,229,zeichen,
+codex,nachher,prompt-input,bibliothekarin,skill_roots,129,zeichen,
+codex,vorher,prompt-input,bibliothekarin,skill_roots,84,tokens,
+codex,nachher,prompt-input,bibliothekarin,skill_roots,46,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,413,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,113,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:diagramm-auswahl,0,tokens,allow_implicit_invocation: false
+codex,vorher,prompt-input,bibliothekarin,eintrag:mermaid,416,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:mermaid,116,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:mermaid,0,tokens,allow_implicit_invocation: false
+codex,vorher,prompt-input,bibliothekarin,eintrag:plantuml,494,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:plantuml,125,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:plantuml,0,tokens,allow_implicit_invocation: false
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-karin,146,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-karin,146,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-karin,41,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-karin,41,tokens,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-vault,149,zeichen,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-vault,149,zeichen,
+codex,vorher,prompt-input,bibliothekarin,eintrag:source-command-vault,41,tokens,
+codex,nachher,prompt-input,bibliothekarin,eintrag:source-command-vault,41,tokens,

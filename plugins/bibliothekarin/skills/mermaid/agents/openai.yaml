@@ -1,0 +1,6 @@
+interface:
+  display_name: "BibliotheKarin: Mermaid"
+  short_description: "Mermaid-Diagramme reference-first erstellen und lokal validieren"
+  default_prompt: "Nutze $bibliothekarin:mermaid, um ein Flussdiagramm für diesen Prozess zu erstellen."
+policy:
+  allow_implicit_invocation: false

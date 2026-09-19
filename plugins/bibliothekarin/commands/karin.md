@@ -5,7 +5,7 @@ description: "Karin (Wissensmanagerin) direkt aufrufen — mit optionalem Auftra
 
 Analysiere den User-Text und wähle den passenden Agent:
 
-**`bibliothekarin:bibliothekarin-search`** (leichtgewichtig, ~8.600 Tokens weniger) wenn:
+**`bibliothekarin:bibliothekarin-search`** (leichtgewichtig, nur lesend) wenn:
 - Wissensfrage: "Was weiß ich über ...", "Fasse zusammen ...", "Suche ..."
 - Vault-Recherche ohne Schreibabsicht
 - Synthese über mehrere Notes

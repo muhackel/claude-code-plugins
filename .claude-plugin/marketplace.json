@@ -10,7 +10,7 @@
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
       "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults; erstellt Mermaid-/PlantUML-Diagramme reference-first und empfiehlt die passende Diagrammart",
-      "version": "0.6.1"
+      "version": "0.7.0"
     },
     {
       "name": "defuddle",
