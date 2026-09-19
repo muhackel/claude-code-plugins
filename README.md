@@ -72,13 +72,14 @@ Slash Commands:
 - `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
 
 Agent-Varianten:
-- `bibliothekarin` — Vollständig (alle Skills, voller Startup) für Ingest, Audit, Scan, Destillation
-- `bibliothekarin-search` — Leichtgewichtig (nur obsidian-cli) für Suche und Synthese (~8.600 Tokens weniger)
+- `bibliothekarin` — Vollständig (voller Startup) für Ingest, Audit, Scan, Destillation; lädt nur `obsidian-cli` vor, alles andere liest sie erst bei Bedarf
+- `bibliothekarin-search` — Leichtgewichtig, nur lesend, für Suche und Synthese
 
 Skills via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT):
-- obsidian-markdown, obsidian-bases, obsidian-cli, json-canvas, defuddle
+- obsidian-markdown, obsidian-cli, defuddle — als Skills, auch für die Hauptsitzung
+- obsidian-bases, json-canvas — unter `references/`, nur Karin liest sie
 
-Eigene Diagramm-Skills:
+Eigene Diagramm-Skills (für den automatischen Aufruf gesperrt, Karin liest sie bei Bedarf):
 - `mermaid` — native Vault-Diagramme (Obsidian rendert nativ), mit Kollisions-Kernregel (reservierte Wörter nie als `classDef`-Namen)
 - `plantuml` — UML-Typen jenseits von Mermaid, mit ehrlichem Rendering-Vorbehalt
 - `diagramm-auswahl` — empfiehlt Diagrammart + Tool (Zweck → Typ → Mermaid/PlantUML/json-canvas)

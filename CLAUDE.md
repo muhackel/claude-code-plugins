@@ -168,8 +168,8 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
 
 ## Persona-Plugins: Fachwissen nur im Agenten
 
-Umgesetzt in `bertram`, `christian`, `it-grundschutz` und `nixie`; `bibliothekarin` folgt mit der
-Ausnahme unten. Jede Datei unter `skills/` steht sonst mit ihrer
+Umgesetzt in `bertram`, `christian`, `it-grundschutz`, `nixie` und `bibliothekarin` (mit der Ausnahme
+unten). Jede Datei unter `skills/` steht sonst mit ihrer
 Beschreibung im Kontext der Hauptsitzung und jedes Subagenten, und `skills:` im Agent-Frontmatter lädt
 zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am 2026-09-18 getestet).
 
@@ -198,10 +198,14 @@ zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am
 - Skills, die der Hauptagent selbst braucht (etwa `obsidian-cli`), bleiben ungesperrt.
 - **Ausnahme `bibliothekarin`:** Vault-Zugriff ist kritisch, Karin muss aus jeder Sitzung erreichbar
   bleiben. `/karin` und `/vault` bekommen keine Sperre, der Hauptagent darf sie selbst aufrufen.
+  Ungesperrt bleiben auch `obsidian-cli`, `obsidian-markdown` und `defuddle`, weil die Hauptsitzung sie
+  selbst nutzt; Karin lädt nur `obsidian-cli` per `skills:` vor. Vendor-Skills, die nur Karin braucht
+  (`obsidian-bases`, `json-canvas`), liegen als Symlink unter `references/`, weil sich ihr Frontmatter im
+  Submodul nicht sperren lässt. Claude löst die Symlinks beim Install auf (0.7.0 am 2026-09-19 geprüft).
 
 ## Externe Quellen
 
-- Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) liegen als Git Submodule unter `vendors/obsidian-skills/`. Plugins referenzieren diese per Symlink (`plugins/<name>/skills/<skill> → ../../../vendors/obsidian-skills/skills/<skill>`).
+- Skills aus **kepano/obsidian-skills** (MIT, Steph Ango) liegen als Git Submodule unter `vendors/obsidian-skills/`. Plugins referenzieren diese per Symlink (`plugins/<name>/skills/<skill> → ../../../vendors/obsidian-skills/skills/<skill>`, bzw. unter `references/`, wenn nur der Agent sie liest).
 - Update: `git submodule update --remote vendors/obsidian-skills`
 
 ## Philharmonie
