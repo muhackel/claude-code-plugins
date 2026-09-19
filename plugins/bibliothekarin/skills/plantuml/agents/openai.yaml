@@ -1,0 +1,6 @@
+interface:
+  display_name: "BibliotheKarin: PlantUML"
+  short_description: "PlantUML-Diagramme reference-first erstellen und lokal validieren"
+  default_prompt: "Nutze $bibliothekarin:plantuml, um ein Deployment-Diagramm dieser Infrastruktur zu erstellen."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "BibliotheKarin: Diagramm-Auswahl"
+  short_description: "Passende Diagrammart und Tool (Mermaid, PlantUML, json-canvas) empfehlen"
+  default_prompt: "Nutze $bibliothekarin:diagramm-auswahl, um die passende Diagrammart für diesen Ablauf zu wählen."
+policy:
+  allow_implicit_invocation: false

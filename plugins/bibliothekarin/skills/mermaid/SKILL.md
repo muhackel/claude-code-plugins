@@ -1,6 +1,7 @@
 ---
 name: mermaid
 description: "Mermaid-Diagramme für den Vault erstellen — reference-first aus einem offline gespiegelten Mermaid-Doku-Klon, vor dem Commit lokal mit mmdc validiert. Obsidian rendert Mermaid nativ. Use when ein Mermaid-Diagramm, Flussdiagramm, Sequenzdiagramm, Klassendiagramm, Zustandsdiagramm, ER-Diagramm oder Gantt-Chart in einer Note erstellt oder korrigiert werden soll."
+disable-model-invocation: true
 ---
 
 # mermaid — native Diagramme für den Obsidian-Vault
