@@ -1,7 +1,6 @@
 ---
 name: nix-packaging
-description: "Eigene Nix-Pakete schreiben (stdenv.mkDerivation, buildNpmPackage, stdenvNoCC, callPackage), Overlays anlegen (final: prev:), und lang bauende Pakete pinnen (nixpkgs-Rev, fetchFromGitHub, Binary-Cache/Cachix). Nutzen, wenn eine Derivation/ein Overlay geschrieben, ein Paket gepatcht oder gegen lange Build-Zeiten gepinnt werden soll."
-disable-model-invocation: true
+description: "Eigene Nix-Pakete, Overlays und Paket-Pinning: mkDerivation, callPackage, final: prev:, nixpkgs-Rev pinnen, Binary-Cache. Nutzen, wenn eine Derivation oder ein Overlay geschrieben, ein Paket gepatcht oder gegen lange Build-Zeiten gepinnt wird."
 ---
 
 # Nix-Packaging — Derivations, Overlays, Pinning

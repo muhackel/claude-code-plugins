@@ -52,11 +52,25 @@ git submodule update --init --recursive
 1. `plugins/_template/` nach `plugins/<mein-plugin>/` kopieren
 2. **Beide** Manifeste anpassen: `.claude-plugin/plugin.json` und `.codex-plugin/plugin.json` (Name, Beschreibung, Version, Keywords)
 3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen (geteilt zwischen beiden Systemen)
-4. Bei einem Agenten mit eigenem Fachwissen: dessen Skills sperren und bei Bedarf lesen lassen (siehe CLAUDE.md, „Persona-Plugins“)
+4. Bei einem Agenten mit eigenem Fachwissen: Skills offen lassen, kurze Descriptions, große Skills in Kern und `references/` teilen (siehe CLAUDE.md, „Persona-Plugins“)
 5. Plugin in **beide** Marketplaces eintragen: `.claude-plugin/marketplace.json` und `.agents/plugins/marketplace.json`
 6. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
 
 > Details zum Dual-Manifest-Schema (Claude Code + Codex): siehe [`CLAUDE.md`](CLAUDE.md).
+
+## Lean-Profil
+
+Für Sitzungen, die möglichst wenig Kontext belegen sollen: Die Persona-Agenten lassen sich in Claude Code
+nur über das Plugin ausblenden. `profiles/lean.json` schaltet `bertram`, `christian`, `it-grundschutz` und
+`nixie` ab, `bibliothekarin` und `tools` bleiben aktiv.
+
+```bash
+# nur diese Sitzung
+claude --settings "$(git rev-parse --show-toplevel)/profiles/lean.json"
+
+# dauerhaft für ein Projekt (nicht in Git)
+cp profiles/lean.json <projekt>/.claude/settings.local.json
+```
 
 ## Verfügbare Plugins
 
@@ -149,10 +163,10 @@ einen generischen Offline-Closure-Deploy (Export auf USB, geführtes TUI am Ziel
 Slash Command:
 - `/nixie` — Nixie direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Nixie liest sie bei Bedarf):
+Enthaltene Skills (`nix-docs` und `nixos-config` lädt Nixie beim Start, die übrigen bei Bedarf):
 - `nixos-config` — Konventionen der NixOS-Config (mkHost, Feature-Flags, Modul-Layout)
 - `nix-packaging` — Derivations, Overlays, Paket-Pinning
-- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check, Offline-Closure-Deploy (USB/TUI)
+- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check; Offline-Closure-Deploy (USB/TUI) und Bootloader-Diagnose als `references/`
 - `nix-docs` — Doku-Lookup-Disziplin (search.nixos.org, noogle, nix search, Manpages)
 
 Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein

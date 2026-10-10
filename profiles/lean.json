@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "bertram@muhackel-plugins": false,
+    "christian@muhackel-plugins": false,
+    "it-grundschutz@muhackel-plugins": false,
+    "nixie@muhackel-plugins": false
+  }
+}
