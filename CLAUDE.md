@@ -59,7 +59,7 @@ Plugins (`skills/ask/` würde `/ask` verdecken).
 **Checkliste bei jeder Plugin-Änderung** (Version-Bump, neue Skills/Commands, Beschreibung):
 1. `.claude-plugin/plugin.json` **und** `.codex-plugin/plugin.json` angleichen (mind. `version`, `description`, `keywords`).
 2. Beide Marketplace-Indizes prüfen (neuer Eintrag / geänderte Beschreibung).
-3. Bei gesperrten Skills: `skills/<name>/agents/openai.yaml` mit `allow_implicit_invocation: false` anlegen.
+3. Nur bei bewusst gesperrten Skills (`tools`): `skills/<name>/agents/openai.yaml` mit `allow_implicit_invocation: false` anlegen. Persona-Skills bleiben offen.
 4. Bei neuen Hooks: `hooks.json`-Symlink im Plugin-Root anlegen.
 
 ### Claude-Manifest (`.claude-plugin/plugin.json`)
@@ -144,6 +144,17 @@ policy:
 /plugin install plugin-name --scope local
 ```
 
+**Lean-Profil (tokensparende Sitzung):** Agenten haben in Claude Code keinen Sperrschalter, nur das Plugin
+lässt sich über `enabledPlugins` ausblenden. `profiles/lean.json` schaltet die vier Technik-Personas ab,
+`bibliothekarin` und `tools` bleiben:
+
+```bash
+claude --settings "$(git rev-parse --show-toplevel)/profiles/lean.json"   # nur diese Sitzung
+cp profiles/lean.json <projekt>/.claude/settings.local.json               # dauerhaft je Projekt, nicht in Git
+```
+
+Die Quelle `flag` schlägt local, project und user. Kein Pendant für Codex.
+
 **Codex:** Der Marketplace liegt unter `.agents/plugins/marketplace.json`, Plugins unter `plugins/<n>/.codex-plugin/`. Skills werden in Codex über `/skills` bzw. `$skill-name` angesprochen. Den exakten Marketplace-/Plugin-Install-Befehl gegen die aktuelle Codex-Doku prüfen (`developers.openai.com/codex` → Customization/Plugins) — hier bewusst nicht aus dem Gedächtnis dokumentiert.
 
 ## Tools: nur explizite Auslösung
@@ -166,42 +177,56 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
 - Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
   lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
 
-## Persona-Plugins: Fachwissen nur im Agenten
+## Persona-Plugins: Fachwissen im Agenten, Skills offen
 
-Umgesetzt in `bertram`, `christian`, `it-grundschutz`, `nixie` und `bibliothekarin` (mit der Ausnahme
-unten). Jede Datei unter `skills/` steht sonst mit ihrer
-Beschreibung im Kontext der Hauptsitzung und jedes Subagenten, und `skills:` im Agent-Frontmatter lädt
-zusätzlich den vollen Body beim Start (Claude Code 2.1.272 und Codex 0.154.0 am 2026-09-18 getestet).
+Umgesetzt am 2026-10-10 in `nixie` 0.6.0, `bertram` 0.3.0, `christian` 0.4.0, `it-grundschutz` 0.6.0 und
+`bibliothekarin` 0.8.0 (Rückbau des Lazy-Musters aus 0.x vom 2026-09-18).
+Hintergrund und Messung: `docs/messung-lazy-skills-2026-09-18.md`, `docs/messung-rueckbau-2026-10-10.md`
+sowie die Analyse vom 2026-10-10 im Vault (`KI-Entwicklung/claude-code-plugins-persona-agenten-tokensparend`). Kurz: Agenten haben in Claude
+Code keinen Sperrschalter, nur `enabledPlugins` blendet ein Plugin aus; gesperrte Skills sparen darum im
+Hauptkontext nichts, was das Lean-Profil nicht auch spart, kosten aber Read-Roundtrips im Agenten.
 
-- Fachwissens-Skills tragen `disable-model-invocation: true` und `skills/<name>/agents/openai.yaml` mit
-  `policy.allow_implicit_invocation: false`. In beiden CLIs fehlen sie damit im Modellkontext; von Hand
-  holt man sie per `/<plugin>:<skill>` bzw. `$<plugin>:<skill>`.
-- Kein `skills:` im Agenten: Vorladen scheitert an der Sperre still, das Skill-Tool blockt auch im
-  Subagenten. Stattdessen führt der Agent-Body eine Tabelle „Datei → lesen, sobald“ mit Pfaden der Form
-  `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` (im Agent-Body ersetzt) und liest sie direkt. Die
-  Auslöser hängen an der Handlung („bevor du auf ein Gerät zugreifst“), nicht nur am Auftrag.
-- In Claude Code bleibt die Agent-`description` als einziger Eintrag im Hauptkontext: ~300–470 Zeichen,
-  Trigger und Abgrenzung zu den anderen Personas. Delegiert die Hauptsitzung nicht von selbst, hilft ein
-  Einstieg „Proaktiv nutzen bei jeder konkreten …-Aufgabe, auch wenn nur ein Vorschlag gefragt ist“
-  (bei `nixie` von 0/3 auf 3/3 Delegationen).
+- Fach-Skills sind **offen** (kein `disable-model-invocation`, keine `agents/openai.yaml`). Ihre
+  `description` hat 150 bis 250 Zeichen: Was und Wann, keine Aufzählung der Unterthemen. Das Listing hat
+  ein Budget von 1 % des Kontextfensters, bei 200k-Modellen rund 8k Zeichen; überlange Descriptions werden
+  dort auf den Namen gekürzt.
+- Große Skills sind in einen `SKILL.md`-Kern und `references/*.md` neben der Datei geteilt (Progressive
+  Disclosure). Der Kern nennt je Referenz den Fall, in dem sie zu lesen ist. Pfade relativ zur `SKILL.md`.
+- Der Agent lädt per `skills:` nur die Skills vor, die praktisch jeder Auftrag braucht (`nixie`:
+  `nix-docs`, `nixos-config`; `bertram`: `net-reference`; `christian`: `vpn-reference`, `vpn-tunnel`;
+  `bruce`: `gs-lookup`; Karin: `obsidian-cli`). Die übrigen holt er über das Skill-Tool, das darum in `tools:` steht.
+  Der Abschnitt „Fachwissen“ im Body nennt je Skill die Achse und den spätesten Zeitpunkt. Das Skill-Tool
+  bringt das ganze Skill-Listing in den Subagenten, rund 8k Tokens je Spawn (`docs/messung-rueckbau-2026-10-10.md`);
+  Agenten, die nie nachladen, bekommen es nicht (`bibliothekarin-search`: 7,8k statt 17,9k).
+- Der Agent-Body enthält Rolle, STARTUP, Kernprinzipien der Domäne, Recherche und Sicherheitsregeln,
+  rund 6k Zeichen. Allgemeine Sorgfalt (lesen vor Edit, keine Bulk-Ersetzungen, Umlaute) steht als
+  Dreizeiler drin, weil die Plugins ohne die globale `CLAUDE.md` des Users nutzbar bleiben müssen. Kein
+  `omitClaudeMd`: `nixie` braucht die Projekt-`CLAUDE.md` des Zielrepos.
+- STARTUP ist an den Auftrag gekoppelt: Achse zuerst, Infrastrukturprüfungen (Build-Host-Config, Hostname)
+  nur, wenn die Achse sie braucht.
+- Agent-`description` rund 300 bis 350 Zeichen, Einstieg „Proaktiv nutzen bei jeder konkreten …-Aufgabe,
+  auch wenn nur ein Vorschlag gefragt ist“ (bei `nixie` von 0/3 auf 3/3 Delegationen), eine Einschränkung,
+  die Abgrenzung zur nächstliegenden Persona. Die Command-`description` ist textgleich: in Claude ist der
+  Command gesperrt und kostet nichts, in Codex ist er der einzige Eintrag der Persona.
 - Arbeitsdateien einer Persona (Downloads, Zwischenstände) nur in einem Verzeichnis aus `mktemp -d`, am
   Ende des Auftrags löschen; nie ins Arbeitsverzeichnis des Users oder an einen selbst gewählten Pfad.
 - Persona-Commands tragen `disable-model-invocation: true`, der Hauptagent delegiert über das Agent-Tool.
-  Codex kennt keine Plugin-Agenten (kein Code in 0.154.0 liest `agents/` im Plugin-Root, auch nicht
-  `agents/openai.yaml`); dort lädt der migrierte Command `agents/<name>.md` als Rollenanweisung. Die
-  Migration verwirft `disable-model-invocation`, der migrierte Command ist in Codex also der sichtbare
-  Einstieg. Darum trägt seine `description` dieselben Trigger und Abgrenzungen wie die des Agenten.
-  Eine `agents/openai.yaml` im Plugin-Root entfällt beim Umbau.
-- Der Claude-Teil des Commands sagt ausdrücklich: nur den User-Text weitergeben, keine Anweisung,
-  `agents/` oder `skills/` zu lesen; der Codex-Teil ist als „Nur Codex“ markiert. Ohne diese Trennung
-  hat die Hauptsitzung die Codex-Schritte an den Subagenten weitergereicht, der dann alles vorab las.
-- Skills, die der Hauptagent selbst braucht (etwa `obsidian-cli`), bleiben ungesperrt.
+  Codex kennt keine Plugin-Agenten (kein Code in 0.154.0 liest `agents/` im Plugin-Root); dort lädt der
+  migrierte Command `agents/<name>.md` als Rollenanweisung. Die Migration verwirft
+  `disable-model-invocation`, der migrierte Command ist in Codex also der sichtbare Einstieg.
+- Der Command-Body ist ein Adapter von rund 1,5k Zeichen: Claude-Teil „nur den User-Text weitergeben,
+  keine Anweisung, `agents/`, `skills/` oder `references/` zu lesen“, Codex-Teil nur die Root-Ermittlung
+  und der Verweis auf `references/codex-start.md` im Plugin-Root. Die Root-Ermittlung bleibt im Body, weil
+  relative Links im migrierten Command brechen. `codex-start.md` nennt die Dateien, die unter Codex das
+  `skills:`-Preload ersetzen. Ohne die Trennung hat die Hauptsitzung die Codex-Schritte an den Subagenten
+  weitergereicht, der dann alles vorab las.
+- Kein Routing-Hinweis im Command-Body: Die Abgrenzung steht in der Description, die Hauptsitzung hat die
+  Agentenliste ohnehin.
 - **Ausnahme `bibliothekarin`:** Vault-Zugriff ist kritisch, Karin muss aus jeder Sitzung erreichbar
   bleiben. `/karin` und `/vault` bekommen keine Sperre, der Hauptagent darf sie selbst aufrufen.
-  Ungesperrt bleiben auch `obsidian-cli`, `obsidian-markdown` und `defuddle`, weil die Hauptsitzung sie
-  selbst nutzt; Karin lädt nur `obsidian-cli` per `skills:` vor. Vendor-Skills, die nur Karin braucht
-  (`obsidian-bases`, `json-canvas`), liegen als Symlink unter `references/`, weil sich ihr Frontmatter im
-  Submodul nicht sperren lässt. Claude löst die Symlinks beim Install auf (0.7.0 am 2026-09-19 geprüft).
+  Vendor-Skills, die nur Karin braucht (`obsidian-bases`, `json-canvas`), liegen als Symlink unter
+  `references/`, weil sich ihr Frontmatter im Submodul nicht ändern lässt. Claude löst die Symlinks beim
+  Install auf (0.7.0 am 2026-09-19 geprüft).
 
 ## Externe Quellen
 

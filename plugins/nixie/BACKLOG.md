@@ -5,6 +5,19 @@ Skill-Sektion, die sie encodiert.
 
 ---
 
+## ✅ UMGESETZT (2026-10-10): 0.6.0 — Rückbau des Lazy-Musters, Skills offen
+
+Die Sperren aus 0.5.0 sind weg (kein `disable-model-invocation`, keine `agents/openai.yaml`), weil Agenten
+in Claude Code keinen Sperrschalter haben und Nixie ohnehin drei von vier Skills nachlas. Skill-Descriptions
+auf 150 bis 250 Zeichen gekürzt. `nix-docs` und `nixos-config` per `skills:` vorgeladen, `nix-packaging` und
+`nix-deploy` holt Nixie über das Skill-Tool (neu in `tools:`). `nix-deploy` in Kern (15k Zeichen) und
+`references/offline-deploy.md` sowie `references/bootloader.md` geteilt. Agent-Body von 10k auf 6k Zeichen:
+Lesetabelle und Abschluss-Check raus, STARTUP an die Achse gekoppelt (Build-Host-Config nur bei
+Bauen/Deploy), Dubletten der globalen Regeln auf einen Sorgfalts-Dreizeiler. Command-Body auf einen
+Adapter gekürzt, Codex-Schritte in `references/codex-start.md`. Der Git-Default „meist direkt auf main“ ist
+durch „auf dem Branch, den das Repo nutzt“ ersetzt. Messung gegen `docs/messung-lazy-skills-2026-09-18.md`
+steht aus.
+
 ## ✅ UMGESETZT (2026-09-18): 0.5.0 — Fachwissen nur im Agenten
 
 Die vier Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex

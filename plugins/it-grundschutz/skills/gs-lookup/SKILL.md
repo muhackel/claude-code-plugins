@@ -1,7 +1,6 @@
 ---
 name: gs-lookup
-description: "Anforderungen und Bausteine zitierfähig nachschlagen — per ID (z.B. GC.1.1) oder Volltext-/Themensuche im lokalen OSCAL-Katalog. Liefert Wortlaut (statement/guidance, Parameter aufgelöst), Pfad (Schicht/Gruppe), sec_level und effort_level, mit Edition und Quelle — und bei vorhandener Methodik-Ebene zusätzlich das Vorgehen/Warum dahinter. Nutzen, sobald konkrete Grundschutz-Inhalte gebraucht werden."
-disable-model-invocation: true
+description: "Anforderungen und Bausteine zitierfähig im lokalen BSI-Korpus nachschlagen, per ID oder Themensuche, mit Wortlaut, Pfad, Edition und Quelle. Nutzen, sobald ein konkreter Grundschutz-Inhalt gebraucht oder zitiert wird."
 ---
 
 # gs-lookup — Zitierfähig nachschlagen

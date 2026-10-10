@@ -1,7 +1,6 @@
 ---
 name: net-reference
-description: "Reference-first-Disziplin für Netzwerk-CLIs: Befehlsreferenz und Best Practices eines Geräts (Cisco IOS/IOS-XE/NX-OS, MikroTik RouterOS, Palo Alto PAN-OS, HP/Aruba, Juniper Junos) zitierfähig nachschlagen und anwenden, statt CLI-Syntax aus dem Gedächtnis zu raten. Nutzen, bevor eine unsichere Syntax, ein Default-Wert oder ein Feature-Verhalten ausgegeben wird. Quellen erst aufrufen, dann zitieren."
-disable-model-invocation: true
+description: "Befehlsreferenz und Best Practices eines Netzwerkgeräts (Cisco, MikroTik, Palo Alto, Aruba, Juniper) zitierfähig nachschlagen statt raten. Nutzen, bevor eine unsichere Syntax, ein Default-Wert oder ein Feature-Verhalten ausgegeben wird."
 ---
 
 # Net-Reference — Nachschlagen statt raten

@@ -1,7 +1,6 @@
 ---
 name: gs-cache
-description: "Projekt-lokalen Baustein-Vorrat erzeugen, rebuilden und nachziehen: die Volltexte ausgewählter Bausteine (Übersicht/Gefährdungslage + alle Anforderungen mit aufgelösten Parametern, zitierfähig wie 'gs get') in eine Markdown-Datei neben den Projektdateien materialisieren. Damit liest der Agent die Bausteintexte direkt aus dem Vorrat statt sie für jede ID neu aus dem Korpus zu parsen — beschleunigt Modellierungs-, Soll-Ist- und Dokument-Läufe erheblich. Rebuild ist idempotent (sha256 der catalog.json), zusätzliche IDs werden nachgezogen. Nutzen, wenn für ein Projekt ein fester Satz Bausteine wiederholt gebraucht wird."
-disable-model-invocation: true
+description: "Projekt-lokalen Baustein-Vorrat als Markdown-Datei erzeugen, neu bauen und nachziehen, damit Bausteintexte aus dem Vorrat statt je ID aus dem Korpus gelesen werden. Nutzen, wenn ein Projekt einen festen Satz Bausteine wiederholt braucht."
 ---
 
 # gs-cache — projekt-lokaler Baustein-Vorrat

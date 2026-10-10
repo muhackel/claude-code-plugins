@@ -1,7 +1,6 @@
 ---
 name: gs-ingest
-description: "Den BSI-Korpus lokal vorhalten: die Grundschutz++-OSCAL-Dateien (Anwenderkatalog, Methodik-Quellkatalog, Profile) von der BSI-Stand-der-Technik-Bibliothek (GitHub) laden sowie das IT-Grundschutz-Kompendium Edition 2023 (DocBook-XML) per Adapter nach OSCAL normalisieren, ins lokale Datenverzeichnis cachen, mit Manifest (Quelle, Version, sha256, Abrufdatum je Datei) versehen und aktuell halten. Nutzen, bevor nachgeschlagen/modelliert/dokumentiert wird, wenn kein Korpus vorliegt oder ein Update ansteht."
-disable-model-invocation: true
+description: "Den lokalen BSI-Korpus laden und aktuell halten: Grundschutz++ (OSCAL von GitHub) und Edition 2023 (DocBook-XML nach OSCAL) mit Manifest. Nutzen, wenn gs status keinen Korpus findet oder ein Update ansteht."
 ---
 
 # gs-ingest — Korpus laden und aktuell halten

@@ -17,7 +17,7 @@ Practices kommen aus der Vendor-Befehlsreferenz, nicht aus dem Gedächtnis. Anal
 
 | Typ | Name | Zweck |
 |-----|------|-------|
-| Agent | `bertram:bertram` | Netzwerk-Engineer-Persona, liest die Skills bei Bedarf |
+| Agent | `bertram:bertram` | Netzwerk-Engineer-Persona, `net-reference` vorgeladen, Rest per Skill-Tool |
 | Command | `/bertram` | Bertram direkt aufrufen (mit optionalem Auftrag) |
 | Skill | `net-reference` | Befehlsreferenz/Best Practices zitierfähig nachschlagen (Reference-first) |
 | Skill | `net-diagnose` | L1–L7-Fehlersuche mit geordneten Diagnose-Sequenzen |
@@ -25,11 +25,10 @@ Practices kommen aus der Vendor-Befehlsreferenz, nicht aus dem Gedächtnis. Anal
 | Skill | `net-operate` | Gestufter Live-Zugriff (SSH) mit vendor-spezifischer Change-Safety |
 | Skill | `net-design` | Netzarchitektur entwerfen/bewerten — Segmentierung, Adressplan, Routing, Resilienz |
 
-Die Skills sind Bertrams Fachwissen und für den automatischen Aufruf gesperrt: Sie stehen weder im
-Kontext der Hauptsitzung noch in dem anderer Agenten. Bertram liest die jeweilige `SKILL.md` erst, wenn
-ein Auftrag sie braucht. Von Hand holst du einen Skill mit `/bertram:net-diagnose` (Claude Code) bzw.
-`$bertram:net-diagnose` (Codex) in die laufende Sitzung. So geladen wirkt er allein: Seine Verweise auf
-andere Skills werden nicht nachgeladen. Für Live-Zugriff Bertram nutzen, nicht `net-operate` von Hand.
+Die Skills sind Bertrams Fachwissen und offen: `net-reference` lädt der Agent beim Start vor, die
+übrigen holt er über das Skill-Tool, sobald ein Auftrag die Achse berührt. Von Hand holst du einen Skill
+mit `/bertram:net-diagnose` (Claude Code) bzw. `$bertram:net-diagnose` (Codex) in die laufende Sitzung.
+Für Live-Zugriff Bertram nutzen, nicht `net-operate` von Hand.
 
 Weitere geplante Erweiterungen (MikroMCP-Integration, Offline-Referenz-Cache, weitere Vendor-Packs) in
 [BACKLOG.md](./BACKLOG.md).

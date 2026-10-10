@@ -1,7 +1,6 @@
 ---
 name: gs-krypto
-description: "Kryptographische Verfahren, Schlüssellängen und Cipher-Suiten zitierfähig bewerten — Primärquelle BSI TR-02102 (Teile -1 bis -4) mit internationaler Gegenprobe (NIST SP 800-57, FIPS 140-3/197/186, RFCs). Liefert ein belegtes Urteil (konform / abzulösen / verboten) mit Quelle, Teil, Tabelle/Abschnitt und Stand/Jahr. Nutzen für die Bewertung von symmetrischen/asymmetrischen Verfahren, Hashfunktionen, PFS, Protokoll-Versionen (TLS/IPsec/SSH) und ganzen Cipher-Suiten — besonders als Zulieferung an Christian bei der VPN-Config-Härtung (OpenVPN/WireGuard/IPsec)."
-disable-model-invocation: true
+description: "Krypto-Verfahren, Schlüssellängen und Cipher-Suiten zitierfähig nach BSI TR-02102 mit NIST/FIPS-Gegenprobe bewerten, Quellen live als PDF, nicht aus dem Korpus. Nutzen bei jeder Krypto-Bewertung, auch als Zulieferung an christian bei der VPN-Härtung."
 ---
 
 # gs-krypto — zitierfähige Krypto-Bewertung nach BSI TR-02102

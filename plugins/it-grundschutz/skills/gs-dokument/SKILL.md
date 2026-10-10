@@ -1,7 +1,6 @@
 ---
 name: gs-dokument
-description: "Sicherheitsdokumente nach der Grundschutz++-Methodik erstellen, führen oder prüfen. Drei Modi: (1) geführter Prozess entlang der Methodik-Schichten; (2) Dokument-Gerüst erzeugen (Template mit eingesetzten Anforderungen + Methodik-Verweisen); (3) bestehendes Dokument gegen Methodik/Anforderungen prüfen (Gap-Analyse). Stützt sich auf die Methodik-Ebene des Korpus und die BSI-Komponenten-Vorlagen. Nutzen, wenn ein Sicherheitskonzept/ISMS-Dokument erstellt, strukturiert oder geprüft werden soll. Generisch — ausgefüllte, firmenspezifische Dokumente gehören in ein vertrauliches Repo."
-disable-model-invocation: true
+description: "Sicherheitsdokumente nach der Grundschutz++-Methodik erstellen, führen oder per Gap-Analyse prüfen, mit zitierten Anforderungen und Platzhaltern für Firmeninhalte. Nutzen, wenn ein ISMS-Dokument oder Sicherheitskonzept entsteht oder geprüft wird."
 ---
 
 # gs-dokument — Dokumente nach der Methodik

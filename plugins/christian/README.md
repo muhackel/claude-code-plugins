@@ -25,7 +25,7 @@ und `bertram` („Vendor-Referenz-first").
 
 | Typ | Name | Zweck |
 |-----|------|-------|
-| Agent | `christian:christian` | Linux-VPN-/Router-Persona, liest die Skills bei Bedarf |
+| Agent | `christian:christian` | Linux-VPN-/Router-Persona; `vpn-reference` und `vpn-tunnel` vorgeladen, die übrigen Skills über das Skill-Tool |
 | Command | `/christian` | Christian direkt aufrufen (mit optionalem Auftrag) |
 | Skill | `vpn-reference` | Config-Syntax/Krypto-Suiten/Manpage-Defaults zitierfähig nachschlagen (Reference-first) |
 | Skill | `openvpn` | OpenVPN-Kern-Expertise: Server/Client, Krypto-Suite, tls-crypt, Routing/Push |
@@ -34,12 +34,13 @@ und `bertram` („Vendor-Referenz-first").
 | Skill | `bsd-firewall` | BSD-Firewall-Appliance pfSense/OPNsense — pf, VPN-Instanzen, Multi-WAN/Gateway-Groups, elementare Plugins, config.xml |
 | Skill | `wan-link` | Sichere WAN-Kopplung zwischen Netzen — Routing, Firewall-Zonen, PMTU/MSS, Failover |
 
-Die Skills sind Christians Fachwissen und für den automatischen Aufruf gesperrt: Sie stehen weder im
-Kontext der Hauptsitzung noch in dem anderer Agenten. Christian liest die jeweilige `SKILL.md` erst, wenn
-ein Auftrag sie braucht. Von Hand holst du einen Skill mit `/christian:openvpn` (Claude Code) bzw.
-`$christian:openvpn` (Codex) in die laufende Sitzung. So geladen wirkt er allein: Seine Verweise auf
-andere Skills werden nicht nachgeladen. Für Live-Eingriffe Christian nutzen, nicht `router-appliance`
-oder `bsd-firewall` von Hand.
+Die Skills sind offen: Ihre kurzen Descriptions stehen im Skill-Listing jeder Sitzung, der volle Inhalt
+wird erst beim Aufruf geladen. Christian bringt `vpn-reference` und `vpn-tunnel` vorgeladen mit und holt
+`openvpn`, `router-appliance`, `bsd-firewall` und `wan-link` über das Skill-Tool, sobald ein Auftrag die
+Achse berührt. Die großen Skills `router-appliance` und `bsd-firewall` sind in einen Kern und
+`references/*.md` geteilt, die der Skill nur für den genannten Fall nachlädt. Von Hand holst du einen Skill
+mit `/christian:openvpn` (Claude Code) bzw. `$christian:openvpn` (Codex). Für Live-Eingriffe Christian
+nutzen, nicht `router-appliance` oder `bsd-firewall` von Hand.
 
 Weitere geplante Erweiterungen (VyOS-Tiefe, Appliance-Image-Builds, FRR-Multipoint-Overlays,
 PMTU-/MSS-Tooling) in [BACKLOG.md](./BACKLOG.md).

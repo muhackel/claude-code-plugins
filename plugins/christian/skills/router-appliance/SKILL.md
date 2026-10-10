@@ -1,7 +1,6 @@
 ---
 name: router-appliance
-description: "Linux-Router-Stack als Kernkompetenz: nftables (Tabellen/Ketten/Hooks, stateful ct-state, Zonen WAN/LAN/DMZ/MGMT, NAT masquerade/dnat/snat, default-drop, MSS-Clamping, Anti-Spoofing/rp_filter, iptables→nftables-Migration); Routing mit FRR/BIRD (OSPF/BGP/statisch, Kernel-FIB, ECMP, wann welcher Daemon); iproute2/systemd-networkd (Adressen/Routen, Policy-Routing mit ip rule + mehreren Tabellen, VRF, IP-Forwarding-sysctls, Bridges/VLANs); OpenWrt/DD-WRT (UCI/opkg) als sekundäre Plattform. Appliance-Denke: minimal, dienstgetrennt, reproduzierbar (NixOS-Umsetzung → nixie). Syntax reference-first aus offizieller Doku, nicht aus dem Gedächtnis. Nutzen beim Bauen, Prüfen oder Umsetzen eines Linux-Routers/Firewall-Gateways."
-disable-model-invocation: true
+description: "Linux-Router-Stack: nftables-Firewall mit Zonen und NAT, Routing mit FRR oder BIRD, iproute2/networkd, OpenWrt als Zweitplattform, gestuftes Live-Ausrollen. Nutzen beim Bauen, Prüfen oder Umsetzen eines Linux-Routers oder Firewall-Gateways."
 ---
 
 # Router-Appliance — der Linux-Router-Stack
@@ -77,7 +76,7 @@ in `forward` (oder `postrouting`). `set rt mtu` klemmt auf die Route-MTU; altern
 Exakte Syntax **per nft(8) / wiki.nftables.org verifizieren** (Option `maxseg`, `set rt mtu`).
 
 ### Anti-Spoofing / rp_filter
-- **Reverse-Path** primär über den Kernel-sysctl `net.ipv4.conf.*.rp_filter` (siehe iproute2-Abschnitt),
+- **Reverse-Path** primär über den Kernel-sysctl `net.ipv4.conf.*.rp_filter` (siehe `references/networkd-iproute2.md`),
   nicht in nftables nachbauen — bei asymmetrischem Routing (mehrere Uplinks) `rp_filter=2` (loose)
   statt `1` (strict), sonst kappt der Router legitimen Rückverkehr.
 - In nftables ergänzend **Bogon-/Martian-Filter** am WAN-Ingress: RFC1918-Quellen von außen, eigene
@@ -94,101 +93,18 @@ Exakte Syntax **per nft(8) / wiki.nftables.org verifizieren** (Option `maxseg`, 
 
 ## Routing — FRR / BIRD
 
-Quellen-Anker: `docs.frrouting.org`, `bird.network.cz` (BIRD-User-Guide). Direktiven dort belegen.
-
-### Wann FRR, wann BIRD
-| | FRR | BIRD |
-|---|-----|------|
-| Stärke | breites Protokoll-Set, Cisco-nahe vtysh-CLI, OSPF/BGP/IS-IS/PIM/BFD | schlanker, sehr performant, mächtige Filtersprache, BGP-Route-Server/RR |
-| Passt für | Enterprise-/Campus-Router, Multiprotokoll, wer IOS-Denke gewohnt ist | reine BGP-Boxen, IXP/Route-Server, große Tabellen, feingranulare Policy |
-| Config | vtysh (integriert) oder Daemon-Files; reload | eine `bird.conf`, deklarativ; `birdc configure` |
-
-Faustregel: **OSPF + gemischte Protokolle → FRR**; **BGP-lastig/Policy-lastig/Route-Server → BIRD**.
-
-### OSPF / BGP / statisch
-- **Statisch** reicht für Stub-/Single-Uplink-Router — kein Daemon, Routen über iproute2 (siehe unten).
-  Dynamisches Routing erst, wenn Redundanz/Multi-Path/mehrere Router es rechtfertigen.
-- **OSPF:** Area-Design nach Fehlerdomäne, Area 0 als Backbone, Interface-Auth, Router-ID
-  deterministisch. FRR: `router ospf` / `network … area …` (vtysh) — Details `docs.frrouting.org`.
-- **BGP:** eBGP an jeder Uplink-/Peering-Grenze mit **Prefix-Filter in beide Richtungen** (nichts
-  ungefiltert annehmen/ankündigen); AS-/Community-Struktur klar. BIRD-Filter oder FRR-route-maps.
-
-### Integration Kernel-FIB
-- FRR/BIRD sind Control-Plane (RIB); die Forwarding-Entscheidung trifft der **Kernel-FIB**. Der Daemon
-  installiert selektierte Routen via **Netlink** (FRR: `zebra`; BIRD: `kernel`-Protokoll) in die
-  Kernel-Tabelle.
-- Route-Herkunft im Blick behalten: `ip route show` zeigt die FIB, `vtysh -c "show ip route"` /
-  `birdc show route` die RIB. Diskrepanz = Daemon installiert nicht (Admin-Distanz, `kernel`-Protokoll
-  im BIRD nicht auf `export`, VRF-Zuordnung).
-- **Policy-Routing-Tabelle** je Daemon beachten: schreibt der Daemon in `main` oder eine eigene Tabelle?
-  Muss zur `ip rule`-Logik passen (siehe unten).
-
-### ECMP
-- Mehrere gleichwertige Nexthops → Equal-Cost-Multipath. Kernel-seitig `nexthop`-Gruppen; der
-  Hash-Algorithmus über `net.ipv4.fib_multipath_hash_policy` (L3 vs. L3+L4) — **per sysctl-Doku
-  verifizieren**. Layer-4-Hash streut besser, kann aber PMTU/State-Annahmen brechen.
-- FRR/BIRD müssen ECMP-fähig konfiguriert sein (Maximum-Paths). Asymmetrie bedenken → `rp_filter`
-  entschärfen.
+Vor FRR-/BIRD-Direktiven, der Wahl zwischen OSPF, BGP und statischem Routing, Fragen zur Kernel-FIB
+oder ECMP `references/routing-frr-bird.md` neben dieser Datei lesen.
 
 ## iproute2 / systemd-networkd — der Netz-Layer
 
-Quellen-Anker: `man ip(8)` (+ `ip-route`, `ip-rule`, `ip-address`), `man systemd.network(5)`.
-
-### Adressen & Routen (imperativ vs. deklarativ)
-- **iproute2** (imperativ, flüchtig bis persistiert): `ip addr add`, `ip route add`, `ip link set`.
-  Gut für Diagnose und den Live-Test **vor** dem Persistieren.
-- **systemd-networkd** (deklarativ, persistent): `.network`/`.netdev`/`.link`-Units unter
-  `/etc/systemd/network/`. `[Match]` bindet ans Interface, `[Network]`/`[Route]`/`[Address]` setzen
-  Konfiguration. Für die Appliance der persistente Weg (oder NixOS via nixie).
-
-### Policy-Routing (`ip rule` + mehrere Tabellen)
-- Mehrere Routing-Tabellen (`/etc/iproute2/rt_tables` benennt sie), `ip rule` wählt anhand von
-  Quelle/Mark/iif die Tabelle. Klassiker: **Multi-Uplink** — Traffic aus Quelle A über Uplink A,
-  Rückverkehr symmetrisch.
-- **Muster:** je Uplink eine Tabelle mit eigener Default-Route; `ip rule add from <quelle> lookup
-  <tabelle>`; eingehend markiertes Antwortpaket per `fwmark` (in nftables `meta mark set`) derselben
-  Tabelle zuweisen, damit die Antwort denselben Uplink nimmt.
-- **Anti-Pattern: Policy-Routing ohne Rückweg** — Hinweg über Uplink B, Antwort geht per `main`-Default
-  über Uplink A → asymmetrisch, `rp_filter=strict` verwirft es, Stateful-Firewall/CGNAT bricht.
-  Rückweg-Regel **immer** mitbauen.
-
-### VRF
-- Echte L3-Isolation über `ip link add <vrf> type vrf table <n>` + Interfaces `master <vrf>` zuordnen
-  (Mgmt-VRF, isoliertes Kundennetz). Jedes VRF hat seine eigene Tabelle; Leaks nur bewusst über
-  Route-Leaking. Dienste ans VRF binden (`ip vrf exec`). Exakte Syntax **per ip(8) verifizieren**.
-
-### IP-Forwarding & rp_filter (sysctl)
-Ohne diese ist die Box kein Router:
-```
-net.ipv4.ip_forward = 1
-net.ipv6.conf.all.forwarding = 1
-net.ipv4.conf.all.rp_filter = 1        # 2 = loose bei asymmetrischem Routing
-net.ipv4.conf.default.rp_filter = 1
-```
-Persistent über `/etc/sysctl.d/*.conf` (oder networkd `IPForward=`/NixOS). **`all` und `default`
-zusammen** setzen — `default` greift nur für später erscheinende Interfaces. rp_filter-Semantik (`per-if`
-vs. `all` ist ein Maximum) **per Kernel-Doku (`ip-sysctl`) verifizieren**.
-
-### Bridges & VLANs
-- **Bridge:** `ip link add br0 type bridge` + Ports `master br0` — für L2-Zusammenschaltung/Switch-Rolle
-  der Box. VLAN-Filtering auf der Bridge (`vlan_filtering 1`) für 802.1Q auf der Bridge selbst.
-- **VLAN-Interface:** `ip link add link eth0 name eth0.20 type vlan id 20` — tagged Subinterface je
-  Zone. In networkd über `.netdev` (`Kind=vlan`) + `.network` (`VLAN=`).
+Vor Adress- und Routen-Konfiguration, Policy-Routing mit `ip rule`, VRF, Forwarding- und
+rp_filter-sysctls, Bridges oder VLANs `references/networkd-iproute2.md` neben dieser Datei lesen.
 
 ## OpenWrt / DD-WRT — sekundäre Plattform
 
-Quellen-Anker: `openwrt.org` (UCI-, opkg-, firewall4-Doku). Steckenpferd der Herkunft, **nicht** der Kern.
-
-- **UCI** ist die deklarative Config-Schicht: `/etc/config/network`, `/etc/config/firewall`,
-  `/etc/config/dhcp`. Dieselben Ziele wie oben, andere Abstraktion — Zonen sind hier **first-class**
-  (`config zone` mit `input`/`output`/`forward`-Policy + `forwarding`-Regeln zwischen Zonen).
-- **firewall4** (aktuelles OpenWrt) generiert **nftables** aus UCI — das nft-Wissen oben gilt darunter
-  weiter; UCI ist der Generator, nicht ein anderer Stack.
-- **opkg** installiert Pakete (`opkg update && opkg install <pkg>`), z.B. FRR/BIRD, wireguard-tools.
-- **Abbildung:** Linux-Zonenübergang ≙ UCI `config forwarding`; Policy-Routing ≙ `config rule`;
-  statische Route ≙ `config route`. Für die Appliance-Denke: dieselben Konzepte, in UCI ausgedrückt.
-- DD-WRT ist GUI-/nvram-lastig und heterogener — im Zweifel auf die konkrete Build-Doku stützen, wenig
-  aus dem Gedächtnis annehmen.
+Bevor du UCI-, opkg- oder firewall4-Zeilen ausgibst oder prüfst oder ein OpenWrt-/DD-WRT-Ziel
+anfasst, `references/openwrt.md` neben dieser Datei lesen.
 
 ## Appliance-Denke
 

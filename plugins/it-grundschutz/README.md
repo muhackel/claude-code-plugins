@@ -56,11 +56,10 @@ Wegen des Lizenz-Unterschieds wird der Korpus **nicht** ins Plugin-Git eingechec
 | Skill | `gs-cache` | Projekt-lokaler Baustein-Vorrat im Volltext |
 | Skill | `gs-krypto` | Krypto-Bewertung nach BSI TR-02102 mit NIST/FIPS-Gegenprobe |
 
-Die Skills sind Bruces Fachwissen und für den automatischen Aufruf gesperrt: Sie stehen weder im
-Kontext der Hauptsitzung noch in dem anderer Agenten. Bruce liest die jeweilige `SKILL.md` erst, wenn
-ein Auftrag sie braucht. Von Hand holst du einen Skill mit `/it-grundschutz:gs-lookup` (Claude Code) bzw.
-`$it-grundschutz:gs-lookup` (Codex) in die laufende Sitzung. So geladen wirkt er allein: Seine Verweise
-auf andere Skills werden nicht nachgeladen.
+Die Skills sind Bruces Fachwissen und offen: `gs-lookup` ist im Agenten vorgeladen, die übrigen sieben
+holt Bruce über das Skill-Tool, sobald ein Auftrag die Achse berührt. Von Hand holst du einen Skill mit
+`/it-grundschutz:gs-lookup` (Claude Code) bzw. `$it-grundschutz:gs-lookup` (Codex) in die laufende
+Sitzung. Unter Codex ersetzt `references/codex-start.md` das Vorladen.
 
 ## Nutzung
 

@@ -52,11 +52,25 @@ git submodule update --init --recursive
 1. `plugins/_template/` nach `plugins/<mein-plugin>/` kopieren
 2. **Beide** Manifeste anpassen: `.claude-plugin/plugin.json` und `.codex-plugin/plugin.json` (Name, Beschreibung, Version, Keywords)
 3. Komponenten in `skills/`, `agents/`, `commands/`, `hooks/` anlegen (geteilt zwischen beiden Systemen)
-4. Bei einem Agenten mit eigenem Fachwissen: dessen Skills sperren und bei Bedarf lesen lassen (siehe CLAUDE.md, „Persona-Plugins“)
+4. Bei einem Agenten mit eigenem Fachwissen: Skills offen lassen, kurze Descriptions, große Skills in Kern und `references/` teilen (siehe CLAUDE.md, „Persona-Plugins“)
 5. Plugin in **beide** Marketplaces eintragen: `.claude-plugin/marketplace.json` und `.agents/plugins/marketplace.json`
 6. Testen mit `/plugin marketplace add ./` und `/plugin install <name> --scope local`
 
 > Details zum Dual-Manifest-Schema (Claude Code + Codex): siehe [`CLAUDE.md`](CLAUDE.md).
+
+## Lean-Profil
+
+Für Sitzungen, die möglichst wenig Kontext belegen sollen: Die Persona-Agenten lassen sich in Claude Code
+nur über das Plugin ausblenden. `profiles/lean.json` schaltet `bertram`, `christian`, `it-grundschutz` und
+`nixie` ab, `bibliothekarin` und `tools` bleiben aktiv.
+
+```bash
+# nur diese Sitzung
+claude --settings "$(git rev-parse --show-toplevel)/profiles/lean.json"
+
+# dauerhaft für ein Projekt (nicht in Git)
+cp profiles/lean.json <projekt>/.claude/settings.local.json
+```
 
 ## Verfügbare Plugins
 
@@ -72,14 +86,14 @@ Slash Commands:
 - `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
 
 Agent-Varianten:
-- `bibliothekarin` — Vollständig (voller Startup) für Ingest, Audit, Scan, Destillation; lädt nur `obsidian-cli` vor, alles andere liest sie erst bei Bedarf
+- `bibliothekarin` — Vollständig (voller Startup) für Ingest, Audit, Scan, Destillation; lädt nur `obsidian-cli` vor, alles andere holt sie bei Bedarf über das Skill-Tool
 - `bibliothekarin-search` — Leichtgewichtig, nur lesend, für Suche und Synthese
 
 Skills via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT):
 - obsidian-markdown, obsidian-cli, defuddle — als Skills, auch für die Hauptsitzung
 - obsidian-bases, json-canvas — unter `references/`, nur Karin liest sie
 
-Eigene Diagramm-Skills (für den automatischen Aufruf gesperrt, Karin liest sie bei Bedarf):
+Eigene Diagramm-Skills (Karin holt sie bei Bedarf über das Skill-Tool):
 - `mermaid` — native Vault-Diagramme (Obsidian rendert nativ), mit Kollisions-Kernregel (reservierte Wörter nie als `classDef`-Namen)
 - `plantuml` — UML-Typen jenseits von Mermaid, mit ehrlichem Rendering-Vorbehalt
 - `diagramm-auswahl` — empfiehlt Diagrammart + Tool (Zweck → Typ → Mermaid/PlantUML/json-canvas)
@@ -120,7 +134,7 @@ Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgehalten und **nicht**
 Slash Command:
 - `/bruce` — Bruce direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Bruce liest sie bei Bedarf):
+Enthaltene Skills (`gs-lookup` lädt Bruce beim Start, die übrigen bei Bedarf):
 - `gs-ingest` — Korpus laden/cachen/aktualisieren: Grundschutz++ (Anwenderkatalog + Methodik + Profile + Zielobjektkategorien) und Edition 2023 per DocBook→OSCAL-Adapter (Manifest je Datei mit sha256)
 - `gs-lookup` — Anforderungen zitierfähig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
@@ -149,10 +163,10 @@ einen generischen Offline-Closure-Deploy (Export auf USB, geführtes TUI am Ziel
 Slash Command:
 - `/nixie` — Nixie direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Nixie liest sie bei Bedarf):
+Enthaltene Skills (`nix-docs` und `nixos-config` lädt Nixie beim Start, die übrigen bei Bedarf):
 - `nixos-config` — Konventionen der NixOS-Config (mkHost, Feature-Flags, Modul-Layout)
 - `nix-packaging` — Derivations, Overlays, Paket-Pinning
-- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check, Offline-Closure-Deploy (USB/TUI)
+- `nix-deploy` — Build-Host-Auswahl, resource-aware Builds, Eskalationsstufen, flake check; Offline-Closure-Deploy (USB/TUI) und Bootloader-Diagnose als `references/`
 - `nix-docs` — Doku-Lookup-Disziplin (search.nixos.org, noogle, nix search, Manpages)
 
 Standalone nutzbar — keine Wissensdatenbank vorausgesetzt; Recherche macht Nixie selbst. Optional: ist ein
@@ -175,7 +189,7 @@ Default, schreibende Eingriffe nur auf explizite Anforderung mit Rollback-Netz (
 Slash Command:
 - `/bertram` — Bertram direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Bertram liest sie bei Bedarf):
+Enthaltene Skills (`net-reference` lädt Bertram beim Start, die übrigen bei Bedarf):
 - `net-reference` — Reference-first-Disziplin: Quellen je Vendor, Workflow präzisieren→holen→verifizieren→zitierfähig→anwenden
 - `net-diagnose` — L1→L7-Diagnosesequenzen mit Show-Kommandos, Output-Deutung und Anti-Patterns
 - `net-config` — Config erzeugen mit Pre-Deployment-Validierung, Dialekt-Übersetzung über die Konzept-Ebene, Best-Practice-Templates
@@ -201,7 +215,7 @@ gestuft mit Rollback (ein WAN-Link-Change kappt den Standort).
 Slash Command:
 - `/christian` — Christian direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Christian liest sie bei Bedarf):
+Enthaltene Skills (`vpn-reference` und `vpn-tunnel` lädt Christian beim Start, die übrigen bei Bedarf):
 - `vpn-reference` — Reference-first-Herzstück: Quellen je Technik (OpenVPN/WireGuard/strongSwan/Libreswan/FRR/BIRD/nftables/pf, pfSense/OPNsense, Mesh-Projekte, OpenWrt/UCI)
 - `openvpn` — Kern-Expertise: PKI (easy-rsa 3), tls-crypt, topology subnet, iroute/push-Routing, Krypto-Härtung, Troubleshooting, Anti-Patterns
 - `vpn-tunnel` — die breite Palette: WireGuard, IPsec/IKEv2, L2-Suite (EtherIP/GRETAP/L2TPv3/VXLAN), Mesh-Overlays, SSL-VPN

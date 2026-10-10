@@ -1,7 +1,6 @@
 ---
 name: diagramm-auswahl
-description: "Empfiehlt für ein Visualisierungsziel die passende Diagrammart UND das passende Tool (Mermaid vs. PlantUML vs. json-canvas). Standard im Vault ist Mermaid (Obsidian-nativ); PlantUML nur für Typen, die Mermaid nicht kann. Use when unklar ist, welches Diagramm passt, wie sich X visualisieren lässt, oder eine Diagramm-Empfehlung gefragt ist."
-disable-model-invocation: true
+description: "Empfiehlt für ein Visualisierungsziel Diagrammart und Tool (Mermaid, PlantUML, json-canvas). Nutzen, sobald etwas visualisiert werden soll und Typ oder Tool offen sind. Standard im Vault ist Mermaid, PlantUML nur für Typen, die Mermaid nicht kann."
 ---
 
 # diagramm-auswahl — Zweck → Diagrammtyp → Tool

@@ -1,7 +1,6 @@
 ---
 name: gs-crosswalk
-description: "Editionswechsel begleiten: Anforderungen zwischen Edition 2023 und Grundschutz++ abgleichen — was kam hinzu, entfiel, wurde zusammengelegt oder umbenannt. Wichtig: editionsübergreifend gibt es KEINE maschinell nutzbare Brücke (keine gemeinsame Kennung, kein offizielles BSI-Mapping) — das ist ein heuristischer Inhalts-/Wortlautvergleich. Dafür liefert 'gs crosswalk <ID>' heuristische Top-Kandidaten (Token-Überlappung). Der alt-identifier-Diff funktioniert nur zwischen zwei Ständen DERSELBEN Edition. Nutzen bei Migration, Delta-Analyse oder Mapping auf andere Standards (z.B. ISO 27001)."
-disable-model-invocation: true
+description: "Anforderungen zwischen Edition 2023 und Grundschutz++ oder zwei Katalogständen zuordnen: alt-identifier-Diff innerhalb einer Edition, editionsübergreifend heuristisch. Nutzen bei Migration, Delta-Analyse oder Mapping auf andere Standards."
 ---
 
 # gs-crosswalk — Editionen und Standards abgleichen

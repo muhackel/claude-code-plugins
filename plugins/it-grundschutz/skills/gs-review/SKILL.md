@@ -1,7 +1,6 @@
 ---
 name: gs-review
-description: "IT-Grundschutz-Check / Soll-Ist-Umsetzungsprüfung: je zutreffender Anforderung den Umsetzungsstatus erheben und auswerten — Schema entbehrlich/ja/teilweise/nein (Grundschutz++ Umsetzung kennt nur ja/nein, siehe UMS.1.1), plus status=entfallen (Edition 2023). Baut auf der Soll-Liste aus gs-modellierung auf, zieht Anforderungstexte zitierfähig via gs-lookup. Liefert Erfüllungsgrad je Schicht/Schutzbedarf, offene Punkte, Realisierungsliste und Audit-/Zertifizierungs-Readiness. Nutzen, wenn 'wie weit ist X umgesetzt' / 'Soll-Ist-Check' / 'Grundschutz-Check' gefragt ist. Nur generisch — der ausgefüllte Check mit realen Statuswerten gehört in ein vertrauliches Repo."
-disable-model-invocation: true
+description: "IT-Grundschutz-Check (Soll-Ist): je Anforderung der Soll-Liste den Umsetzungsstatus erheben und auswerten, Erfüllungsgrad, offene Punkte, Audit-Readiness. Nutzen bei „wie weit ist X umgesetzt“. Dokumentstruktur prüft gs-dokument."
 ---
 
 # gs-review — IT-Grundschutz-Check (Soll-Ist-Umsetzungsprüfung)
