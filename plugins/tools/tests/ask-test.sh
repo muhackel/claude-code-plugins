@@ -42,9 +42,12 @@ if [[ "${1:-}" == debug ]]; then
              | .slug as $x
              | .supported_reasoning_levels |= map(select(($x + ":" + .effort) as $k | any($s[]; . == $k) | not)))' <<'JSON'
 {"models":[
- {"slug":"gpt-6-astra","visibility":"list","priority":1,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"},{"effort":"max"}]},
- {"slug":"gpt-5.6-sol","visibility":"list","priority":6,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"}]},
- {"slug":"gpt-5.6-luna","visibility":"list","priority":8,"supported_reasoning_levels":[{"effort":"medium"},{"effort":"high"}]},
+ {"slug":"gpt-6.1-sol","visibility":"list","priority":1,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"},{"effort":"max"}]},
+ {"slug":"gpt-6-astra","visibility":"list","priority":2,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"},{"effort":"max"}]},
+ {"slug":"gpt-6-sol","visibility":"list","priority":3,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"},{"effort":"max"}]},
+ {"slug":"gpt-6-luna","visibility":"list","priority":4,"supported_reasoning_levels":[{"effort":"medium"},{"effort":"high"}]},
+ {"slug":"gpt-5.6-sol","visibility":"list","priority":5,"supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"}]},
+ {"slug":"gpt-5.6-luna","visibility":"list","priority":9,"supported_reasoning_levels":[{"effort":"medium"},{"effort":"high"}]},
  {"slug":"gpt-5.5","visibility":"list","priority":12,"supported_reasoning_levels":[{"effort":"medium"},{"effort":"high"}]},
  {"slug":"gpt-hidden","visibility":"hide","priority":0,"supported_reasoning_levels":[{"effort":"high"}]}
 ]}
@@ -134,7 +137,7 @@ log_info "(b) </dev/null -> Standard-Review, Stufe advanced"
 out="$(ask --target codex --dry-run </dev/null)"
 expect_in b "Kein Handover -> Standard-Review" "$out"
 expect_in b "Keine Stufe angegeben -> advanced" "$out"
-expect_in b "gpt-5.6-sol" "$out"
+expect_in b "gpt-6.1-sol" "$out"
 
 log_info "(c) execute ohne Handover scheitert"
 if out="$(ask --target codex --mode execute --dry-run </dev/null)"; then
@@ -148,13 +151,17 @@ cases=(
   "fail|fail|||ask|--tier advanced|||codex debug models fehlgeschlagen"
   "broken|broken|||ask|--tier advanced|||nicht lesbar"
   "nomodels|nomodels|||ask|--tier advanced|||nicht lesbar"
-  "leer|empty|||ask|--tier advanced|||'gpt-5.6-sol' (effort high) nicht im Katalog"
-  "ohne-luna|ok|gpt-5.6-luna||execute|--tier drone|gpt-5.6-sol|high|'gpt-5.6-luna' (effort high) fehlt im Katalog"
-  "luna-ohne-high|ok||gpt-5.6-luna:high|execute|--tier drone|gpt-5.6-sol|high|'gpt-5.6-luna' (effort high) fehlt im Katalog"
-  "luna-und-sol-ohne-high|ok||gpt-5.6-luna:high gpt-5.6-sol:high|execute|--tier drone|||weder 'gpt-5.6-luna' noch 'gpt-5.6-sol'"
-  "sol-ohne-xhigh|ok||gpt-5.6-sol:xhigh|ask|--tier advanced --boost|||'gpt-5.6-sol' (effort xhigh) nicht im Katalog"
-  "astra-ohne-low|ok||gpt-6-astra:low|ask|--tier strong --fast|gpt-5.6-sol|low|'gpt-6-astra' (effort low) fehlt im Katalog"
-  "ohne-astra|ok|gpt-6-astra||ask|--tier strong|gpt-5.6-sol|medium|Stufe strong -> gpt-5.6-sol (effort medium)"
+  "leer|empty|||ask|--tier advanced|||keine sol-Version mit effort high im Katalog"
+  "prioritaet-ist-nicht-staerke|ok|||ask|--tier strong|gpt-6-astra|medium|Stufe strong -> gpt-6-astra (effort medium)"
+  "neueste-version|ok|||ask|--tier advanced|gpt-6.1-sol|high|Stufe advanced -> gpt-6.1-sol (effort high)"
+  "ohne-neueste-luna|ok|gpt-6-luna||execute|--tier drone|gpt-5.6-luna|high|Stufe drone -> gpt-5.6-luna (effort high)"
+  "ohne-luna|ok|gpt-6-luna gpt-5.6-luna||execute|--tier drone|gpt-6.1-sol|high|keine luna-Version mit effort high im Katalog"
+  "luna-ohne-high|ok||gpt-6-luna:high gpt-5.6-luna:high|execute|--tier drone|gpt-6.1-sol|high|keine luna-Version mit effort high im Katalog"
+  "luna-und-sol-ohne-high|ok||gpt-6-luna:high gpt-5.6-luna:high gpt-6.1-sol:high gpt-6-sol:high gpt-5.6-sol:high|execute|--tier drone|||weder luna noch sol mit effort high"
+  "sol-ohne-xhigh|ok||gpt-6.1-sol:xhigh|ask|--tier advanced --boost|gpt-6-sol|xhigh|Stufe advanced -> gpt-6-sol (effort xhigh)"
+  "sol-alle-ohne-xhigh|ok||gpt-6.1-sol:xhigh gpt-6-sol:xhigh gpt-5.6-sol:xhigh|ask|--tier advanced --boost|||keine sol-Version mit effort xhigh im Katalog"
+  "astra-ohne-low|ok||gpt-6-astra:low|ask|--tier strong --fast|gpt-6.1-sol|low|keine astra-Version mit effort low im Katalog"
+  "ohne-astra|ok|gpt-6-astra||ask|--tier strong|gpt-6.1-sol|medium|keine astra-Version mit effort medium im Katalog"
   "model-ungeprueft|fail|||ask|--model gpt-5.5|gpt-5.5|high|--model gpt-5.5 (effort high) ungeprüft übernommen"
   "model-katalog-kaputt|broken|||ask|--model gpt-5.5|gpt-5.5|high|--model gpt-5.5 (effort high) ungeprüft übernommen"
   "model-nomodels|nomodels|||ask|--model gpt-5.5|gpt-5.5|high|--model gpt-5.5 (effort high) ungeprüft übernommen"
@@ -187,15 +194,15 @@ expect_in d/exit "beendet mit Exit 7" "$out"
 log_info "(e) Modell und Effort je Stufe, Boost, Fast, freie Wahl"
 # Fall | Modus | Flags | Claude-Modell | Codex-Modell | Effort | Label
 cases=(
-  "drone|execute|--tier drone|sonnet|gpt-5.6-luna|high|/execute drone proj"
-  "advanced|ask|--tier advanced|opus|gpt-5.6-sol|high|/ask advanced proj"
-  "advanced-boost|ask|--tier advanced --boost|opus|gpt-5.6-sol|xhigh|/ask advanced+ proj"
+  "drone|execute|--tier drone|sonnet|gpt-6-luna|high|/execute drone proj"
+  "advanced|ask|--tier advanced|opus|gpt-6.1-sol|high|/ask advanced proj"
+  "advanced-boost|ask|--tier advanced --boost|opus|gpt-6.1-sol|xhigh|/ask advanced+ proj"
   "strong|ask|--tier strong|fable|gpt-6-astra|medium|/ask strong proj"
   "strong-boost|ask|--tier strong --boost|fable|gpt-6-astra|high|/ask strong+ proj"
   "strong-fast|execute|--tier strong --fast|fable|gpt-6-astra|low|/execute strong- proj"
-  "default|execute||opus|gpt-5.6-sol|high|/execute advanced proj"
+  "default|execute||opus|gpt-6.1-sol|high|/execute advanced proj"
   "effort|ask|--tier strong --effort max|fable|gpt-6-astra|max|/ask strong proj"
-  "effort-nach-boost|ask|--tier advanced --boost --effort low|opus|gpt-5.6-sol|low|/ask advanced+ proj"
+  "effort-nach-boost|ask|--tier advanced --boost --effort low|opus|gpt-6.1-sol|low|/ask advanced+ proj"
   "model|ask|--model gpt-5.5|gpt-5.5|gpt-5.5|high|/ask gpt-5.5 proj"
   "model-effort|ask|--model gpt-5.5 --effort medium|gpt-5.5|gpt-5.5|medium|/ask gpt-5.5 proj"
   "model-versteckt|ask|--model gpt-hidden|gpt-hidden|gpt-hidden|high|/ask gpt-hidden proj"

@@ -93,18 +93,21 @@ von `claude -p`. Der Check
 
   | Stufe | Claude (`--model`) | Codex (`-m`) | Effort | `--boost` | `--fast` | Modus |
   |---|---|---|---|---|---|---|
-  | `strong` | `fable` | sichtbares Modell mit niedrigster `priority` | `medium` | `high` | `low` | ask, execute |
-  | `advanced` | `opus` | `gpt-5.6-sol` | `high` | `xhigh` | – | ask, execute |
-  | `drone` | `sonnet` | `gpt-5.6-luna` | `high` | – | – | nur execute |
+  | `strong` | `fable` | neueste `gpt-<version>-astra` | `medium` | `high` | `low` | ask, execute |
+  | `advanced` | `opus` | neueste `gpt-<version>-sol` | `high` | `xhigh` | – | ask, execute |
+  | `drone` | `sonnet` | neueste `gpt-<version>-luna` | `high` | – | – | nur execute |
 
   `--model SLUG` setzt das Modell frei (Effort `high`), `--effort low|medium|high|xhigh|max` den Effort;
   `--effort` gewinnt über alles, `--model` schließt `--tier`/`--boost`/`--fast` aus. Unzulässige Kombinationen
   (`drone` bei ask, `--fast` außerhalb `strong`, `--boost` bei `drone`, `--boost` mit `--fast`) brechen vor
   dem Aufruf ab.
 
-  Claude bekommt Alias und Effort immer direkt. Codex prüft gegen `codex debug models --bundled` (nur
-  `visibility == "list"`), ob das Stufenmodell existiert und den Effort kann. Rückfall: Stufenmodell →
-  `gpt-5.6-sol` mit dem Effort der Stufe → Aufruf **ohne `-m` und ohne `model_reasoning_effort`**; dann
+  Claude bekommt Alias und Effort immer direkt. Codex-Modelle sind Klassen: Aus `codex debug models
+  --bundled` (nur `visibility == "list"`) nimmt das Skript die neueste Version der Klasse, die den Effort
+  der Stufe kann (Slug `gpt-<version>-<klasse>`, Version numerisch verglichen: 6.1 > 6 > 5.6). Die
+  `priority` des Katalogs ist die Reihenfolge im Picker, nicht die Stärke (0.162.1: `gpt-6.1-sol` vor
+  `gpt-6-astra`), sie spielt keine Rolle. Rückfall: Klasse der Stufe → neueste `sol` mit dem Effort der
+  Stufe → Aufruf **ohne `-m` und ohne `model_reasoning_effort`**; dann
   entscheidet die Codex-CLI Modell und Effort selbst (nach Messung das Flaggschiff). Den letzten Schritt
   lösen auch ein fehlschlagender Katalogaufruf und ein unlesbarer Katalog (kein JSON, kein `.models`) aus.
   Jeder Rückfall steht als Warnung auf stderr. Bei `--model` gibt es keinen Rückfall: unbekannter Slug oder

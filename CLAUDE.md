@@ -223,15 +223,19 @@ Die Laufzeit berichtet Modellarbeit je Aufruf auf stderr und als `invocation_mod
 Native Modellnachweise und Selbstberichte getrennt halten; gespeicherte Run-Historie ist kein neuer Aufruf.
 
 Modelle werden nach Stufe gewählt, nicht pauschal als Flaggschiff. Philharmonie kennt `light` haiku/luna,
-`standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra (Codex-Spitze aus dem Katalog der
-installierten Version); dort entscheidet die Rolle: Generator und Evaluator `advanced`, Spec-Gegenprüfung
-`strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei Änderungen beide
+`standard` sonnet/terra, `advanced` opus/sol, `strong` fable/astra; dort entscheidet die Rolle: Generator
+und Evaluator `advanced`, Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei Änderungen beide
 Ebenen zusammen halten.
 
 `tools:ask`/`tools:execute` haben eine eigene, bewusst von Philharmonie entkoppelte Tabelle (`--tier`):
 `strong` fable/astra mit Effort medium (`--boost` high, `--fast` low), `advanced` opus/sol mit high
 (`--boost` xhigh; Default beider Modi), `drone` sonnet/luna mit high (nur execute). `--model` und
 `--effort` setzen beides frei, bei `--model` ist der Effort high.
+
+Codex-Modelle sind Klassen (luna, sol, astra). `tools:ask` nimmt die neueste Version der Klasse aus
+`codex debug models --bundled` (Slug `gpt-<version>-<klasse>`), nicht die `priority` des Katalogs: Die ist
+die Picker-Reihenfolge, Codex 0.162.1 führt `gpt-6.1-sol` vor `gpt-6-astra`. Philharmonie
+(`delegation.py`) wählt `strong` noch nach `priority` und nagelt die übrigen Klassen auf `gpt-5.6-*` fest.
 
 Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
 der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,
