@@ -1,7 +1,6 @@
 ---
 name: bsd-firewall
-description: "BSD-Firewall-/Router-Distributionen als Plattform-Achse: pfSense (Netgate; CE vs. Plus) und OPNsense (Deciso) auf gemeinsamer FreeBSD/pf-DNA. pf-Paketfilter (pass/block/match, quick, letzte-Regel-gewinnt, Interface=Zone, stateful, Aliase/Tabellen, NAT outbound automatic/hybrid/manual + Port-Forward/1:1 mit Filter-Rule-Association, Floating Rules, Anti-Lockout); VPN als GUI-Instanzen (OpenVPN/IPsec/WireGuard, interner CA-Manager); Routing & Multi-WAN (statisch, Gateway-Groups mit Tier/Trigger, FRR-Paket OSPF/BGP/BFD); Pakete/Plugins (pfBlockerNG, Suricata/Snort, HAProxy, FRR, ACME, ntopng, Zenarmor/Sensei); config.xml als Single-Source, Backup/Restore/Revert. Design kommt aus wan-link/vpn-tunnel/openvpn/router-appliance, hier die BSD-Umsetzung. Syntax/Defaults/Paketnamen reference-first aus docs.netgate.com/docs.opnsense.org/pf.conf(5), nicht aus dem Gedächtnis. Nutzen beim Bauen, Prüfen oder Umsetzen einer pfSense-/OPNsense-Appliance; Abgrenzung: kommerzielle Hardware → bertram, pfSense/OPNsense sind Open Source und bleiben hier."
-disable-model-invocation: true
+description: "pfSense und OPNsense als Plattform: pf-Regelmodell, NAT, VPN-Instanzen, Multi-WAN, Pakete, config.xml und gestuftes Live-Ausrollen. Nutzen beim Bauen, Prüfen oder Umsetzen einer pfSense- oder OPNsense-Box; kommerzielle Hardware gehört zu bertram."
 ---
 
 # BSD-Firewall — pfSense & OPNsense
@@ -124,46 +123,13 @@ VPNs werden hier **nicht** als handgeschriebene Configs gebaut, sondern als **GU
 
 ## Routing & Multi-WAN
 
-Quellen-Anker: `docs.netgate.com` (Routing/Multi-WAN/FRR), `docs.opnsense.org` (Dynamic Routing/Multi-WAN).
-
-- **Statische Routen** für Stub-/Single-Uplink. Dynamisches Routing erst, wenn Redundanz/mehrere Router
-  es rechtfertigen (gleiche Faustregel wie in `router-appliance`).
-- **Gateway-Groups (Multi-WAN):** jedes Gateway bekommt ein **Tier**. **Gleiches Tier = Load-Balance**,
-  **unterschiedliches Tier = Failover** (niedrigeres/höheres Tier zuerst — Zuordnung **per Doku
-  verifizieren**). Der **Trigger Level** (pfSense: z.B. Member Down / Packet Loss / High Latency)
-  bestimmt, **wann** ein Gateway als tot gilt. OPNsense: bis zu fünf Tiers.
-- **Policy-Routing:** die Gateway-Group wird im **Gateway-Feld einer Firewall-Regel** ausgewählt →
-  passender Verkehr nimmt die Group statt des Default-Gateways. **DNS/Firewall-eigener Verkehr** braucht
-  eine separate Regel aufs Default-Gateway, sonst Routing-Schleifen.
-- **`reply-to`-Falle:** pf setzt auf WAN-Regeln automatisch `reply-to`, damit Antworten **dieselbe** WAN
-  hinausgehen, über die die Anfrage kam — Grundlage für symmetrisches Multi-WAN. Bei ungewöhnlichen
-  Topologien (asymmetrischer Rückweg, Transit über ein anderes Interface) kann das Verkehr fehlleiten;
-  `reply-to` gezielt abschalten ist möglich (**per Doku verifizieren**).
-- **FRR** (Paket/`os-frr`-Plugin) bringt **OSPF (v2)**, **OSPF6/OSPFv3**, **BGP** (IPv4/IPv6), **BFD**
-  und **ECMP**; OPNsense listet zusätzlich **RIP** (Protokoll-Verfügbarkeit je Plattform/Version **per
-  Doku verifizieren**). Bezug zur FRR-Ebene aus `router-appliance` — dieselbe FRRouting-Basis, hier über
-  die GUI konfiguriert.
+Vor statischen Routen, Gateway-Groups (Failover, Load-Balance), Policy-Routing über Firewall-Regeln,
+der `reply-to`-Semantik oder dem FRR-Paket `references/routing-multi-wan.md` neben dieser Datei lesen.
 
 ## Elementare Plugins/Pakete
 
-Quellen-Anker: `docs.netgate.com` (Packages), `docs.opnsense.org` (Plugins). **Paketverfügbarkeit und
--namen driften zwischen Versionen** — Namen und Existenz **immer gegen die jeweilige Doku prüfen**, nicht
-aus dieser Tabelle raten. Installation: pfSense **System → Package Manager**; OPNsense **System →
-Firmware → Plugins**.
-
-| Zweck | pfSense | OPNsense | Anker |
-|-------|---------|----------|-------|
-| DNSBL/GeoIP-Filter | **pfBlockerNG** (pfBlocker-NG) | Teils Basis (Aliase/URL-Tabellen) + Plugins | Packages-Doku |
-| IDS/IPS | **Suricata** und/oder **Snort** (Paket) | **Suricata im Basissystem** (IPS via Netmap) | IDS-Doku |
-| Reverse-Proxy/LB | **HAProxy** (Paket) | **`os-haproxy`** | Packages/Plugins |
-| Dynamisches Routing | **FRR** (Paket) | **`os-frr`** | FRR/Dynamic-Routing |
-| WireGuard | **WireGuard** (Paket bzw. Basis, verifizieren) | Basis bzw. Plugin (verifizieren) | VPN-Doku |
-| ACME/Let's Encrypt | **ACME** (Paket) | **`os-acme-client`** | ACME-Doku |
-| Monitoring | **ntopng** (Paket) | **`os-ntopng`** / Telegraf | Monitoring-Doku |
-| NGFW/App-Control | **Zenarmor/Sensei** (Paket) | **`os-sensei`** (Zenarmor) | Plugin-Doku |
-
-`os-*`-Namen außer `os-frr` (Dynamic-Routing-Doku bestätigt) hier **nicht** einzeln verifiziert →
-**per Plugin-Liste der Zielversion prüfen**.
+Bevor du ein Paket (pfSense) oder `os-*`-Plugin (OPNsense) empfiehlst, benennst oder installierst,
+`references/plugins.md` neben dieser Datei lesen.
 
 ## config.xml / Backup / Reproduzierbarkeit
 
@@ -222,11 +188,5 @@ Default-Route/Gateway-Wechsel, Interface-Umbau, Outbound-NAT-Umstellung — kann
 
 ## Verweise
 
-- **Design bleibt bei den Design-Skills:** Kopplungs-Szenario/Tech-Wahl `wan-link`; VPN-Technik/Aufbau
-  `vpn-tunnel`; OpenVPN-Tiefe `openvpn`; Linux/nftables-Router-Pendant `router-appliance`. Dieser Skill
-  ist nur die **BSD-Umsetzung** davon.
-- **Referenz-Lookup-Disziplin:** unsichere Syntax/Defaults/Paketnamen über `vpn-reference` bzw. direkt
-  gegen `docs.netgate.com`/`docs.opnsense.org`/`pf.conf(5)` belegen — erst aufrufen, dann behaupten.
-- **Krypto-Freigabe:** opinionated hier, verbindliche Bewertung über **bruce** (`gs-krypto`, TR-02102).
-- **Abgrenzung:** kommerzielle Netzwerk-**Hardware** (Cisco/MikroTik/Palo Alto) → **bertram**;
-  pfSense/OPNsense sind Open Source und bleiben bei **Christian**.
+Bevor du einen anderen Skill, bruce oder bertram ins Spiel bringst, `references/verweise.md` neben
+dieser Datei lesen.

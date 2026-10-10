@@ -1,7 +1,6 @@
 ---
 name: net-diagnose
-description: "Strukturierte Netzwerk-Fehlersuche von L1 bis L7: geordnete Diagnose-Sequenzen statt Raten. Interface-Health (CRC, Drops, Duplex-Mismatch, Flapping, Speed-Negotiation), L2 (STP, VLAN, MAC-Table), L3 (Routing, BGP/OSPF-Nachbarn, ACL), L4+ (Dienste, Firewall, DNS/DHCP). Je Symptom die Check-Reihenfolge, das exakte Show-Kommando, die Bedeutung des Outputs und die häufigen Anti-Patterns. Nutzen bei 'warum spinnt das Netz' und jedem konkreten Störungsbild."
-disable-model-invocation: true
+description: "Strukturierte Netzwerk-Fehlersuche von L1 bis L7: je Symptom Check-Reihenfolge, Show-Kommando, Output-Deutung und Anti-Patterns. Nutzen bei jedem Störungsbild an Netzwerk-Hardware und sobald Show-Output zu deuten ist."
 ---
 
 # Net-Diagnose — von unten nach oben

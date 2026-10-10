@@ -86,14 +86,14 @@ Slash Commands:
 - `/vault` — Schneller Vault-Zugriff ohne Subagent (suchen, lesen, Tags)
 
 Agent-Varianten:
-- `bibliothekarin` — Vollständig (voller Startup) für Ingest, Audit, Scan, Destillation; lädt nur `obsidian-cli` vor, alles andere liest sie erst bei Bedarf
+- `bibliothekarin` — Vollständig (voller Startup) für Ingest, Audit, Scan, Destillation; lädt nur `obsidian-cli` vor, alles andere holt sie bei Bedarf über das Skill-Tool
 - `bibliothekarin-search` — Leichtgewichtig, nur lesend, für Suche und Synthese
 
 Skills via Symlink aus [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT):
 - obsidian-markdown, obsidian-cli, defuddle — als Skills, auch für die Hauptsitzung
 - obsidian-bases, json-canvas — unter `references/`, nur Karin liest sie
 
-Eigene Diagramm-Skills (für den automatischen Aufruf gesperrt, Karin liest sie bei Bedarf):
+Eigene Diagramm-Skills (Karin holt sie bei Bedarf über das Skill-Tool):
 - `mermaid` — native Vault-Diagramme (Obsidian rendert nativ), mit Kollisions-Kernregel (reservierte Wörter nie als `classDef`-Namen)
 - `plantuml` — UML-Typen jenseits von Mermaid, mit ehrlichem Rendering-Vorbehalt
 - `diagramm-auswahl` — empfiehlt Diagrammart + Tool (Zweck → Typ → Mermaid/PlantUML/json-canvas)
@@ -134,7 +134,7 @@ Korpus (Lizenz **CC BY-SA 4.0**) wird per Ingest lokal vorgehalten und **nicht**
 Slash Command:
 - `/bruce` — Bruce direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Bruce liest sie bei Bedarf):
+Enthaltene Skills (`gs-lookup` lädt Bruce beim Start, die übrigen bei Bedarf):
 - `gs-ingest` — Korpus laden/cachen/aktualisieren: Grundschutz++ (Anwenderkatalog + Methodik + Profile + Zielobjektkategorien) und Edition 2023 per DocBook→OSCAL-Adapter (Manifest je Datei mit sha256)
 - `gs-lookup` — Anforderungen zitierfähig nachschlagen (ID/Volltext); zeigt auch die Methodik-Ebene (das Warum)
 - `gs-dokument` — Sicherheitsdokumente nach der Methodik führen, als Gerüst erzeugen oder prüfen (Gap)
@@ -189,7 +189,7 @@ Default, schreibende Eingriffe nur auf explizite Anforderung mit Rollback-Netz (
 Slash Command:
 - `/bertram` — Bertram direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Bertram liest sie bei Bedarf):
+Enthaltene Skills (`net-reference` lädt Bertram beim Start, die übrigen bei Bedarf):
 - `net-reference` — Reference-first-Disziplin: Quellen je Vendor, Workflow präzisieren→holen→verifizieren→zitierfähig→anwenden
 - `net-diagnose` — L1→L7-Diagnosesequenzen mit Show-Kommandos, Output-Deutung und Anti-Patterns
 - `net-config` — Config erzeugen mit Pre-Deployment-Validierung, Dialekt-Übersetzung über die Konzept-Ebene, Best-Practice-Templates
@@ -215,7 +215,7 @@ gestuft mit Rollback (ein WAN-Link-Change kappt den Standort).
 Slash Command:
 - `/christian` — Christian direkt aufrufen (mit optionalem Auftrag)
 
-Enthaltene Skills (für den automatischen Aufruf gesperrt, Christian liest sie bei Bedarf):
+Enthaltene Skills (`vpn-reference` und `vpn-tunnel` lädt Christian beim Start, die übrigen bei Bedarf):
 - `vpn-reference` — Reference-first-Herzstück: Quellen je Technik (OpenVPN/WireGuard/strongSwan/Libreswan/FRR/BIRD/nftables/pf, pfSense/OPNsense, Mesh-Projekte, OpenWrt/UCI)
 - `openvpn` — Kern-Expertise: PKI (easy-rsa 3), tls-crypt, topology subnet, iroute/push-Routing, Krypto-Härtung, Troubleshooting, Anti-Patterns
 - `vpn-tunnel` — die breite Palette: WireGuard, IPsec/IKEv2, L2-Suite (EtherIP/GRETAP/L2TPv3/VXLAN), Mesh-Overlays, SSL-VPN

@@ -1,7 +1,6 @@
 ---
 name: plantuml
-description: "PlantUML-Diagramme erstellen — reference-first aus einem offline gespiegelten Language Reference Guide, lokal mit plantuml validiert. NICHT Obsidian-nativ (braucht Community-Plugin/Server) — nur wählen, wenn der Mehrwert die Rendering-Hürde rechtfertigt. Use when ein PlantUML- oder UML-Diagramm gebraucht wird, insbesondere Deployment-, Komponenten-, Timing-, Objekt- oder detailtiefe Sequenzdiagramme, Wireframes (Salt) oder Archimate."
-disable-model-invocation: true
+description: "PlantUML-Diagramme schreiben oder korrigieren: Syntax reference-first aus dem offline gespiegelten Reference Guide, lokal mit plantuml validiert. Nicht Obsidian-nativ, nur für Typen jenseits von Mermaid (Deployment, Timing, Salt, Archimate)."
 ---
 
 # plantuml — mächtige UML-Diagramme mit Rendering-Vorbehalt

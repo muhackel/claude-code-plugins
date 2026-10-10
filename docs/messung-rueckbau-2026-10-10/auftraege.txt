@@ -1,0 +1,4 @@
+bertram|/bertram Zwischen zwei Cat9300 (IOS-XE 17.9) steigen die CRC-Fehler auf dem Uplink Te1/1/1. Welche Diagnose-Sequenz schlägst du vor? Nur Vorschlag, nichts ausführen.
+christian|/christian Ich will zwei Standorte (je ein Debian-Router, LAN 10.1.0.0/24 und 10.2.0.0/24) per WireGuard koppeln. Entwirf die Config für beide Seiten, nur als Vorschlag, nichts ausführen.
+bruce|/bruce Schlag die Anforderung GC.1.1 zitierfähig nach. Nur lesen, nichts ändern.
+nixie|/nixie Schreib mir eine Derivation für ein kleines Go-Tool von GitHub (Platzhalter-Repo). Nur Entwurf ausgeben, nichts bauen, nichts deployen, nichts in Dateien schreiben.

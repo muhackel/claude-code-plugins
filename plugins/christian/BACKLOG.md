@@ -17,6 +17,24 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ---
 
+## ✅ UMGESETZT (2026-10-10): 0.4.0 — Rückbau des Lazy-Musters, Skills offen
+
+Die Sperren aus 0.3.0 sind weg (kein `disable-model-invocation`, keine `agents/openai.yaml`), weil Agenten
+in Claude Code keinen Sperrschalter haben und die gesperrten Skills nur Read-Roundtrips im Agenten
+kosteten. Skill-Descriptions auf 150 bis 250 Zeichen gekürzt. `vpn-reference` und `vpn-tunnel` per
+`skills:` vorgeladen, `openvpn`, `router-appliance`, `bsd-firewall` und `wan-link` holt Christian über das
+Skill-Tool (neu in `tools:`). `router-appliance` in Kern (nftables, Appliance-Denke, Live-Ausrollen) und
+`references/routing-frr-bird.md`, `references/networkd-iproute2.md`, `references/openwrt.md` geteilt;
+`bsd-firewall` in Kern (Plattform, pf, VPN-Instanzen, config.xml, Live-Ausrollen) und
+`references/routing-multi-wan.md`, `references/plugins.md`, `references/verweise.md`. Agent-Body von 13k
+auf rund 6k Zeichen: Lesetabelle und Codex-Pfadabsatz raus, STARTUP an die Achse gekoppelt, Change-Regeln
+(transient zuerst, Management-Verbindung nie als Erstes, pf-Systeme nur mit Konsole) bleiben als Eiserne
+Regel im Body, Dubletten der globalen Regeln auf einen Sorgfalts-Dreizeiler. Command-Body auf einen
+Adapter gekürzt, Codex-Schritte in `references/codex-start.md`, Routing-Hinweis gestrichen (steht in der
+Description).
+
+---
+
 ## ✅ UMGESETZT (2026-09-18): 0.3.0 — Fachwissen nur im Agenten
 
 Die sechs Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex

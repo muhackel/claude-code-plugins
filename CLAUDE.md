@@ -179,10 +179,10 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
 
 ## Persona-Plugins: Fachwissen im Agenten, Skills offen
 
-Stand: `nixie` 0.6.0 nach diesem Muster, `bertram`, `christian`, `it-grundschutz` und `bibliothekarin`
-folgen (sie tragen bis dahin das alte Lazy-Muster mit gesperrten Skills und Lesetabelle im Agent-Body).
-Hintergrund und Messung: `docs/messung-lazy-skills-2026-09-18.md` sowie die Analyse vom 2026-10-10 im
-Vault (`KI-Entwicklung/claude-code-plugins-persona-agenten-tokensparend`). Kurz: Agenten haben in Claude
+Umgesetzt am 2026-10-10 in `nixie` 0.6.0, `bertram` 0.3.0, `christian` 0.4.0, `it-grundschutz` 0.6.0 und
+`bibliothekarin` 0.8.0 (Rückbau des Lazy-Musters aus 0.x vom 2026-09-18).
+Hintergrund und Messung: `docs/messung-lazy-skills-2026-09-18.md`, `docs/messung-rueckbau-2026-10-10.md`
+sowie die Analyse vom 2026-10-10 im Vault (`KI-Entwicklung/claude-code-plugins-persona-agenten-tokensparend`). Kurz: Agenten haben in Claude
 Code keinen Sperrschalter, nur `enabledPlugins` blendet ein Plugin aus; gesperrte Skills sparen darum im
 Hauptkontext nichts, was das Lean-Profil nicht auch spart, kosten aber Read-Roundtrips im Agenten.
 
@@ -192,9 +192,12 @@ Hauptkontext nichts, was das Lean-Profil nicht auch spart, kosten aber Read-Roun
   dort auf den Namen gekürzt.
 - Große Skills sind in einen `SKILL.md`-Kern und `references/*.md` neben der Datei geteilt (Progressive
   Disclosure). Der Kern nennt je Referenz den Fall, in dem sie zu lesen ist. Pfade relativ zur `SKILL.md`.
-- Der Agent lädt per `skills:` nur die Skills vor, die praktisch jeder Auftrag braucht (bei `nixie`:
-  `nix-docs`, `nixos-config`). Die übrigen holt er über das Skill-Tool, das darum in `tools:` steht.
-  Der Abschnitt „Fachwissen“ im Body nennt je Skill die Achse und den spätesten Zeitpunkt.
+- Der Agent lädt per `skills:` nur die Skills vor, die praktisch jeder Auftrag braucht (`nixie`:
+  `nix-docs`, `nixos-config`; `bertram`: `net-reference`; `christian`: `vpn-reference`, `vpn-tunnel`;
+  `bruce`: `gs-lookup`; Karin: `obsidian-cli`). Die übrigen holt er über das Skill-Tool, das darum in `tools:` steht.
+  Der Abschnitt „Fachwissen“ im Body nennt je Skill die Achse und den spätesten Zeitpunkt. Das Skill-Tool
+  bringt das ganze Skill-Listing in den Subagenten, rund 8k Tokens je Spawn (`docs/messung-rueckbau-2026-10-10.md`);
+  Agenten, die nie nachladen, bekommen es nicht (`bibliothekarin-search`: 7,8k statt 17,9k).
 - Der Agent-Body enthält Rolle, STARTUP, Kernprinzipien der Domäne, Recherche und Sicherheitsregeln,
   rund 6k Zeichen. Allgemeine Sorgfalt (lesen vor Edit, keine Bulk-Ersetzungen, Umlaute) steht als
   Dreizeiler drin, weil die Plugins ohne die globale `CLAUDE.md` des Users nutzbar bleiben müssen. Kein

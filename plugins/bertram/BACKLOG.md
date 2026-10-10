@@ -15,6 +15,18 @@ Offene Punkte oben, umgesetzte darunter (jüngste zuerst).
 
 ---
 
+## ✅ UMGESETZT (2026-10-10): 0.3.0 — Rückbau des Lazy-Musters, Skills offen
+
+Die Sperren aus 0.2.0 sind weg (kein `disable-model-invocation`, keine `agents/openai.yaml`), weil Agenten
+in Claude Code keinen Sperrschalter haben und Bertram `net-reference` ohnehin auf jeder Achse nachlas.
+Skill-Descriptions auf 150 bis 250 Zeichen gekürzt. `net-reference` per `skills:` vorgeladen,
+`net-diagnose`, `net-config`, `net-design` und `net-operate` holt Bertram über das Skill-Tool (neu in
+`tools:`). Kein Split nötig, alle Skills liegen unter 7k Zeichen. Agent-Body von 9,6k auf rund 6k
+Zeichen: Lesetabelle und Codex-Pfadabsatz raus, STARTUP an die Achse gekoppelt, Dubletten der globalen
+Regeln auf einen Sorgfalts-Dreizeiler, Arbeitsweise in den Fachwissen-Abschnitt gezogen. Command-Body auf
+einen Adapter ohne Routing-Hinweis gekürzt, Codex-Schritte in `references/codex-start.md`. Agent- und
+Command-Description textgleich mit „Proaktiv nutzen“ nach dem `nixie`-Muster.
+
 ## ✅ UMGESETZT (2026-09-18): 0.2.0 — Fachwissen nur im Agenten
 
 Die fünf Skills sind für den automatischen Aufruf gesperrt (Claude `disable-model-invocation`, Codex

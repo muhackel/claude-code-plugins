@@ -1,7 +1,6 @@
 ---
 name: gs-modellierung
-description: "Für ein Szenario die zutreffenden Grundschutz-Bausteine und Anforderungen ermitteln: Beschreibung (Komponenten, Prozesse, Schutzbedarf) auf die Schichten/Gruppen und Zielobjektkategorien des Katalogs abbilden (Grundschutz++ via 'gs list --target' und 'gs coverage' mit Vererbung; Edition 2023 via 'gs coverage' über eine heuristische Komponente->Baustein-Hinttabelle) und eine begründete, zitierfähige Anforderungsliste erzeugen. Nutzen, wenn 'welche Anforderungen treffen auf X zu' gefragt ist. Nur generisch — keine vertraulichen Verbundsdaten."
-disable-model-invocation: true
+description: "Für ein generisches Szenario die zutreffenden Grundschutz-Bausteine und Anforderungen ermitteln, zielobjektbasiert mit Vererbung, als begründete Soll-Liste. Nutzen, wenn gefragt ist, welche Anforderungen auf X zutreffen."
 ---
 
 # gs-modellierung — Bausteine für ein Szenario

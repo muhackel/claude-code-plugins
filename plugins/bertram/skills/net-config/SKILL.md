@@ -1,7 +1,6 @@
 ---
 name: net-config
-description: "Netzwerk-Konfiguration erzeugen, vor der Anwendung validieren und zwischen Vendor-Dialekten übersetzen. Pre-Deployment-Checks (dangerous commands, Subnet-Overlap, doppelte IPs, ACL-Logikfehler, fehlendes commit/write). Übersetzung über die Konzept-Ebene (Cisco IOS/IOS-XE ↔ MikroTik RouterOS ↔ Palo Alto PAN-OS ↔ HP/Aruba ↔ Juniper Junos), nicht als Token-Mapping. Best-Practice-Templates für VLAN-Segmentierung, Trunk/Access, Firewall-Zonen, Management-Hardening. Nutzen beim Erzeugen oder Portieren von Configs."
-disable-model-invocation: true
+description: "Netzwerk-Config erzeugen, vor der Anwendung validieren und zwischen Vendor-Dialekten übersetzen (Cisco, RouterOS, PAN-OS, Aruba, Junos). Nutzen, sobald Config-Zeilen ausgegeben, geprüft oder portiert werden; die Architektur davor liefert net-design."
 ---
 
 # Net-Config — erzeugen, prüfen, übersetzen
