@@ -28,7 +28,7 @@ Usage: ask.sh [--mode ask|execute] [--tier STUFE] [--boost|--fast] [--model SLUG
   --mode ask        read-only (Default). Ohne Handover: Standard-Review des Projekts.
   --mode execute    workspace-write. Handover ist Pflicht.
   --tier STUFE      strong (fable/astra, medium), advanced (opus/sol, high; Default),
-                    drone (sonnet/luna, high; nur execute).
+                    drone (sonnet/luna, high; nur execute). Codex: neueste Version der Klasse im Katalog.
   --boost           eine Effort-Stufe mehr: strong -> high, advanced -> xhigh.
   --fast            strong -> low. Nur bei strong.
   --model SLUG      Modell frei wählen (Alias oder Slug der Ziel-CLI), Effort dann high.
@@ -43,8 +43,7 @@ EOT
 
 MODE="ask"; TARGET=""; HANDOVER_SRC=""; DRY_RUN=0; WORKDIR="$PWD"
 TIER=""; BOOST=0; FAST=0; MODEL_OVERRIDE=""; EFFORT_OVERRIDE=""
-EFFORT=""; CLAUDE_MODEL=""; CODEX_WISH=""
-CODEX_FALLBACK="gpt-5.6-sol"   # Stufe advanced, Rückfall wenn ein Stufenmodell fehlt
+EFFORT=""; CLAUDE_MODEL=""; CODEX_CLASS=""
 
 parse_args() {
   while [[ $# -gt 0 ]]; do
@@ -148,9 +147,11 @@ require_cli() {
 
 # Stufen. Die starken Modelle brauchen für dieselbe Qualität weniger Effort, ihr Default liegt darum
 # eine Stufe unter dem der advanced-Modelle.
-#   strong   fable / Codex-Katalogspitze   medium   --boost high   --fast low
-#   advanced opus  / sol                   high     --boost xhigh
-#   drone    sonnet / luna                 high     nur execute: mechanische Umsetzung nach klarem Auftrag
+#   strong   fable / astra   medium   --boost high   --fast low
+#   advanced opus  / sol     high     --boost xhigh
+#   drone    sonnet / luna    high     nur execute: mechanische Umsetzung nach klarem Auftrag
+# Codex-Modelle sind Klassen: das Skript nimmt die neueste Version der Klasse aus dem Katalog der
+# installierten CLI (Slug gpt-<version>-<klasse>), siehe codex_class_model.
 # --model setzt das Modell frei (Effort high), --effort setzt den Effort frei.
 resolve_tier() {
   if [[ -z "$TIER" ]]; then
@@ -159,10 +160,9 @@ resolve_tier() {
   fi
   if [[ "$TIER" == "drone" && "$MODE" == "ask" ]]; then die "Stufe drone gibt es nur bei --mode execute"; fi
   case "$TIER" in
-    drone)    CLAUDE_MODEL="sonnet"; CODEX_WISH="gpt-5.6-luna"; EFFORT="high" ;;
-    advanced) CLAUDE_MODEL="opus";   CODEX_WISH="gpt-5.6-sol";  EFFORT="high" ;;
-    # Die Codex-Spitze wird nicht festgeschrieben, sondern aus dem Katalog der installierten Version genommen.
-    strong)   CLAUDE_MODEL="fable";  CODEX_WISH="";             EFFORT="medium" ;;
+    drone)    CLAUDE_MODEL="sonnet"; CODEX_CLASS="luna";  EFFORT="high" ;;
+    advanced) CLAUDE_MODEL="opus";   CODEX_CLASS="sol";   EFFORT="high" ;;
+    strong)   CLAUDE_MODEL="fable";  CODEX_CLASS="astra"; EFFORT="medium" ;;
   esac
   if [[ "$BOOST" == 1 ]]; then
     case "$TIER" in
@@ -176,7 +176,7 @@ resolve_tier() {
     EFFORT="low"
   fi
   if [[ -n "$MODEL_OVERRIDE" ]]; then
-    CLAUDE_MODEL="$MODEL_OVERRIDE"; CODEX_WISH="$MODEL_OVERRIDE"; EFFORT="high"
+    CLAUDE_MODEL="$MODEL_OVERRIDE"; EFFORT="high"
   fi
   if [[ -n "$EFFORT_OVERRIDE" ]]; then EFFORT="$EFFORT_OVERRIDE"; fi
 }
@@ -189,9 +189,21 @@ codex_usable() {
      '.[] | select(.slug == $m) | .supported_reasoning_levels[] | select(.effort == $e)' <<<"$visible" >/dev/null
 }
 
+# Neueste Version einer Modellklasse (luna, sol, astra), die den Effort kann: Slug gpt-<version>-<klasse>.
+# Die priority des Katalogs ist die Reihenfolge im Picker, nicht die Stärke: Codex 0.162.1 führt
+# gpt-6.1-sol (1) vor gpt-6-astra (2). Darum Klasse plus Versionsnummer, nicht priority.
+codex_class_model() {
+  local visible="$1" class="$2" effort="$3"
+  jq -r --arg c "$class" --arg e "$effort" '
+    map(select((.slug | test("^gpt-[0-9]+(\\.[0-9]+)?-" + $c + "$"))
+               and any(.supported_reasoning_levels[]; .effort == $e)))
+    | map({slug, v: (.slug | capture("^gpt-(?<v>[0-9]+(\\.[0-9]+)?)-").v | split(".") | map(tonumber))})
+    | sort_by(.v) | last | .slug // empty' <<<"$visible"
+}
+
 CODEX_MODEL=""; CODEX_EFFORT=""
 codex_model() {
-  local catalog all visible wish="$CODEX_WISH" readable=1
+  local catalog all visible wish fallback readable=1
   # Ohne lesbaren Katalog keine Stufenwahl. Statt abzubrechen entscheidet die CLI selbst.
   catalog="$(codex debug models --bundled 2>/dev/null)" || {
     log_warn "codex debug models fehlgeschlagen"; readable=0; }
@@ -217,19 +229,24 @@ codex_model() {
     return
   fi
   if [[ "$readable" == 0 ]]; then log_warn "-> Aufruf ohne Modellwahl"; return; fi
-  if [[ -z "$wish" ]]; then wish="$(jq -r 'sort_by(.priority) | .[0].slug // empty' <<<"$visible")"; fi
-  # Fällt ein Slug aus dem Katalog, erst auf advanced zurück, dann der CLI überlassen.
-  # Ein Aufruf ohne -m landet bei Codex auf dem Flaggschiff, deshalb ist advanced die Zwischenstufe.
-  if codex_usable "$visible" "$wish" "$EFFORT"; then
+  wish="$(codex_class_model "$visible" "$CODEX_CLASS" "$EFFORT")"
+  if [[ -n "$wish" ]]; then
     CODEX_MODEL="$wish"; CODEX_EFFORT="$EFFORT"
     log_info "Stufe $TIER -> $CODEX_MODEL (effort $CODEX_EFFORT)"
-  elif [[ "$wish" != "$CODEX_FALLBACK" ]] && codex_usable "$visible" "$CODEX_FALLBACK" "$EFFORT"; then
-    CODEX_MODEL="$CODEX_FALLBACK"; CODEX_EFFORT="$EFFORT"
-    log_warn "Stufe $TIER: '$wish' (effort $EFFORT) fehlt im Katalog dieser CLI-Version -> $CODEX_MODEL"
-  elif [[ "$wish" != "$CODEX_FALLBACK" ]]; then
-    log_warn "Stufe $TIER: weder '$wish' noch '$CODEX_FALLBACK' (effort $EFFORT) im Katalog -> Aufruf ohne Modellwahl"
+    return
+  fi
+  # Fehlt die Klasse mit diesem Effort, erst auf advanced (neueste sol) zurück, dann der CLI überlassen.
+  # Ein Aufruf ohne -m landet bei Codex auf dem Flaggschiff, deshalb ist advanced die Zwischenstufe.
+  if [[ "$CODEX_CLASS" == "sol" ]]; then
+    log_warn "Stufe $TIER: keine sol-Version mit effort $EFFORT im Katalog -> Aufruf ohne Modellwahl"
+    return
+  fi
+  fallback="$(codex_class_model "$visible" sol "$EFFORT")"
+  if [[ -n "$fallback" ]]; then
+    CODEX_MODEL="$fallback"; CODEX_EFFORT="$EFFORT"
+    log_warn "Stufe $TIER: keine $CODEX_CLASS-Version mit effort $EFFORT im Katalog dieser CLI-Version -> $CODEX_MODEL"
   else
-    log_warn "Stufe $TIER: '$wish' (effort $EFFORT) nicht im Katalog -> Aufruf ohne Modellwahl"
+    log_warn "Stufe $TIER: weder $CODEX_CLASS noch sol mit effort $EFFORT im Katalog -> Aufruf ohne Modellwahl"
   fi
 }
 

@@ -84,9 +84,9 @@ Weitere Flags: `--boost`, `--fast`, `--model SLUG`, `--effort STUFE` (siehe Stuf
 
 Die starken Modelle brauchen für dieselbe Qualität weniger Effort, ihr Default liegt darum eine Stufe
 unter dem der advanced-Modelle. `--fast` gibt es nur bei `strong`: das starke Modell als schnelle, aber
-tiefe Einschätzung. `--boost` gibt es bei `strong` und `advanced`, nicht bei `drone`. Bei Codex steht die
-Spitze nicht fest, sie kommt aus dem Katalog der installierten Version (sichtbares Modell mit niedrigster
-`priority`).
+tiefe Einschätzung. `--boost` gibt es bei `strong` und `advanced`, nicht bei `drone`. Codex-Modelle sind
+Klassen (luna, sol, astra): Das Skript nimmt die neueste Version der Klasse aus dem Katalog der
+installierten CLI, nicht die `priority` des Pickers.
 
 `ask` startet ohne Angabe auf `advanced`, weil eine Zweitmeinung nicht schwächer sein darf als der
 Fragende. `execute` ebenfalls; `drone` ist ein bewusstes „das ist wirklich mechanisch" und verlangt einen
