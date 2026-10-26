@@ -244,7 +244,7 @@ Skills:
   Sachstandsbericht). Kern-Prinzip **Form, nicht Fakten**: fehlt ein Fakt, setzt Grimm einen Platzhalter.
 
 Cross-CLI-Aufrufe und Orchestrierung laufen über die Orchestrierung von T3 Code (MCP-Server `t3-code`,
-`delegate_task`) oder über Philharmonie.
+`delegate_task`).
 
 ```bash
 /plugin install tools@muhackel-plugins --scope user
@@ -255,27 +255,6 @@ Cross-CLI-Aufrufe und Orchestrierung laufen über die Orchestrierung von T3 Code
 Letzte Versionen `grimm` 0.2.0-final, `unslop` 0.4.0-final. Funktion unverändert, ein Hinweis auf den
 Nachfolger `tools` erscheint bei grimm bei jedem Aufruf, bei unslop einmal pro Sitzung. Werden später
 entfernt.
-
-### philharmonie
-
-Projektaufträge mit versionierter Spec, getrenntem Generator und Evaluator sowie dauerhaftem
-Missionszustand. Verbindet Cross-CLI-Aufträge mit unabhängiger Prüfung und belegter Abnahme. Die Linux-Laufzeit verwendet Nix und Bubblewrap; Änderungen entstehen in Snapshots und
-werden nur für freigegebene Pfade übernommen.
-
-Planer und Generator delegieren unabhängige Teilaufgaben an eigene Agents mit aufgabenbezogener
-Modellwahl. Vor der Freigabe bewertet die andere CLI die Spec mit einem begründeten Score und
-weist Blocker separat aus.
-
-Nach jedem Aufruf zeigt eine Modellübersicht, wer welche Aufgabe umgesetzt oder geprüft hat und
-mit welchem Ergebnis; fehlende oder nur konfigurierte Modellnachweise werden gekennzeichnet.
-Die Sitzungsverzeichnisse der Ziel-CLIs sind in die Sandbox eingebunden, sodass jeder Auftrag in
-`ccusage` erscheint und im Resume-Picker die Kennung `[Philharmonie …]` trägt.
-
-Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
-Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.
-
-Details und Betriebsgrenzen in [README](plugins/philharmonie/README.md) und
-[build.md](plugins/philharmonie/build.md); Entwurf in [design-ask-tandem.md](docs/design-ask-tandem.md).
 
 ## Lizenz
 

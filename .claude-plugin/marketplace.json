@@ -55,12 +55,6 @@
       "version": "0.4.0-final"
     },
     {
-      "name": "philharmonie",
-      "source": "./plugins/philharmonie",
-      "description": "Cross-CLI-Aufträge mit Spec, getrennten Generator- und Evaluator-Rollen sowie persistentem Missionszustand",
-      "version": "0.3.1"
-    },
-    {
       "name": "tools",
       "source": "./plugins/tools",
       "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins unslop und grimm.",
