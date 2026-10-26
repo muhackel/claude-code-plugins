@@ -233,66 +233,28 @@ empfiehlt dem Hauptagenten, `nixie` bzw. `bruce` zu spawnen.
 ### tools
 
 Werkzeuge, die **nur auf ausdrücklichen Aufruf** laufen und nie automatisch anspringen. Nachfolger der
-Plugins `ask`, `unslop` und `grimm`. Jeder Skill trägt `disable-model-invocation: true` (Claude Code)
+Plugins `unslop` und `grimm`. Jeder Skill trägt `disable-model-invocation: true` (Claude Code)
 und eine `agents/openai.yaml` mit `allow_implicit_invocation: false` (Codex).
 
 Skills:
-- `/tools:ask` — Cross-CLI-Zweitmeinung, read-only: fragt non-interaktiv die **jeweils andere CLI**
-  (aus Claude Code → `codex exec`, aus Codex → `claude -p`) mit Modell und Effort zur **Stufe**
-  (`advanced` opus/sol high, `strong` fable/astra medium; `--boost`/`--fast` verschieben den Effort,
-  `--model`/`--effort` setzen beides frei). Ohne Argument ein Standard-Review des aktuellen Projekts,
-  mit Argument eine eigene Frage.
-- `/tools:execute` — dasselbe mit Schreibrechten im Workspace (kein Commit/Push), zusätzlich Stufe
-  `drone` (sonnet/luna) für mechanische Aufträge.
 - `/tools:unslop` — entfernt typische KI-Muster (62 Erkennungsmerkmale in acht Kategorien) aus einem
   übergebenen Text oder ohne Argument aus dem zuletzt selbst geschriebenen.
 - `/tools:grimm` — Behörden-Schreibstilist: überführt Sachverhalte ins nüchterne Verwaltungs- und
   Anordnungsdeutsch und baut ganze Dokumente (Anordnung nach Führungsschema, Vermerk, Konzept,
   Sachstandsbericht). Kern-Prinzip **Form, nicht Fakten**: fehlt ein Fakt, setzt Grimm einen Platzhalter.
-- `/tools:orchestrator`, `/tools:orchestrator-review`, `/tools:orchestrator-cross` — Rollen-Prompt für die
-  laufende Sitzung: steuern statt arbeiten. Alle drei tragen denselben Kern (zerlegen, Agents der eigenen
-  CLI briefen, Ergebnisse abnehmen, keine eigene Umsetzung). Stufe 2 darf Arbeit per ask `strong --fast`
-  (komplex: `strong`) gegenprüfen lassen, `--boost` nur nach Rückfrage einmal pro Sitzung. Stufe 3 setzt
-  die andere CLI auch per execute (`drone`/`advanced`) ein, Boost nach Abwägung mit Begründung. Weil
-  ask/execute für das Modell gesperrt sind, liest der Orchestrator deren `SKILL.md` und folgt ihr.
 
-Für ask/execute schreibt der Host ein Handover ([`references/handover.md`](plugins/tools/references/handover.md)),
-die andere CLI startet mit leerem Kontext. Jeder Aufruf erscheint in `ccusage`. Die Ziel-CLIs kommen
-bewusst vom Host-PATH, nicht aus nixpkgs. Hilfswerkzeuge und Checks via Nix
-(Details in [`build.md`](plugins/tools/build.md)): `nix run ./plugins/tools#ask`, `nix flake check`.
+Cross-CLI-Aufrufe und Orchestrierung laufen über die Orchestrierung von T3 Code (MCP-Server `t3-code`,
+`delegate_task`).
 
 ```bash
 /plugin install tools@muhackel-plugins --scope user
 ```
 
-### grimm, ask, unslop (veraltet)
+### grimm, unslop (veraltet)
 
-Letzte Versionen `grimm` 0.2.0-final, `ask` 0.4.0-final, `unslop` 0.4.0-final. Funktion unverändert,
-ein Hinweis auf den Nachfolger `tools` erscheint bei ask und grimm bei jedem Aufruf, bei unslop
-einmal pro Sitzung. Werden später entfernt.
-
-### philharmonie
-
-Projektaufträge mit versionierter Spec, getrenntem Generator und Evaluator sowie dauerhaftem
-Missionszustand. Verbindet die Cross-CLI-Aufträge aus ask mit unabhängiger Prüfung und belegter
-Abnahme. Die Linux-Laufzeit verwendet Nix und Bubblewrap; Änderungen entstehen in Snapshots und
-werden nur für freigegebene Pfade übernommen.
-
-Planer und Generator delegieren unabhängige Teilaufgaben an eigene Agents mit aufgabenbezogener
-Modellwahl. Vor der Freigabe bewertet die andere CLI die Spec mit einem begründeten Score und
-weist Blocker separat aus.
-
-Nach jedem Aufruf zeigt eine Modellübersicht, wer welche Aufgabe umgesetzt oder geprüft hat und
-mit welchem Ergebnis; fehlende oder nur konfigurierte Modellnachweise werden gekennzeichnet.
-Die Sitzungsverzeichnisse der Ziel-CLIs sind in die Sandbox eingebunden, sodass jeder Auftrag in
-`ccusage` erscheint und im Resume-Picker die Kennung `[Philharmonie …]` trägt.
-
-Commands: `/philharmonie:plan`, `review-spec`, `run`, `status`, `resume`, `pause`, `cancel`, `accept` sowie die
-Einzelaufrufe `ask` und `execute`. Unter Codex stehen die Commands als migrierte Skills zur Verfügung.
-Die Einzelaufrufe bleiben über `/tools:ask` und `/tools:execute` separat nutzbar.
-
-Details und Betriebsgrenzen in [README](plugins/philharmonie/README.md) und
-[build.md](plugins/philharmonie/build.md); Entwurf in [design-ask-tandem.md](docs/design-ask-tandem.md).
+Letzte Versionen `grimm` 0.2.0-final, `unslop` 0.4.0-final. Funktion unverändert, ein Hinweis auf den
+Nachfolger `tools` erscheint bei grimm bei jedem Aufruf, bei unslop einmal pro Sitzung. Werden später
+entfernt.
 
 ## Lizenz
 
