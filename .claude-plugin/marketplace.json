@@ -49,12 +49,6 @@
       "version": "0.2.0-final"
     },
     {
-      "name": "ask",
-      "source": "./plugins/ask",
-      "description": "[VERALTET – final, Nachfolger: tools] Cross-CLI-Zweitmeinung: fragt non-interaktiv die jeweils andere CLI (Codex aus Claude Code, Claude aus Codex) mit dem Flaggschiffmodell der installierten Version — /ask read-only (ohne Argument: Review des Projektstands), /execute mit Schreibrechten im Workspace",
-      "version": "0.4.0-final"
-    },
-    {
       "name": "unslop",
       "source": "./plugins/unslop",
       "description": "[VERALTET – final, Nachfolger: tools] Entfernt typische KI-Muster aus Texten und gibt ihnen eine menschliche Stimme — 62 Erkennungsmerkmale von Werbesprache über Strukturschablonen bis Chatbot-Floskeln. Gilt für jede eigene Textausgabe, auch Chat- und Konsolenantworten.",
@@ -69,8 +63,8 @@
     {
       "name": "tools",
       "source": "./plugins/tools",
-      "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:ask und /tools:execute (die jeweils andere CLI non-interaktiv fragen bzw. beauftragen), /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen), /tools:orchestrator[-review|-cross] (Rollen-Prompt: steuern statt arbeiten, in drei Stufen bis zur anderen CLI als Arbeiter). Nachfolger der Plugins ask, unslop und grimm.",
-      "version": "0.2.1"
+      "description": "Werkzeuge mit ausschließlich expliziter Auslösung: /tools:unslop (KI-Muster aus Text entfernen), /tools:grimm (Sachverhalte ins Verwaltungs- und Anordnungsdeutsch überführen). Nachfolger der Plugins unslop und grimm.",
+      "version": "0.3.0"
     }
   ]
 }

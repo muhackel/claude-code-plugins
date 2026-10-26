@@ -159,9 +159,10 @@ Die Quelle `flag` schlägt local, project und user. Kein Pendant für Codex.
 
 ## Tools: nur explizite Auslösung
 
-`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`ask`, `execute`, `unslop`, `grimm`,
-`orchestrator[-review|-cross]`).
-Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bis zur Entfernung bleiben.
+`plugins/tools/` bündelt Werkzeuge, die nie automatisch anspringen (`unslop`, `grimm`).
+Nachfolger der Plugins `unslop` und `grimm`, die als `-final` markiert bis zur Entfernung bleiben.
+`ask`, `execute` und die `orchestrator`-Skills sind mit 0.3.0 entfallen, ebenso das Plugin `ask`:
+Cross-CLI-Arbeit und Orchestrierung übernimmt T3 Code über seinen MCP-Server (`delegate_task`).
 
 - Einstiegspunkte sind **Skills, keine Commands und keine Agents**: nur Skills haben in beiden CLIs einen
   belegten Schalter. Claude Code: `disable-model-invocation: true` im Frontmatter. Codex:
@@ -170,10 +171,6 @@ Nachfolger der Plugins `ask`, `unslop` und `grimm`, die als `-final` markiert bi
   Agent in `tools`. Skills mit `disable-model-invocation: true` lassen sich auch nicht in Subagenten vorladen.
 - Wissen, das ein Tool braucht, liegt als `references/*.md` (kein Skill-Frontmatter), damit es nicht
   selbst als Skill auftaucht.
-- Die `orchestrator`-Skills sind Rollen-Prompts in drei kumulativen Stufen; der Kern steht in allen drei
-  `SKILL.md` wörtlich gleich (bewusst dreifach, kein Verweis: der Prompt soll beim Aufruf direkt im Kontext
-  liegen). Stufe 2 und 3 nutzen `ask`/`execute` über deren `SKILL.md` als Datei, weil die Sperre gegen
-  Modell-Aufruf keine Ausnahme für Rollen kennt.
 - Der `plugin-creator`-Validator von Codex lehnt `disable-model-invocation: true` ab, die Codex-Laufzeit
   lädt die Skills trotzdem (mit `tools` 0.1.0 am 2026-09-14 getestet). Das Feld bleibt drin.
 
@@ -252,15 +249,10 @@ Modelle werden nach Stufe gewählt, nicht pauschal als Flaggschiff. Philharmonie
 und Evaluator `advanced`, Spec-Gegenprüfung `strong`. Die Staffelung ist dieselbe wie bei den Subagenten in `delegation.py` — bei Änderungen beide
 Ebenen zusammen halten.
 
-`tools:ask`/`tools:execute` haben eine eigene, bewusst von Philharmonie entkoppelte Tabelle (`--tier`):
-`strong` fable/astra mit Effort medium (`--boost` high, `--fast` low), `advanced` opus/sol mit high
-(`--boost` xhigh; Default beider Modi), `drone` sonnet/luna mit high (nur execute). `--model` und
-`--effort` setzen beides frei, bei `--model` ist der Effort high.
-
-Codex-Modelle sind Klassen (luna, sol, astra). `tools:ask` nimmt die neueste Version der Klasse aus
-`codex debug models --bundled` (Slug `gpt-<version>-<klasse>`), nicht die `priority` des Katalogs: Die ist
-die Picker-Reihenfolge, Codex 0.162.1 führt `gpt-6.1-sol` vor `gpt-6-astra`. Philharmonie
-(`delegation.py`) wählt `strong` noch nach `priority` und nagelt die übrigen Klassen auf `gpt-5.6-*` fest.
+Codex-Modelle sind Klassen (luna, sol, astra), der Slug lautet `gpt-<version>-<klasse>`. Die `priority`
+aus `codex debug models --bundled` ist die Picker-Reihenfolge, nicht die Stärke: Codex 0.162.1 führt
+`gpt-6.1-sol` vor `gpt-6-astra`. Philharmonie (`delegation.py`) wählt `strong` trotzdem noch nach
+`priority` und nagelt die übrigen Klassen auf `gpt-5.6-*` fest.
 
 Fehlt ein Klassenmodell im Codex-Katalog, fällt der Aufruf auf `advanced` und erst danach auf die Wahl
 der CLI zurück. Nie direkt auf "ohne Modellangabe" ausweichen: `codex exec` nimmt dann das Flaggschiff,
@@ -268,8 +260,8 @@ auch wenn `model` in `~/.codex/config.toml` etwas anderes sagt (bei `exec` nachg
 nicht). Bei Claude ist der Fall nicht vorab prüfbar, weil die CLI keinen Modellkatalog ausgibt; ohne
 `--model` läuft dort Opus 5.
 
-Aufträge beider Plugins schreiben Sitzungsdateien der Ziel-CLI und sind darum in `ccusage` sichtbar.
-Bei Philharmonie sind dafür die Sitzungsverzeichnisse des Hosts in die Sandbox gebunden — die einzige
+Philharmonie-Aufträge schreiben Sitzungsdateien der Ziel-CLI und sind darum in `ccusage` sichtbar.
+Dafür sind die Sitzungsverzeichnisse des Hosts in die Sandbox gebunden — die einzige
 Stelle, an der ein Auftrag außerhalb seines Snapshots schreibt. Jeder Auftrag trägt eine Kennung im
 Resume-Picker: bei Claude über `--name`, bei Codex als Präfix des Auftrags, weil Codex kein solches
 Flag kennt. Ein Codex-Rollout gehört zu einem Auftrag, wenn sein Sitzungskopf dessen Snapshot als
