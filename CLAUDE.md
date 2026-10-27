@@ -164,6 +164,12 @@ Nachfolger der Plugins `unslop` und `grimm`, die als `-final` markiert bis zur E
 `ask`, `execute` und die `orchestrator`-Skills sind mit 0.3.0 entfallen, ebenso das Plugin `ask`:
 Cross-CLI-Arbeit und Orchestrierung übernimmt T3 Code über seinen MCP-Server (`delegate_task`).
 
+Das Plugin `t3` ergänzt dies um den offenen Skill `t3-bridge`: angeforderte
+Zusammenarbeit zwischen Herstellern, Modelloptionen, Ergebnisrückgabe und
+Review-Runden. Es gehört nicht zu den explizit gesperrten Schreibwerkzeugen in
+`tools`. Keine eigene CLI-Brücke und kein eigener MCP-Server. Verhaltensregressionen
+und Wiederholungsanleitung liegen unter `plugins/t3/tests/`.
+
 - Einstiegspunkte sind **Skills, keine Commands und keine Agents**: nur Skills haben in beiden CLIs einen
   belegten Schalter. Claude Code: `disable-model-invocation: true` im Frontmatter. Codex:
   `skills/<name>/agents/openai.yaml` mit `policy.allow_implicit_invocation: false`.

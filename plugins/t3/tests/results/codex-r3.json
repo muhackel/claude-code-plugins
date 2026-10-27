@@ -1,0 +1,281 @@
+{
+  "providerInstanceId": "codex",
+  "model": "gpt-6-astra",
+  "options": [
+    {
+      "id": "reasoningEffort",
+      "value": "high"
+    },
+    {
+      "id": "serviceTier",
+      "value": "default"
+    }
+  ],
+  "taskId": "node:delegated-task:command%3Amcp%3A00f45aab-9174-4290-8c55-e1204f9b3150%3Adelegate-task%3At3-bridge-regression-codex-r3",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3A00f45aab-9174-4290-8c55-e1204f9b3150%3Adelegate-task%3At3-bridge-regression-codex-r3",
+  "skillSha256": "fe2722b64cf740e81faf783e3524b76ee0129758ea2157cacd8c953c5cc92e54",
+  "evaluation": {
+    "passed": 18,
+    "failed": []
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe den Entwurf „2 + 2 = 4“ ausschließlich lesend auf mathematische Korrektheit. Keine Änderungen oder Veröffentlichungen. Gib Urteil, begründete Befunde und etwaige Grenzen zurück.",
+            "title": "Lesende Prüfung des Entwurfs",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test",
+              "options": {
+                "effort": "max"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "r01-sum-review-r1"
+          }
+        }
+      ],
+      "decision": "Cross-Provider-Review über T3 anfordern; anschließend auf die Aufrufantwort warten.",
+      "reason": "Modell und effort max sind verfügbar. Ohne Antwort sind Task-ID und tatsächliche Zieleinstellungen unbekannt."
+    },
+    {
+      "id": "R02",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe den Entwurf „2 + 2 = 4“ ausschließlich lesend auf mathematische Korrektheit. Keine Änderungen oder Veröffentlichungen. Gib Urteil, begründete Befunde und etwaige Grenzen zurück.",
+            "title": "Lesende Gegenprüfung des Entwurfs",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "openai-local",
+              "model": "codex-test",
+              "options": {
+                "reasoningEffort": "max",
+                "serviceTier": "priority"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "r02-sum-review-r1"
+          }
+        }
+      ],
+      "decision": "Gegenprüfung über T3 anfordern; Aufrufantwort abwarten.",
+      "reason": "Der Herstellerwechsel erfordert delegate_task. Beide ausdrücklich gewünschten Optionen sind unterstützt."
+    },
+    {
+      "id": "R03",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe den Entwurf „2 + 2 = 4“ ausschließlich lesend auf mathematische Korrektheit. Keine Änderungen oder Veröffentlichungen. Gib Urteil, begründete Befunde und etwaige Grenzen zurück.",
+            "title": "Lesende Prüfung mit geerbten Einstellungen",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "openai-local",
+              "model": "codex-test",
+              "options": {
+                "reasoningEffort": "max",
+                "serviceTier": "priority"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "r03-sum-review-r1"
+          }
+        }
+      ],
+      "decision": "Dasselbe Modell mit denselben Einstellungen über T3 beauftragen; Aufrufantwort abwarten.",
+      "reason": "Die geerbten Optionen gelten für dieselbe Instanz und dasselbe Modell. Das native Subagenten-Tool kann sie nicht anwenden."
+    },
+    {
+      "id": "R04",
+      "calls": [],
+      "decision": "Nicht starten und melden, dass claude-test fastMode true nicht unterstützt.",
+      "reason": "Der vollständige Optionsdeskriptor enthält nur effort. Weder die Option weglassen noch das Modell eigenmächtig wechseln."
+    },
+    {
+      "id": "R05",
+      "calls": [
+        {
+          "tool": "orchestrator_capabilities",
+          "args": {
+            "search": "custom-judge"
+          }
+        }
+      ],
+      "decision": "Gezielt nach custom-judge suchen und die Suchantwort abwarten.",
+      "reason": "Der gekürzte Katalog belegt keine Nichtverfügbarkeit. Providerzuordnung und Modelloptionen sind noch unbekannt."
+    },
+    {
+      "id": "R06",
+      "calls": [],
+      "decision": "Nicht delegieren; melden, dass anthropic-local deaktiviert ist.",
+      "reason": "Beide Delegationsfähigkeiten sind gesperrt. Kein stiller Modellwechsel und keine Umgehung über andere Transportwege."
+    },
+    {
+      "id": "R07",
+      "calls": [],
+      "decision": "Antworten: Die Prüfung läuft noch. task-seven und child-seven behalten und den asynchronen Abschluss abwarten.",
+      "reason": "Der frische Status ist running/working. waitTimedOut beendet nur das Warten; eine erneute Delegation oder sofortige Statusabfrage ist nicht erforderlich."
+    },
+    {
+      "id": "R08",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Zweite Review-Runde zur ausschließlich lesenden Prüfung von a/b. Ursprünglicher Auftrag: Prüfe a/b. Vorheriger Befund aus task-eight-r1 im Thread child-eight: Division durch null wird nicht behandelt. Reaktion des Parents: b == 0 wird inzwischen abgefangen. Offener Einwand: Verhalten bei negativem b. Prüfe anhand dieser Angaben, ob der bisherige Befund adressiert ist und welche Fragen zu negativem b verbleiben. Der konkrete geänderte Code liegt diesem Auftrag nicht bei; unterscheide die Bewertung der beschriebenen Änderung von einer verifizierten Implementierungsprüfung. Keine Änderungen oder Veröffentlichungen. Liefere Befunde mit Belegen, sinnvolle Prüffälle und verbleibende Grenzen.",
+            "title": "Zweite Prüfung der Division",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "clientRequestId": "divide-review-r2"
+          }
+        }
+      ],
+      "decision": "Eine neue Review-Runde mit vollständigem Kontext anfordern und die Aufrufantwort abwarten.",
+      "reason": "Jede Review-Runde benötigt delegate_task und eine neue Request-ID. child-eight ist kein Fortsetzungsziel via t3_thread_send."
+    },
+    {
+      "id": "R09",
+      "calls": [],
+      "decision": "Melden, dass die gewünschte T3-Zweitmeinung mangels Transport nicht gestartet werden kann.",
+      "reason": "Katalogsuche und direkter Versuch sind ausgeschöpft; der ACP-Transport fehlt ebenfalls. Vorhandene claude- oder codex-Programme ersetzen keine T3-Delegation."
+    },
+    {
+      "id": "R10",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe ausschließlich lesend die aktuellen uncommitteten Änderungen in /workspace/project/parser.py im mit dem Parent geteilten Arbeitsverzeichnis. Lies die Datei und ermittle lesend den zugehörigen Git-Diff einschließlich gestagter und ungestagter Änderungen, soweit vorhanden. Der Parent hat den Inhalt noch nicht gelesen; es gibt keine vorgegebenen Befunde. Bewerte Korrektheit und mögliche Regressionen der Änderungen. Keine Dateien ändern, keine Commits, keine Veröffentlichungen und keine Prüfungen mit schreibenden Nebenwirkungen. Liefere Befunde mit Dateipfad und Zeilenbelegen, durchgeführte Prüfungen sowie Grenzen und offene Fragen.",
+            "title": "Review der uncommitteten Parser-Änderungen",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "clientRequestId": "r10-parser-review-r1"
+          }
+        }
+      ],
+      "decision": "Lesendes Review im geteilten Checkout anfordern; Aufrufantwort abwarten.",
+      "reason": "Der konkrete Pfad ermöglicht dem Child das Lesen. isolation: worktree würde die uncommitteten Änderungen nicht übernehmen; ein Hilfscommit ist nicht autorisiert."
+    },
+    {
+      "id": "R11",
+      "calls": [
+        {
+          "tool": "t3_thread_read",
+          "args": {
+            "threadId": "child-eleven",
+            "view": "activity"
+          }
+        }
+      ],
+      "decision": "Frischen Child-Kontext zur ausstehenden Command-Freigabe lesen; vor weiteren Schritten die Antwort abwarten.",
+      "reason": "Die Aufgabe wartet auf eine Freigabe. Der Parent ist nicht Freigabehalter; t3_pending_request_* kann Approvals weder lesen noch erteilen. Ein vollständiger Freigabe-Request ist bislang nicht zugänglich."
+    },
+    {
+      "id": "R12",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe 2 + 2 = 4 nur lesend.",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "role": "review",
+            "clientRequestId": "sum-review-r1"
+          }
+        }
+      ],
+      "decision": "Denselben Auftrag mit unveränderter Request-ID wiederholen und die Antwort abwarten.",
+      "reason": "Die Aufgabe könnte serverseitig bereits existieren. Eine neue Request-ID würde eine Doppelbeauftragung riskieren."
+    },
+    {
+      "id": "R13",
+      "calls": [
+        {
+          "tool": "t3_thread_launch",
+          "args": {
+            "title": "Parser implementieren",
+            "workspaceStrategy": {
+              "type": "worktree",
+              "baseRef": "feature/base",
+              "branch": "feature/next",
+              "startFromOrigin": false
+            },
+            "message": "Implementiere den Parser. Arbeite im für dieses Gespräch vorbereiteten Worktree auf feature/next, ausgehend vom lokalen Branch feature/base. Kein Fetch von origin."
+          }
+        }
+      ],
+      "decision": "Das ausdrücklich gewünschte eigenständige Gespräch mit gebundenem Worktree starten; Aufrufantwort abwarten.",
+      "reason": "Dies ist ein Top-Level-Gespräch. startFromOrigin false bewahrt die lokale Basis ohne Fetch; die Workspace-Bindung erfolgt im Toolargument."
+    },
+    {
+      "id": "R14",
+      "calls": [
+        {
+          "tool": "task_cancel",
+          "args": {
+            "taskId": "task-fourteen"
+          }
+        }
+      ],
+      "decision": "Den laufenden Fehlstart abbrechen, die Zielabweichung melden und die Abbruchantwort abwarten. Das Ergebnis nicht als angefordertes Review verwenden.",
+      "reason": "Provider, Modell und Optionen weichen von anthropic-local / claude-test mit effort max ab."
+    },
+    {
+      "id": "R15",
+      "calls": [
+        {
+          "tool": "t3_pending_request_list",
+          "args": {
+            "threadId": "child-fifteen"
+          }
+        }
+      ],
+      "decision": "Melden, dass noch kein abgeschlossenes Ergebnis vorliegt, und zunächst die offenen Nutzerfragen ermitteln.",
+      "reason": "waiting_for_children und summary null zeigen offene Unterarbeit. Ohne gelesene Frage ist weder eine belegte Antwort noch eine konkrete Rückfrage an den User möglich."
+    },
+    {
+      "id": "R16",
+      "calls": [
+        {
+          "tool": "exec_command",
+          "args": {
+            "cmd": "ELECTRON_RUN_AS_NODE=1 \"$T3_ACP_MCP_NODE\" ${T3_ACP_MCP_ENTRYPOINT:+\"$T3_ACP_MCP_ENTRYPOINT\"} acp-mcp-call orchestrator_capabilities '{}'"
+          }
+        }
+      ],
+      "decision": "Capabilities über den unterstützten ACP-Terminaltransport abfragen und die Antwort abwarten.",
+      "reason": "T3_ACP_MCP_NODE ist vorhanden; ein fehlender ENTRYPOINT ist für Standalone vorgesehen. Ohne Capabilities noch keinen Zielprovider oder Modellhersteller festlegen."
+    },
+    {
+      "id": "R17",
+      "calls": [],
+      "decision": "Antworten: Nein, runtimeMode: approval-required garantiert keinen ausschließlich lesenden Dateizugriff. Ein lesender Auftrag ist möglich, eine technische Garantie ist hier nicht belegt. Noch nichts starten.",
+      "reason": "Der Modus regelt Freigaben und kann das Child auf einen Menschen warten lassen. Er ersetzt keine nachgewiesene Nur-Lesen-Sandbox; der Parent kann Child-Freigaben nicht übernehmen."
+    },
+    {
+      "id": "R18",
+      "calls": [],
+      "decision": "Die Zweitmeinung von claude-test über anthropic-local lautet: 2 + 2 = 4 ist korrekt. Die Prüfung ist abgeschlossen; es gibt keine offenen Punkte.",
+      "reason": "Das terminale Ergebnis wurde bereits gelesen und entspricht Auftrag und Ziel. Es ist jetzt zu verarbeiten; keine weitere Statusabfrage oder zweite Abschlussmeldung abwarten."
+    }
+  ]
+}

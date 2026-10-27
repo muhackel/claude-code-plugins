@@ -1,0 +1,20 @@
+{
+  "name": "t3",
+  "description": "Herstellerübergreifende Zusammenarbeit über T3 Code: Aufgaben delegieren, Ergebnisse austauschen und Reviews zwischen Claude und Codex koordinieren.",
+  "version": "0.1.0",
+  "author": { "name": "Sebastian Rädle", "email": "muhackel@gmail.com" },
+  "repository": "https://github.com/muhackel/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["t3", "orchestrierung", "claude", "codex", "review"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "T3 Bridge",
+    "shortDescription": "Claude und Codex über T3 Code zusammenarbeiten lassen",
+    "longDescription": "t3-bridge nutzt die Orchestrierung von T3 Code für Aufgaben und Reviews zwischen KI-Herstellern. Der Skill ermittelt verfügbare Modelle und Optionen live und führt Ergebnisse im aufrufenden Thread zusammen.",
+    "developerName": "Sebastian Rädle",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": "Nutze $t3-bridge, um meinen aktuellen Entwurf vom anderen KI-Hersteller reviewen zu lassen.",
+    "screenshots": []
+  }
+}

@@ -74,6 +74,23 @@ cp profiles/lean.json <projekt>/.claude/settings.local.json
 
 ## Verfügbare Plugins
 
+### t3
+
+`t3-bridge` vermittelt Aufgaben und Reviews zwischen Claude, Codex und weiteren
+verfügbaren KI-Herstellern über die Orchestrierung von T3 Code. Beide CLIs nutzen
+denselben Skill; Modelle, Optionen und Verfügbarkeit werden live abgefragt.
+Erfordert einen laufenden T3-Thread mit Zugriff auf dessen MCP-Server.
+
+Claude: `/t3:t3-bridge`; Codex: `$t3-bridge` oder Auswahl über `/skills`.
+Beispiel: „Lass meinen aktuellen Entwurf von Fable reviewen, nur lesend.“
+
+```bash
+/plugin install t3@muhackel-plugins --scope user
+```
+
+[Ablauf und Grenzen](plugins/t3/skills/t3-bridge/SKILL.md) ·
+[Regressionstests](plugins/t3/tests/README.md)
+
 ### bibliothekarin
 
 Wissensmanagement-Agent — primäres Interface für den Obsidian Vault.

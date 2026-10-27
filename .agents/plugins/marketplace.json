@@ -5,6 +5,12 @@
   },
   "plugins": [
     {
+      "name": "t3",
+      "source": { "source": "local", "path": "./plugins/t3" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_USE", "products": ["CODEX"] },
+      "category": "Developer Tools"
+    },
+    {
       "name": "bibliothekarin",
       "source": {
         "source": "local",
