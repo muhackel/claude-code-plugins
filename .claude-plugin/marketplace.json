@@ -7,6 +7,12 @@
   },
   "plugins": [
     {
+      "name": "t3",
+      "source": "./plugins/t3",
+      "description": "Herstellerübergreifende Zusammenarbeit über T3 Code: Aufgaben delegieren, Ergebnisse austauschen und Reviews zwischen Claude und Codex koordinieren.",
+      "version": "0.1.0"
+    },
+    {
       "name": "bibliothekarin",
       "source": "./plugins/bibliothekarin",
       "description": "Wissensmanagement-Agent: Wissen einpflegen, abrufen, synthetisieren, destillieren und Vault-Pflege für Obsidian Vaults; erstellt Mermaid-/PlantUML-Diagramme reference-first und empfiehlt die passende Diagrammart",

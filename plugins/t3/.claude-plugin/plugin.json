@@ -1,0 +1,9 @@
+{
+  "name": "t3",
+  "description": "Herstellerübergreifende Zusammenarbeit über T3 Code: Aufgaben delegieren, Ergebnisse austauschen und Reviews zwischen Claude und Codex koordinieren.",
+  "version": "0.1.0",
+  "author": { "name": "Sebastian Rädle", "email": "muhackel@gmail.com" },
+  "license": "MIT",
+  "keywords": ["t3", "orchestrierung", "claude", "codex", "review"],
+  "skills": "./skills"
+}

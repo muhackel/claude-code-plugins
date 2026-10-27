@@ -1,0 +1,260 @@
+{
+  "providerInstanceId": "claudeAgent",
+  "model": "claude-fable-5-1",
+  "options": [],
+  "taskId": "node:delegated-task:command%3Amcp%3A00f45aab-9174-4290-8c55-e1204f9b3150%3Adelegate-task%3At3-bridge-regression-claude-r2",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3A00f45aab-9174-4290-8c55-e1204f9b3150%3Adelegate-task%3At3-bridge-regression-claude-r2",
+  "skillSha256": "8faaac9ad1f7ff91163ef507c859fd13e3114d2bcce8c4236e3bb765da40a54e",
+  "evaluation": {
+    "passed": 16,
+    "failed": []
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe den folgenden Entwurf ausschließlich lesend. Entwurf: `2 + 2 = 4`. Ziel: Zweitmeinung zur Korrektheit. Keine Änderungen, keine Veröffentlichungen, keine weiteren Delegationen. Rückgabe: Befunde mit Belegen, offene Fragen, Grenzen der Prüfung.",
+            "title": "Lesendes Review: 2 + 2 = 4",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test",
+              "options": {
+                "effort": "max"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "sum-draft-review-r1"
+          }
+        }
+      ],
+      "decision": "Cross-Provider-Delegation an anthropic-local/claude-test mit effort max; taskId/childThreadId aus der Antwort aufbewahren, Rückgabewerte für Provider, Modell, Optionen prüfen, Turn mit Zwischenstand beenden.",
+      "reason": "Anderer Hersteller und explizite Option erfordern delegate_task; effort max ist im Deskriptor von claude-test vorhanden und gehört in target.options."
+    },
+    {
+      "id": "R02",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Gegenprüfe den folgenden Entwurf ausschließlich lesend. Entwurf: `2 + 2 = 4`. Ziel: unabhängige Zweitmeinung zur Korrektheit. Keine Änderungen, keine Veröffentlichungen. Rückgabe: Befunde mit Belegen, offene Fragen, Grenzen.",
+            "title": "Gegenprüfung: 2 + 2 = 4",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "openai-local",
+              "model": "codex-test",
+              "options": {
+                "reasoningEffort": "max",
+                "serviceTier": "priority"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "sum-draft-counterreview-r1"
+          }
+        }
+      ],
+      "decision": "Delegation an openai-local/codex-test mit beiden angeforderten Optionen; Rückgabewerte prüfen, kein Herabsetzen von max.",
+      "reason": "Cross-Provider von Anthropic zu OpenAI; beide Optionen stehen im Deskriptor von codex-test und werden explizit in target.options gesetzt."
+    },
+    {
+      "id": "R03",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe den folgenden Entwurf ausschließlich lesend. Entwurf: `2 + 2 = 4`. Ziel: Korrektheitsprüfung. Keine Änderungen, keine Veröffentlichungen. Rückgabe: Befunde mit Belegen, offene Fragen, Grenzen.",
+            "title": "Lesendes Review: 2 + 2 = 4",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "openai-local",
+              "model": "codex-test",
+              "options": {
+                "reasoningEffort": "max",
+                "serviceTier": "priority"
+              }
+            },
+            "mode": "async",
+            "clientRequestId": "sum-draft-same-model-review-r1"
+          }
+        }
+      ],
+      "decision": "delegate_task statt natives Subagenten-Tool; geerbte Einstellungen explizit als target.options mitgeben und in der Antwort prüfen.",
+      "reason": "Gleiche Instanz und gleiches Modell, aber nicht-leere inheritedOptions; das native Tool kann keine Modelloptionen anwenden."
+    },
+    {
+      "id": "R04",
+      "calls": [],
+      "decision": "Keine Delegation. Dem User melden, dass claude-test laut Katalog nur `effort` kennt und fastMode dort nicht erfüllbar ist; anbieten, das Review ohne fastMode (optional mit effort) zu starten oder ein anderes Modell mit fastMode-Deskriptor zu suchen.",
+      "reason": "Der vollständige Deskriptor enthält fastMode nicht; der Skill verlangt Meldung der Einschränkung statt stillem Weglassen oder Modellwechsel."
+    },
+    {
+      "id": "R05",
+      "calls": [
+        {
+          "tool": "orchestrator_capabilities",
+          "args": {
+            "search": "custom-judge"
+          }
+        }
+      ],
+      "decision": "Katalog gezielt nach custom-judge durchsuchen; erst nach Treffer mit providerInstanceId und Modell-ID delegieren, bei Fehlanzeige das Fehlen melden statt ein Ersatzmodell zu nehmen.",
+      "reason": "Der Katalog ist gekürzt (omittedModels: 3); ein fehlendes Modell wird per search gesucht, kein stiller Modellwechsel."
+    },
+    {
+      "id": "R06",
+      "calls": [],
+      "decision": "Keine Delegation. Melden, dass anthropic-local deaktiviert ist (constraint „Provider instance is disabled.“, canRun… false), und fragen, ob der User die Instanz in T3 aktiviert oder ein anderes verfügbares Ziel wünscht.",
+      "reason": "Deaktivierter Provider ist eine echte Einschränkung; keine Umgehung über native Tools oder fremde CLIs."
+    },
+    {
+      "id": "R07",
+      "calls": [],
+      "decision": "Antwort an den User: Nein, task-seven läuft noch (status running, workState working); waitTimedOut ist nur das Ende des Wartens, kein Fehler. Task-ID behalten, auf die asynchrone Abschlussmeldung von T3 warten, keinen zweiten Auftrag starten, kein Polling.",
+      "reason": "Der Status ist frisch; der Skill untersagt Polling-Schleifen und Doppelaufträge nach Timeout."
+    },
+    {
+      "id": "R08",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Zweite Review-Runde, ausschließlich lesend. Ursprünglicher Auftrag: lesende Prüfung der Division `a/b`. Befund aus Runde 1: Division durch null nicht behandelt. Reaktion: `b == 0` wird jetzt abgefangen. Offener Einwand: Verhalten bei negativem `b` ist ungeklärt. Bitte prüfen, ob der Nullfall korrekt behandelt ist und wie sich negatives `b` verhält. Keine Änderungen, keine Veröffentlichungen. Rückgabe: Befunde mit Belegen, Bewertung des offenen Einwands, verbleibende Fragen.",
+            "title": "Review a/b, Runde 2",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "clientRequestId": "divide-review-r2"
+          }
+        }
+      ],
+      "decision": "Neue Delegation mit neuer Request-ID divide-review-r2 an dasselbe Modell; child-eight nicht per t3_thread_send fortführen.",
+      "reason": "Jede Review-Runde ist ein neuer delegate_task mit Vorbefund, Reaktion und offenem Einwand im Prompt; der Reviewer erbt keinen Verlauf."
+    },
+    {
+      "id": "R09",
+      "calls": [],
+      "decision": "Fehlenden T3-Zugriff melden: weder MCP-Tools noch ACP-Transport vorhanden. Keine Zweitmeinung über die lokalen Programme claude oder codex starten; den User auf einen laufenden T3-Thread mit Orchestrierungszugriff verweisen.",
+      "reason": "Katalogsuche und einmaliger Direktversuch sind erschöpft, T3_ACP_MCP_NODE fehlt; fremde CLIs sind keine T3-Delegation."
+    },
+    {
+      "id": "R10",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe ausschließlich lesend die aktuellen uncommitteten Änderungen in /workspace/project/parser.py. Der Checkout ist mit dem Parent geteilt; ermittle die Änderungen read-only mit `git diff -- /workspace/project/parser.py` und lies die Datei. Keine Edits, kein Commit, kein Stash, keine Veröffentlichung. Rückgabe: Befunde mit Datei- und Zeilenbelegen, Risiken, offene Fragen.",
+            "title": "Lesendes Review: uncommittete Änderungen parser.py",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "clientRequestId": "parser-uncommitted-review-r1"
+          }
+        }
+      ],
+      "decision": "Delegation ohne isolation im geteilten Checkout, kein eigener Commit als Hilfsschritt.",
+      "reason": "Ein Worktree startet vom letzten Commit und sähe die uncommitteten Änderungen nicht; Review des Arbeitsstands bleibt im geteilten Checkout und liest nur."
+    },
+    {
+      "id": "R11",
+      "calls": [
+        {
+          "tool": "t3_thread_read",
+          "args": {
+            "threadId": "child-eleven",
+            "view": "activity"
+          }
+        }
+      ],
+      "decision": "Dem User erklären: das Child wartet auf eine Kommando-Freigabe (approval-eleven, run-eleven); ich bin nicht Freigabehalter und kann den Request weder über t3_pending_request_* lesen noch erteilen. Der Freigabehalter entscheidet in der T3-Oberfläche; bis dahin bleibt task-eleven stehen.",
+      "reason": "pendingApproval wird über den Activity-Kontext eingesehen; t3_pending_request_* ist nur für Nutzerfragen, Approvals bleiben beim Freigabehalter."
+    },
+    {
+      "id": "R12",
+      "calls": [
+        {
+          "tool": "delegate_task",
+          "args": {
+            "task": "Prüfe 2 + 2 = 4 nur lesend.",
+            "role": "review",
+            "target": {
+              "providerInstanceId": "anthropic-local",
+              "model": "claude-test"
+            },
+            "mode": "async",
+            "clientRequestId": "sum-review-r1"
+          }
+        }
+      ],
+      "decision": "Identischen Aufruf mit unveränderter clientRequestId sum-review-r1 wiederholen; der Server dedupliziert eine bereits angelegte Aufgabe.",
+      "reason": "Transport-Retry desselben logischen Auftrags behält die Request-ID; eine neue ID würde einen Doppelauftrag riskieren."
+    },
+    {
+      "id": "R13",
+      "calls": [
+        {
+          "tool": "t3_thread_launch",
+          "args": {
+            "title": "Parser implementieren",
+            "workspaceStrategy": {
+              "type": "worktree",
+              "baseRef": "feature/base",
+              "branch": "feature/next",
+              "startFromOrigin": false
+            },
+            "message": "Implementiere den Parser."
+          }
+        }
+      ],
+      "decision": "Eigenständigen Top-Level-Thread im neuen Worktree starten; zurückgegebene threadId behalten und bei verlorener Antwort zuerst t3_thread_list prüfen statt erneut zu starten.",
+      "reason": "Neues eigenständiges Gespräch ist ausdrücklich gewünscht; Worktree-Strategie mit lokalem Branch und startFromOrigin false entspricht dem Auftrag."
+    },
+    {
+      "id": "R14",
+      "calls": [
+        {
+          "tool": "task_cancel",
+          "args": {
+            "taskId": "task-fourteen"
+          }
+        }
+      ],
+      "decision": "Fehlstart stoppen, Abweichung melden (angefordert anthropic-local/claude-test mit effort max, erhalten openai-local/codex-test ohne Optionen), das Ergebnis von task-fourteen nicht als das angeforderte Review verwenden. Erneute Delegation erst nach Klärung der Ursache, dann mit neuer clientRequestId.",
+      "reason": "Zurückgegebener Provider und Modell weichen vom Ziel ab; der Skill verlangt Meldung, task_cancel und Verwerfen des Ergebnisses."
+    },
+    {
+      "id": "R15",
+      "calls": [
+        {
+          "tool": "t3_pending_request_list",
+          "args": {
+            "threadId": "child-fifteen"
+          }
+        }
+      ],
+      "decision": "Dem User: noch kein Ergebnis, task-fifteen hat offene Unterarbeit (waiting_for_children) und eine offene Rückfrage. Frage über list/read lesen; nur mit belegtem Kontext per t3_pending_request_respond antworten, echte Nutzerentscheidungen dem User vorlegen. summary null nicht als Ergebnis ausgeben.",
+      "reason": "hasPendingQuestion verlangt das Lesen der frischen Frage; erst das abgeschlossene Task-Ergebnis zählt."
+    },
+    {
+      "id": "R16",
+      "calls": [
+        {
+          "tool": "Bash",
+          "args": {
+            "command": "ELECTRON_RUN_AS_NODE=1 \"$T3_ACP_MCP_NODE\" ${T3_ACP_MCP_ENTRYPOINT:+\"$T3_ACP_MCP_ENTRYPOINT\"} acp-mcp-call orchestrator_capabilities '{}'"
+          }
+        }
+      ],
+      "decision": "Capabilities über den ACP-Terminaltransport abfragen; danach mit denselben Vertragswerten delegate_task über acp-mcp-call ausführen (JSON als ein Shell-Argument, keine Prompt-Interpolation, keine Token ausgeben).",
+      "reason": "MCP-Tools fehlen, aber T3_ACP_MCP_NODE ist gesetzt; fehlender Entrypoint ist bei der Standalone-Ausgabe vorgesehen. Ziel-IDs sind noch unbekannt, daher kein Delegationsaufruf vorab."
+    }
+  ]
+}
